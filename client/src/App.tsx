@@ -5,6 +5,11 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import UserDetails from './pages/UserDetails';
 import ProtectedRoute from './components/ProtectedRoute';
+import FoodHome from './pages/FoodHome';
+import HousingHome from './pages/Housing/HousingHome';
+import Footer from './components/Footer';
+import PropertyDashboard from './pages/Housing/PostProperty';
+import PostProperty from './pages/Housing/PostProperty';
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -22,7 +27,11 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
+        <Route path='/foodhome' element={<FoodHome/>} />
+        <Route path='/housinghome' element={<HousingHome/>} />
+        <Route path='/propertydashboard' element={<PostProperty/>} />
       </Routes>
+      <Footer/>
     </GoogleOAuthProvider>
   );
 };
