@@ -8,30 +8,68 @@ import ProtectedRoute from './components/ProtectedRoute';
 import FoodHome from './pages/FoodHome';
 import HousingHome from './pages/Housing/HousingHome';
 import Footer from './components/Footer';
-import PropertyDashboard from './pages/Housing/PostProperty';
 import PostProperty from './pages/Housing/PostProperty';
+import LoginPage from './pages/Login/LoginPage';
+import SignupPage from './pages/SignupPage/SignupPage';
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
+
+  // Function to check if the user is authenticated
+  const isAuthenticated = (): boolean => {
+    const user = localStorage.getItem('user');
+    return user !== null; // Returns true if user data is present in localStorage
+  };
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Login Page */}
+        <Route path="/login" element={<LoginPage />} />
+        {/* Sign Page */}
+        <Route path="/SignUp" element={<SignupPage />} />
+
+        {/* Home Page (Protected) */}
+        <Route
+          path="/"
+          element={
+           
+              <Home />
+          }
+        />
+
+        {/* User Details Page (Protected) */}
         <Route
           path="/user-details"
           element={
-            <ProtectedRoute>
+            isAuthenticated() ? (
               <UserDetails />
-            </ProtectedRoute>
+            ) : (
+              <LoginPage />
+            )
           }
         />
-        <Route path='/foodhome' element={<FoodHome/>} />
-        <Route path='/housinghome' element={<HousingHome/>} />
-        <Route path='/propertydashboard' element={<PostProperty/>} />
+
+        {/* Food Home */}
+        <Route path="/foodhome" element={<FoodHome />} />
+
+        {/* Housing Home */}
+        <Route path="/housinghome" element={<HousingHome />} />
+
+        {/* Property Dashboard */}
+        <Route
+          path="/propertydashboard"
+          element={
+            isAuthenticated() ? (
+              <PostProperty />
+            ) : (
+              <LoginPage />
+            )
+          }
+        />
       </Routes>
-      <Footer/>
+      <Footer />
     </GoogleOAuthProvider>
   );
 };
