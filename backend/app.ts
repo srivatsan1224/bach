@@ -5,29 +5,38 @@ import { setupDatabaseAndContainer } from "./db";
 import userRoutes from "./routes/userRoutes";
 import dynamicRoutes from "./routes/api";
 
-// Create an Express application
 const app: Application = express();
 const port: number = 3000;
 
 // Middleware
-app.use(express.json()); // Built-in middleware for parsing JSON
-app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.json());
+
+// Debug Middleware
+app.use((req, res, next) => {
+    console.log(`Request received: ${req.method} ${req.path}`);
+    next();
+});
 
 // Routes
 app.use("/user", userRoutes);
+app.use("/api", (req, res, next) => {
+    console.log(`API route accessed: ${req.method} ${req.path}`);
+    next();
+});
 app.use("/api", dynamicRoutes);
 
-// Function to start the server
+// Start Server
 async function startServer(): Promise<void> {
-  try {
-    await setupDatabaseAndContainer();
-    app.listen(port, () => {
-      console.log(`Server running at http://localhost:${port}`);
-    });
-  } catch (error) {
-    console.error("Failed to start server:", error);
-  }
+    try {
+        console.log("Initializing server...");
+        await setupDatabaseAndContainer();
+        app.listen(port, () => {
+            console.log(`Server running at http://localhost:${port}`);
+        });
+    } catch (error) {
+        console.error("Failed to start server:", error);
+    }
 }
 
 startServer();

@@ -18,17 +18,34 @@ const Gallery: React.FC = () => {
     updateFormData("gallery", localState);
   }, [localState]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    toast.info("Submitting your data, please wait...");
+    toast.info("Submitting your form, please wait...");
 
-    // Simulate a task
-    setTimeout(() => {
-      console.log("Final Form Data:", formData);
-      toast.success("Data submitted successfully!");
-      setIsSubmitting(false);
+    try {
+      const response = await fetch("http://localhost:3000/api/submit-form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to submit form data: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log("Form submission response:", result);
+
+      toast.success("Form data submitted successfully!");
       navigate("/propertydashboard");
-    }, 2000);
+    } catch (error) {
+      console.error("Error submitting form data:", error);
+      toast.error("An error occurred while submitting your data. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
