@@ -2,7 +2,7 @@ import AppDownloadSection from "../../components/DownloadSection";
 import Carousel from "../../components/Housing/Carousel";
 import ExclusiveServices from "../../components/Housing/ExclusiveServices";
 import HomesNearYou from "../../components/Housing/NearYou";
-import PostPropertySection from "../../components/Housing/PostProperty";
+import PostPropertySection from "../../components/Housing/PostPropertyBanner";
 import FeaturesSection from "../../components/Housing/Section";
 
 export default function HousingHome() {

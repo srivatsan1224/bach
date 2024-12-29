@@ -7,6 +7,7 @@ const Navbar: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
   const [profilePic, setProfilePic] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem('user');
@@ -20,6 +21,7 @@ const Navbar: React.FC = () => {
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      setLoading(true);
       const { access_token } = tokenResponse;
       localStorage.setItem('token', access_token);
       try {
@@ -32,10 +34,14 @@ const Navbar: React.FC = () => {
         setProfilePic(response.data.picture);
       } catch (error) {
         console.error('Failed to fetch user info', error);
+        alert('Failed to retrieve user information. Please try again.');
+      } finally {
+        setLoading(false);
       }
     },
     onError: () => {
-      console.error('Login failed');
+      setLoading(false);
+      alert('Google login failed. Please try again.');
     },
   });
 
@@ -56,16 +62,19 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
         <div className="flex items-center space-x-4">
-          {isLoggedIn ? (
+          {loading ? (
+            <div className="text-blue-500">Logging in...</div>
+          ) : isLoggedIn ? (
             <>
               <button
                 onClick={logout}
-                className="p-3 border border-gray-300 bg-gray-100 text-black transition rounded-full shadow-sm hover:bg-gray-200">
+                className="p-3 border border-gray-300 bg-gray-100 text-black transition rounded-full shadow-sm hover:bg-gray-200"
+              >
                 Logout
               </button>
               <Link to="/user-details" className="text-lg font-semibold text-gray-800 hover:text-gray-500">
                 <img
-                  src={profilePic}
+                  src={profilePic || 'default-profile-pic.png'}
                   alt="Profile"
                   className="w-8 h-8 rounded-full border border-gray-300 shadow-sm inline-block ml-2"
                 />
@@ -74,7 +83,8 @@ const Navbar: React.FC = () => {
           ) : (
             <button
               onClick={() => login()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md">
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md"
+            >
               Login with Google
             </button>
           )}

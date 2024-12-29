@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const RentProperty = () => {
   return (
@@ -120,9 +121,11 @@ const RentProperty = () => {
             <p className="text-sm text-gray-600 mb-4">
               Post your property for free
             </p>
+            <Link to='/propertyform'>
             <button className="bg-red-500 text-white px-6 py-3 rounded-md">
               Post Now
             </button>
+            </Link>
           </div>
 
           {/* Illustration */}
