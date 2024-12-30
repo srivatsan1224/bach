@@ -54,7 +54,7 @@ const FiltersPage: React.FC = () => {
             <button
               className="mt-4 text-blue-500"
               onClick={() =>
-                (window.location.href = `/restaurant/${restaurant.id}`)
+                (window.location.href = `/restaurant1/${restaurant.id}`)
               }
             >
               View Details →
