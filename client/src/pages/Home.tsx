@@ -6,6 +6,7 @@ import ExclusiveServices from "../components/HomePage/ExclusiveServices";
 import HomeCard from "../components/HomePage/HomeCard";
 import Testimonials from "../components/HomePage/Testimonials";
 import DownloadSection from "../components/HomePage/DownloadSection";
+import FAQ from "../components/HomePage/Faq";
 
 
 const Home: React.FC = () => {
@@ -13,11 +14,11 @@ const Home: React.FC = () => {
   {/*Hero Section Start*/}
   <HeroCarousel/>
   {/*Hero Section Icons*/}
-  <div className="flex flex-wrap justify-center gap-6 py-8 bg-gray-50 w-full mx-auto">
+  <div className="flex flex-wrap justify-between gap-3 py-4 bg-gray-50 w-[90vw] mx-auto">
   {features.map((feature, index) => (
     <div
       key={index}
-      className="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg w-40 h-40 hover:shadow-xl transition-shadow duration-300"
+      className="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg w-56 h-48 hover:shadow-xl transition-shadow duration-300"
     >
       <div
         className="text-4xl mb-4"
@@ -27,6 +28,7 @@ const Home: React.FC = () => {
     </div>
   ))}
 </div>
+
 
     {/*Hero Section end*/}
     
@@ -39,12 +41,9 @@ const Home: React.FC = () => {
     {/*Nearby Homes*/}
 
     <DownloadSection/>
-
-      {/* Phone Ads Section */}
-      {/* Phone Ads Section */}
  <Testimonials/>
+ <FAQ/>
 
-      {/* Phone Ads Section */}
   </>;
 };
 

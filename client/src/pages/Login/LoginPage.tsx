@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         setIsLoggedIn(true);
         setUserName(data.user.name);
-        navigate("/home");
+        navigate("/");
       } else {
         setError(data.message || "Invalid login credentials.");
       }
@@ -66,7 +66,7 @@ const LoginPage: React.FC = () => {
         setIsLoggedIn(true);
         setUserName(response.data.name);
         setProfilePic(response.data.picture);
-        navigate("/home");
+        navigate("/");
       } catch (error) {
         console.error("Failed to fetch user info", error);
       }

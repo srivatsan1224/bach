@@ -11,6 +11,8 @@ import Footer from './components/Footer';
 import PostProperty from './pages/Housing/PostProperty';
 import LoginPage from './pages/Login/LoginPage';
 import SignupPage from './pages/SignupPage/SignupPage';
+import DiscountPage from './pages/DiscountPage/DiscountPage';
+import SearchPage from './pages/DiscountSearch/SearchPage';
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -41,7 +43,7 @@ const App: React.FC = () => {
 
         {/* User Details Page (Protected) */}
         <Route
-          path="/user-details"
+          path="/profile"
           element={
             isAuthenticated() ? (
               <UserDetails />
@@ -56,6 +58,12 @@ const App: React.FC = () => {
 
         {/* Housing Home */}
         <Route path="/housinghome" element={<HousingHome />} />
+
+       {/* Housing Home */}
+        <Route path="/discount" element={<DiscountPage />} />
+
+             {/* Housing Home */}
+        <Route path="/discountsearch" element={<SearchPage />} />
 
         {/* Property Dashboard */}
         <Route

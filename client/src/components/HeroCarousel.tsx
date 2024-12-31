@@ -1,6 +1,7 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import { Navigate } from 'react-router-dom';
 
 const HeroCarousel = () => {
   return (
@@ -75,7 +76,7 @@ const HeroCarousel = () => {
 
   {/* Search Button */}
   <div className="flex-shrink-0">
-    <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 w-full font-semibold shadow-md">
+    <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 w-full font-semibold shadow-md"  >
       Search
     </button>
   </div>
