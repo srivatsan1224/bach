@@ -25,7 +25,6 @@ app.use("/api", (req, res, next) => {
     next();
 });
 app.use("/api", dynamicRoutes);
-
 // Start Server
 async function startServer(): Promise<void> {
     try {

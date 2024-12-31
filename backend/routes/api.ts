@@ -1,35 +1,206 @@
 import express, { Request, Response, Router } from "express";
-import { getContainer, createContainerIfNotExists } from "../db";
+import multer from "multer";
+import path from "path";
+import {
+  getContainer,
+  createContainerIfNotExists,
+  getHousingPropertyContainer,
+  createPropertyListing,
+  getUserProperties,
+  updatePropertyListing,
+  deletePropertyListing,
+} from "../db";
 
 const router: Router = express.Router();
 
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Save files to 'uploads/' directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+// Submit new property form
 router.post("/submit-form", async (req: Request, res: Response): Promise<void> => {
-  const formData = req.body;
-
-  if (!formData) {
-    res.status(400).json({ message: "Form data is required!" });
-    return;
-  }
-
   try {
-    console.log("Received form data:", formData);
+    const formData = req.body;
 
-    // Define the container name as HousingProperty
-    const containerName = "HousingProperty";
+    if (!formData || !formData.email) {
+      res.status(400).json({ message: "Form data with a valid email is required!" });
+      return;
+    }
 
-    // Ensure the container exists
-    const container = await createContainerIfNotExists(containerName);
+    const email = formData.email;
 
-    // Insert the form data into the HousingProperty container
-    const { resource } = await container.items.create(formData);
+    // Store form data in the HousingProperty container
+    const housingPropertyContainer = await getHousingPropertyContainer();
+
+    const documentId = `${email}-${Date.now()}`;
+    const newDocument = {
+      id: documentId,
+      email, // Partition key
+      ...formData,
+    };
+
+    const { resource } = await housingPropertyContainer.items.create(newDocument);
+    console.log("Form data stored successfully:", resource);
+
+    // Additionally create a property listing
+    const property = await createPropertyListing(email, formData);
 
     res.status(201).json({
-      message: "Form data submitted successfully",
-      data: resource,
+      message: "Form data and property listing stored successfully",
+      data: { formData: resource, property },
     });
   } catch (error: any) {
-    console.error("Error saving form data:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    console.error("Error processing form submission:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+});
+
+// Get user's properties
+router.get("/properties/:email", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.params;
+    console.log(`Fetching properties for email: ${email}`);
+
+    if (!email) {
+      res.status(400).json({ message: "Email is required!" });
+      return;
+    }
+
+    const properties = await getUserProperties(email);
+    console.log(`Properties retrieved:`, properties);
+
+    if (!properties || properties.length === 0) {
+      res.status(404).json({ message: `No properties found for email: ${email}` });
+      return;
+    }
+
+    res.status(200).json({ properties });
+  } catch (error: any) {
+    console.error("Error retrieving properties:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+});
+
+// Upload multiple photos
+router.post("/upload-photos", upload.array("file", 10), async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.files || !Array.isArray(req.files)) {
+      res.status(400).json({ message: "No files uploaded" });
+      return;
+    }
+
+    const filePaths = (req.files as Express.Multer.File[]).map((file) =>
+      path.join("uploads", file.filename)
+    );
+
+    console.log("Uploaded photos:", filePaths);
+
+    const { email, propertyId } = req.body;
+
+    if (!email || !propertyId) {
+      res.status(400).json({ message: "Email and propertyId are required to associate photos" });
+      return;
+    }
+
+    const housingPropertyContainer = await getHousingPropertyContainer();
+
+    // Retrieve the existing property
+    const { resource: existingProperty } = await housingPropertyContainer
+      .item(propertyId, email)
+      .read();
+
+    if (!existingProperty) {
+      res.status(404).json({ message: "Property not found" });
+      return;
+    }
+
+    // Update the gallery with new photo paths
+    const updatedProperty = {
+      ...existingProperty,
+      gallery: {
+        ...(existingProperty.gallery || {}),
+        photos: [...(existingProperty.gallery?.photos || []), ...filePaths],
+      },
+    };
+
+    const { resource: updatedResource } = await housingPropertyContainer
+      .item(propertyId, email)
+      .replace(updatedProperty);
+
+    console.log("Property updated with photos:", updatedResource);
+
+    res.status(200).json({
+      message: "Photos uploaded and added to property successfully",
+      photos: filePaths,
+      updatedProperty: updatedResource,
+    });
+  } catch (error: any) {
+    console.error("Error uploading photos:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+});
+
+// Update property
+router.put("/property/:propertyId", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { propertyId } = req.params;
+    const { email, ...updateData } = req.body;
+
+    if (!email) {
+      res.status(400).json({ message: "Email is required!" });
+      return;
+    }
+
+    const updatedProperty = await updatePropertyListing(propertyId, email, updateData);
+    res.status(200).json({
+      message: "Property updated successfully",
+      property: updatedProperty,
+    });
+  } catch (error: any) {
+    console.error("Error updating property:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+});
+
+// Delete property
+router.delete("/property/:propertyId", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { propertyId } = req.params;
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400).json({ message: "Email is required!" });
+      return;
+    }
+
+    await deletePropertyListing(propertyId, email);
+    res.status(200).json({ message: "Property deleted successfully" });
+  } catch (error: any) {
+    console.error("Error deleting property:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 });
 
@@ -52,87 +223,6 @@ router.post("/create", async (req: Request, res: Response): Promise<void> => {
     });
   } catch (error: any) {
     console.error("Error creating item:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-});
-
-// Generic READ API
-router.post("/read", async (req: Request, res: Response): Promise<void> => {
-  const { containerName, queryTemplate, params } = req.body;
-
-  if (!containerName || !queryTemplate) {
-    res.status(400).json({ message: "Container name and query template are required!" });
-    return;
-  }
-
-  try {
-    const container = await getContainer(containerName);
-    const parsedQuery = {
-      query: queryTemplate,
-      parameters: params || [],
-    };
-
-    const { resources } = await container.items.query(parsedQuery).fetchAll();
-
-    res.status(200).json({ items: resources });
-  } catch (error: any) {
-    console.error("Error reading items:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-});
-
-// Generic UPDATE API
-router.put("/update", async (req: Request, res: Response): Promise<void> => {
-  const { containerName, id, updateFields } = req.body;
-
-  if (!containerName || !id || !updateFields) {
-    res.status(400).json({
-      message: "Container name, item ID, and update data are required!",
-    });
-    return;
-  }
-
-  try {
-    const container = await getContainer(containerName);
-    const { resources: items } = await container.items.query({
-      query: "SELECT * FROM c WHERE c.id = @id",
-      parameters: [{ name: "@id", value: id }],
-    }).fetchAll();
-
-    if (!items.length) {
-      res.status(404).json({ message: "Item not found!" });
-      return;
-    }
-
-    const updatedItem = { ...items[0], ...updateFields };
-    const { resource } = await container.items.upsert(updatedItem);
-
-    res.status(200).json({
-      message: "Item updated successfully",
-      property: resource,
-    });
-  } catch (error: any) {
-    console.error("Error updating item:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-});
-
-// Generic DELETE API
-router.delete("/delete", async (req: Request, res: Response): Promise<void> => {
-  const { containerName, id } = req.body;
-
-  if (!containerName || !id) {
-    res.status(400).json({ message: "Container name and item ID are required!" });
-    return;
-  }
-
-  try {
-    const container = await getContainer(containerName);
-    await container.item(id).delete();
-
-    res.status(200).json({ message: "Item deleted successfully" });
-  } catch (error: any) {
-    console.error("Error deleting item:", error.message);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
