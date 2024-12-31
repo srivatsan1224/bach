@@ -17,6 +17,7 @@ import LocalityDetailsForm from "./pages/Housing/PropertyForm/LocalityDetails";
 import Gallery from "./pages/Housing/PropertyForm/Gallery";
 import AmenitiesForm from "./pages/Housing/PropertyForm/Amenities";
 import RentalDetailsForm from "./pages/Housing/PropertyForm/RentalDetails";
+import PropertyList from "./pages/Housing/PropertyList";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -44,6 +45,8 @@ const App: React.FC = () => {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/amenities" element={<AmenitiesForm />} />
           <Route path="/rentaldetails" element={<RentalDetailsForm />} />
+          <Route path="/propertylist" element={<PropertyList />} />
+
         </Routes>
         <Footer />
       </FormProvider>

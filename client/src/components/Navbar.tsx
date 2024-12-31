@@ -32,6 +32,8 @@ const Navbar: React.FC = () => {
         setIsLoggedIn(true);
         setUserName(response.data.name);
         setProfilePic(response.data.picture);
+        localStorage.setItem('token', access_token);
+
       } catch (error) {
         console.error('Failed to fetch user info', error);
         alert('Failed to retrieve user information. Please try again.');

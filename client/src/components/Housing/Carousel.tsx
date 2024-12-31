@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Carousel = () => {
   const images = [
@@ -113,10 +114,11 @@ const Carousel = () => {
                 </div>
               )}
             </div>
-
+              <Link to='/propertylist'>
             <button className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition">
               Search
             </button>
+            </Link>
           </div>
         </div>
       </div>
