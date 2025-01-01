@@ -1,0 +1,22 @@
+import { Routes, Route } from "react-router-dom";
+import RentalHome from "../pages/Rental/RentalHome";
+import FurnitureHome from "../pages/Rental/FurnitureHome";
+import AppliancesHome from "../pages/Rental/AppliancesHome";
+import ElectronicsHome from "../pages/Rental/ElectronicsHome";
+import FitnessHome from "../pages/Rental/FitnessHome";
+import ItemDetailsPage from "../pages/Rental/ItemDetailsPage";
+
+const RentalRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/rental" element={<RentalHome />} />
+      <Route path="/furniture" element={<FurnitureHome />} />
+      <Route path="/appliances" element={<AppliancesHome />} />
+      <Route path="/electronics" element={<ElectronicsHome />} />
+      <Route path="/fitness" element={<FitnessHome />} />
+      <Route path="/:category/:id" element={<ItemDetailsPage />} />
+    </Routes>
+  );
+};
+
+export default RentalRoutes;

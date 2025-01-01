@@ -6,7 +6,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import UserDetails from "./pages/UserDetails";
-import ProtectedRoute from "./components/ProtectedRoute";
 import HousingHome from "./pages/Housing/HousingHome";
 import PostProperty from "./pages/Housing/PostProperty";
 import Main from "./pages/Housing/PropertyForm/Main";
@@ -24,6 +23,7 @@ import RestaurantDetails from "./components/Foods/RestaurantDetails";
 import VendorDashboard from "./components/Foods/VendorDashboard";
 import RestaurantList from "./components/Foods/RestaurantList";
 import FoodList from "./components/Foods/FoodList";
+import RentalRoutes from "./routes/rentalRoutes";
 import FoodHome from "./components/Foods/FoodHome";
 
 const App: React.FC = () => {
@@ -49,6 +49,9 @@ const App: React.FC = () => {
           {/* Home Page */}
           <Route path="/" element={<Home />} />
 
+          {/* Rental Routes */}
+          <Route path="/home/rental/*" element={<RentalRoutes />} />
+
           {/* User Details Page (Protected) */}
           <Route
             path="/profile"
@@ -56,7 +59,7 @@ const App: React.FC = () => {
           />
 
           {/* Food Home */}
-          <Route path="/foodhome" element={<FoodHome/>} />
+          <Route path="/foodhome" element={<FoodHome />} />
 
           {/* Restaurant Pages */}
           <Route path="/restaurant" element={<RestaurantList />} />

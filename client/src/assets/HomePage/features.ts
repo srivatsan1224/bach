@@ -94,6 +94,8 @@ export const features = [
   </svg>
   `,
       label: "Property Rentals",
+            route: "/home/rental/rental"
+
     },
     {
       icon: `
@@ -122,5 +124,6 @@ export const features = [
   </svg>
   `,
       label: "Discount Bazaar",
+      route:"/discount"
     },
   ];
