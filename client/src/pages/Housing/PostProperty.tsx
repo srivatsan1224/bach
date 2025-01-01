@@ -1,4 +1,3 @@
-import React from 'react'
 import PropertyDashboard from '../../components/Housing/PropertyDashboard'
 import { Link } from 'react-router-dom'
 

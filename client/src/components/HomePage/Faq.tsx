@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { FiChevronDown, FiX } from "react-icons/fi";
 
 const FAQ = () => {

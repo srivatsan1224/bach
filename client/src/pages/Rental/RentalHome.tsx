@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import LatestProductCard from "../../components/Rental/LatestProductCard";
 import TestimonialCard from "../../components/Rental/TestimonialCard";

@@ -1,4 +1,3 @@
-import React from "react";
 import ddbg from "../../assets/HomePage/ddbg.png";
 import AppStore from "../../assets/HomePage/APPSTORE.png";
 import PlayStore from "../../assets/HomePage/PLAYSTORE.png";

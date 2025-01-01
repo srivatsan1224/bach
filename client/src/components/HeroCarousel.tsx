@@ -1,7 +1,5 @@
-import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { Navigate } from 'react-router-dom';
 
 const HeroCarousel = () => {
   return (
