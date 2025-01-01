@@ -46,6 +46,7 @@ export const features = [
   </svg>
   `,
       label: "Home Food",
+      route: "/foodhome"
     },
     {
       icon: `
@@ -60,6 +61,7 @@ export const features = [
   </svg>
   `,
       label: "Jobs",
+      
     },
     {
       icon: `
