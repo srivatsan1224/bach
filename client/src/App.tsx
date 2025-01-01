@@ -17,7 +17,7 @@ import SearchPage from './pages/DiscountSearch/SearchPage';
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
-  // Function to check if the user is authenticated
+  // Function to check if the user is authenticate
   const isAuthenticated = (): boolean => {
     const user = localStorage.getItem('user');
     return user !== null; // Returns true if user data is present in localStorage
