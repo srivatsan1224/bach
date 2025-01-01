@@ -11,7 +11,7 @@ const App: React.FC = () => {
     <GoogleOAuthProvider clientId={clientId}>
       <Navbar />
       <Routes>
-        {/* Rental Routes */}
+        {/* Rental Route */}
         <Route path="/home/rental/*" element={<RentalRoutes />} />
       </Routes>
     </GoogleOAuthProvider>
