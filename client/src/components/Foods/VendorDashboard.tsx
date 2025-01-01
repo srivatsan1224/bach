@@ -57,7 +57,7 @@ const VendorDashboard: React.FC = () => {
       const response = await axios.post<Restaurant>('http://localhost:5000/api/restaurants', restaurant);
       setRestaurants((prev) => [...prev, response.data]); // Append new restaurant
       setRestaurant({ name: '', address: '', phone: '', rating: 0, image: '' });
-      alert('Restaurant added successfully!');
+      alert(`Restaurant "${response.data.name}" added successfully!`);
     } catch (error) {
       console.error('Failed to add restaurant:', error);
       alert('Failed to add restaurant.');
@@ -76,7 +76,7 @@ const VendorDashboard: React.FC = () => {
         `http://localhost:5000/api/restaurants/${selectedRestaurant}/food`,
         foodItem
       );
-      alert('Food item added successfully!');
+      alert(`Food item "${response.data.name}" added successfully!`);
       setFoodItem({ name: '', ingredients: '', cost: 0, rating: 0, image: '' });
     } catch (error) {
       console.error('Failed to add food item:', error);

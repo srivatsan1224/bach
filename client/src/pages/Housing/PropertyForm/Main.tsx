@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from './FormContext';
-import { sendPhoneOTP, verifyPhoneOTP } from '../../../../firebase';
 import { Link } from 'react-router-dom';
 
 interface UserData {
@@ -19,10 +18,6 @@ const Main: React.FC = () => {
     mobile: '',
   });
 
-  const [otp, setOtp] = useState('');
-  const [verificationId, setVerificationId] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserData = () => {
@@ -87,52 +82,9 @@ const Main: React.FC = () => {
     detectLocation();
   }, []);
 
-  const validateMobileNumber = (mobileNumber: string): boolean => {
-    const trimmedNumber = mobileNumber.trim();
-    const regex = /^(?:\+?91|0)?[6-9]\d{9}$/;
-    return regex.test(trimmedNumber);
-  };
 
-  const sendOtp = async () => {
-    const mobileNumber = userData.mobile.trim();
 
-    if (!validateMobileNumber(mobileNumber)) {
-      alert('Please enter a valid 10-digit Indian mobile number');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const confirmationResult = await sendPhoneOTP(mobileNumber, 'recaptcha-container');
-      setVerificationId(confirmationResult.verificationId);
-      alert('OTP sent successfully!');
-    } catch (error) {
-      console.error('Error sending OTP:', error);
-      alert('Failed to send OTP. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const verifyOtp = async () => {
-    if (!otp) {
-      alert('Please enter the OTP');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      await verifyPhoneOTP(verificationId, otp);
-      setIsVerified(true);
-      alert('Mobile number verified successfully!');
-    } catch (error) {
-      console.error('Error verifying OTP:', error);
-      alert('Invalid OTP. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  
   const handleNext = () => {
     updateFormData('main', { userData });
   };
@@ -207,35 +159,7 @@ const Main: React.FC = () => {
                   readOnly
                 />
               </div>
-              {!isVerified ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={sendOtp}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Sending OTP...' : 'Send OTP'}
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Enter OTP"
-                    className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring focus:ring-blue-300 mt-4"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={verifyOtp}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Verifying...' : 'Verify OTP'}
-                  </button>
-                </>
-              ) : (
-                <p className="text-green-500">Mobile number verified successfully!</p>
-              )}
+              
               <div className="flex items-center space-x-2 mt-4">
                 <input type="checkbox" id="whatsapp" />
                 <label htmlFor="whatsapp" className="text-gray-600">

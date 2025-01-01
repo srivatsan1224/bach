@@ -10,13 +10,11 @@ const SignupPage: React.FC = () => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
 
     if (!name || !email || !mobileNumber || !password) {
       setError("All fields are required.");
@@ -42,7 +40,7 @@ const SignupPage: React.FC = () => {
         const result = data.results[0]; // Handle first user in results array
         if (result.status === "success") {
           localStorage.setItem("user", JSON.stringify(result.user)); // Save user data in localStorage
-          setSuccess("Signup successful! Redirecting to home...");
+          alert("Signup successful! Redirecting to home...");
           setTimeout(() => {
             navigate("/home"); // Redirect to home page
           }, 2000);
@@ -70,7 +68,7 @@ const SignupPage: React.FC = () => {
         // Save Google user details in localStorage
         localStorage.setItem("user", JSON.stringify(response.data));
 
-        setSuccess("Google signup successful! Redirecting to home...");
+        alert("Google signup successful! Redirecting to home...");
         setTimeout(() => {
           navigate("/home"); // Redirect to home page
         }, 2000);
