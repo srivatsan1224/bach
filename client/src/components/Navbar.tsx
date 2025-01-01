@@ -1,92 +1,99 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa"; // User icon
+import logo from "../assets/logo.png";
 
 const Navbar: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [profilePic, setProfilePic] = useState('');
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      const parsedUser = JSON.parse(user);
-      setIsLoggedIn(true);
-      setUserName(parsedUser.name);
-      setProfilePic(parsedUser.picture || '');
-    }
-  }, []);
+  // Check if the user is authenticated by checking for user data in localStorage
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAuthenticated = !!user?.name;
 
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      setLoading(true);
-      const { access_token } = tokenResponse;
-      localStorage.setItem('token', access_token);
-      try {
-        const response = await axios.get(
-          `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`
-        );
-        localStorage.setItem('user', JSON.stringify(response.data));
-        setIsLoggedIn(true);
-        setUserName(response.data.name);
-        setProfilePic(response.data.picture);
-      } catch (error) {
-        console.error('Failed to fetch user info', error);
-        alert('Failed to retrieve user information. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    },
-    onError: () => {
-      setLoading(false);
-      alert('Google login failed. Please try again.');
-    },
-  });
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    setUserName('');
-    setProfilePic('');
+  // Dropdown state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
   };
 
   return (
-    <nav className="bg-white shadow-lg font-montserrat">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link to="/" className="text-lg font-semibold text-gray-800 hover:text-gray-500">
-            Home
-          </Link>
+    <nav className="bg-white shadow-md flex justify-center relative z-50">
+      <div className="w-[90vw] pr-4 flex justify-between items-center h-16">
+        {/* Logo */}
+        <div>
+          <img
+            src={logo}
+            alt="Bachelors Logo"
+            className="h-20 cursor-pointer"
+            onClick={() => navigate("/")}
+          />
         </div>
-        <div className="flex items-center space-x-4">
-          {loading ? (
-            <div className="text-blue-500">Logging in...</div>
-          ) : isLoggedIn ? (
-            <>
-              <button
-                onClick={logout}
-                className="p-3 border border-gray-300 bg-gray-100 text-black transition rounded-full shadow-sm hover:bg-gray-200"
-              >
-                Logout
-              </button>
-              <Link to="/user-details" className="text-lg font-semibold text-gray-800 hover:text-gray-500">
-                <img
-                  src={profilePic || 'default-profile-pic.png'}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full border border-gray-300 shadow-sm inline-block ml-2"
-                />
-              </Link>
-            </>
-          ) : (
+
+        {/* Navigation Buttons */}
+        <div className="flex items-center space-x-6 relative">
+          <button
+            onClick={() => navigate("/all-services")}
+            className="px-4 py-2 border border-black rounded-full text-black font-medium hover:bg-black hover:text-white transition"
+          >
+            All Services
+          </button>
+          {!isAuthenticated ? (
             <button
-              onClick={() => login()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md"
+              onClick={() => navigate("/login")}
+              className="px-4 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition"
             >
-              Login with Google
+              Login
             </button>
+          ) : (
+            <div className="relative">
+              {/* Profile Picture or User Icon */}
+              <div
+                className="cursor-pointer"
+                onClick={toggleDropdown} // Toggle dropdown on click
+              >
+                {user?.picture ? (
+                  <img
+                    src={user.picture}
+                    alt="User Profile"
+                    className="w-10 h-10 rounded-full border border-gray-300 shadow-md"
+                  />
+                ) : (
+                  <FaUserCircle className="w-10 h-10 text-gray-600" />
+                )}
+              </div>
+
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 w-40 z-50">
+                  <button
+                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      navigate("/profile");
+                    }}
+                  >
+                    Profile
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      handleLogout();
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
