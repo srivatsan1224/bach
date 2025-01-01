@@ -9,7 +9,7 @@ function generateUniqueId(email: string): string {
   return crypto.createHash("sha256").update(email).digest("hex");
 }
 
-// API to handle signup with an array of users
+// API to handle signup with an array of usera
 router.post("/signup", async (req: Request, res: Response): Promise<void> => {
   const {
     containerName,
