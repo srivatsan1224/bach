@@ -26,6 +26,8 @@ import RestaurantList from "./components/Foods/RestaurantList";
 import FoodList from "./components/Foods/FoodList";
 import RentalRoutes from "./routes/rentalRoutes";
 import FoodHome from "./components/Foods/FoodHome";
+import ProductPage from "./pages/DiscountSearch/ProductPage";
+import CartPage from "./pages/DiscountSearch/CartPage";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -77,6 +79,9 @@ const App: React.FC = () => {
 
           {/* Discount Search Page */}
           <Route path="/discountsearch" element={<SearchPage />} />
+          {/* Discound product Home */}
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/cart" element={<CartPage />} /> 
 
           {/* Property Dashboard */}
           <Route

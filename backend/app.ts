@@ -4,6 +4,7 @@ import cors from "cors";
 import { setupDatabaseAndContainer } from "./db";
 import userRoutes from "./routes/userRoutes";
 import dynamicRoutes from "./routes/api";
+import productRoutes from "./routes/productRoutes";
 
 const app: Application = express();
 const port: number = 3000;
@@ -25,6 +26,8 @@ app.use("/api", (req, res, next) => {
     next();
 });
 app.use("/api", dynamicRoutes);
+
+app.use("/products", productRoutes);
 // Start Server
 async function startServer(): Promise<void> {
     try {

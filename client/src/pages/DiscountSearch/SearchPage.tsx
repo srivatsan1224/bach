@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-// Sample Images (Replace these with your actual image paths)
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import groceryImg from "../../assets/DiscountPage/gro.png";
 import mobileImg from "../../assets/DiscountPage/mob.png";
 import fashionImg from "../../assets/DiscountPage/drs.png";
@@ -10,69 +11,47 @@ import accessoriesImg from "../../assets/DiscountPage/acc.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
-const products = [
-  {
-    id: 1,
-    name: "Singo Maple",
-    price: 1264000,
-    oldPrice: 1500000,
-    discount: 20,
-    image: "https://via.placeholder.com/150?text=Product+1",
-    category: "Furniture",
-    isFree: false,
-    isExclusive: true,
-    rating: 4.5,
-  },
-  {
-    id: 2,
-    name: "Singo Ebony",
-    price: 1264000,
-    oldPrice: 1500000,
-    discount: 20,
-    image: "https://via.placeholder.com/150?text=Product+2",
-    category: "Furniture",
-    isFree: false,
-    isExclusive: false,
-    rating: 3.8,
-  },
-  {
-    id: 3,
-    name: "Rakai Ebony",
-    price: 1118000,
-    oldPrice: 1280000,
-    discount: 15,
-    image: "https://via.placeholder.com/150?text=Product+3",
-    category: "Accessories",
-    isFree: true,
-    isExclusive: false,
-    rating: 4.0,
-  },
-  {
-    id: 4,
-    name: "Way Kambas Mini Maple",
-    price: 1024000,
-    oldPrice: 1280000,
-    discount: 10,
-    image: "https://via.placeholder.com/150?text=Product+4",
-    category: "Accessories",
-    isFree: false,
-    isExclusive: true,
-    rating: 4.8,
-  },
-];
-
 const SearchPage: React.FC = () => {
+  const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     isFree: false,
     isExclusive: false,
-    hasOffer: false,
     priceRange: "",
     rating: "",
     discount: "",
   });
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:3000/products/search", {
+        params: {
+          search: searchQuery,
+          category: selectedCategory,
+          isFree: filters.isFree ? "true" : "false",
+          isExclusive: filters.isExclusive ? "true" : "false",
+          discount: filters.discount || undefined,
+          minPrice: filters.priceRange ? filters.priceRange.split("-")[0] : undefined,
+          maxPrice: filters.priceRange ? filters.priceRange.split("-")[1] : undefined,
+          rating: filters.rating || undefined,
+        },
+      });
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [searchQuery, selectedCategory, filters]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -98,33 +77,15 @@ const SearchPage: React.FC = () => {
 
   const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory
-      ? product.category === selectedCategory
-      : true;
-    const matchesFilters =
-      (!filters.isFree || product.isFree) &&
-      (!filters.isExclusive || product.isExclusive) &&
-      (!filters.hasOffer || product.discount > 0) &&
-      (filters.priceRange
-        ? product.price >= Number(filters.priceRange.split("-")[0]) &&
-          product.price <= Number(filters.priceRange.split("-")[1])
-        : true) &&
-      (filters.rating ? product.rating >= Number(filters.rating) : true) &&
-      (filters.discount ? product.discount >= Number(filters.discount) : true);
-
-    return matchesSearch && matchesCategory && matchesFilters;
-  });
+  const handleProductClick = (product: any) => {
+    navigate(`/product/${product.id}`, { state: { product } });
+  };
 
   return (
     <div className="flex justify-center items-center bg-gray-50">
       <div className="p-6 w-4/5">
         {/* Search Bar and Filters */}
         <div className="flex items-center justify-between mb-8">
-          {/* Search Bar */}
           <div className="flex items-center w-full max-w-4xl border border-gray-300 rounded-full overflow-hidden shadow-sm">
             <input
               type="text"
@@ -133,7 +94,10 @@ const SearchPage: React.FC = () => {
               value={searchQuery}
               onChange={handleSearch}
             />
-            <button className="px-8 py-4 bg-purple-600 text-white font-medium rounded-r-full hover:bg-purple-700 transition">
+            <button
+              className="px-8 py-4 bg-purple-600 text-white font-medium rounded-r-full hover:bg-purple-700 transition"
+              onClick={fetchProducts}
+            >
               Search
             </button>
           </div>
@@ -144,8 +108,7 @@ const SearchPage: React.FC = () => {
               className="flex items-center p-2 px-4 border border-gray-300 rounded-full hover:bg-gray-100 transition"
               onClick={toggleDropdown}
             >
-        <FontAwesomeIcon icon={faFilter} size="lg" />
-
+              <FontAwesomeIcon icon={faFilter} size="lg" />
               <span className="ml-2 font-medium">Filters</span>
             </button>
             <button
@@ -170,7 +133,6 @@ const SearchPage: React.FC = () => {
         {/* Dropdown Section */}
         {dropdownVisible && (
           <div className="p-4 border border-gray-300 rounded-lg bg-white shadow-lg mb-6">
-            {/* Price Range */}
             <div className="mb-4">
               <label className="block font-medium mb-2">Price Range</label>
               <select
@@ -179,13 +141,12 @@ const SearchPage: React.FC = () => {
                 onChange={(e) => updateDropdownFilter("priceRange", e.target.value)}
               >
                 <option value="">Select Price Range</option>
-                <option value="0-500000">₹0 - ₹500,000</option>
-                <option value="500000-1000000">₹500,000 - ₹1,000,000</option>
-                <option value="1000000-2000000">₹1,000,000 - ₹2,000,000</option>
+                <option value="0-5000">₹0 - ₹5,000</option>
+                <option value="5000-10000">₹5,000 - ₹10,000</option>
+                <option value="10000-20000">₹10,000 - ₹20,000</option>
               </select>
             </div>
 
-            {/* Ratings */}
             <div className="mb-4">
               <label className="block font-medium mb-2">Ratings</label>
               <select
@@ -200,7 +161,6 @@ const SearchPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Discounts */}
             <div>
               <label className="block font-medium mb-2">Discounts</label>
               <select
@@ -216,12 +176,13 @@ const SearchPage: React.FC = () => {
             </div>
           </div>
         )}
+
         {/* Categories Grid Section */}
         <div className="flex justify-between items-center mt-12">
           {[
-            { name: "Grocery", image: groceryImg},
-            { name: "Mobile", image: mobileImg},
-            { name: "Fashion", image:fashionImg },
+            { name: "Grocery", image: groceryImg },
+            { name: "Mobile", image: mobileImg },
+            { name: "Fashion", image: fashionImg },
             { name: "Watch", image: watchImg },
             { name: "Furniture", image: furnitureImg },
             { name: "Cosmetics", image: cosmeticsImg },
@@ -245,37 +206,42 @@ const SearchPage: React.FC = () => {
             </div>
           ))}
         </div>
+
         {/* Search Results */}
         <div className="mt-12">
           <h2 className="text-xl font-semibold mb-6">Search Results</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="font-medium">{product.name}</h3>
-                  <p className="text-sm text-gray-500 line-through">
-                    ₹{product.oldPrice.toLocaleString()}
-                  </p>
-                  <p className="text-lg font-semibold text-purple-600">
-                    ₹{product.price.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            ))}
-            {filteredProducts.length === 0 && (
-              <p className="col-span-full text-center text-gray-500">
-                No products found.
-              </p>
-            )}
-          </div>
+          {loading ? (
+            <p className="text-center text-gray-500">Loading...</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.length > 0 ? (
+                products.map((product: any) => (
+                  <div
+                    key={product.id}
+                    className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => handleProductClick(product)}
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h3 className="font-medium">{product.name}</h3>
+                      <p className="text-sm text-gray-500 line-through">
+                        ₹{product.oldPrice.toLocaleString()}
+                      </p>
+                      <p className="text-lg font-semibold text-purple-600">
+                        ₹{product.price.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="col-span-full text-center text-gray-500">No products found.</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
