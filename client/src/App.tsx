@@ -14,6 +14,7 @@ import LocalityDetailsForm from "./pages/Housing/PropertyForm/LocalityDetails";
 import Gallery from "./pages/Housing/PropertyForm/Gallery";
 import AmenitiesForm from "./pages/Housing/PropertyForm/Amenities";
 import RentalDetailsForm from "./pages/Housing/PropertyForm/RentalDetails";
+import PropertyList from "./pages/Housing/PropertyList";
 import LoginPage from "./pages/Login/LoginPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
 import DiscountPage from "./pages/DiscountPage/DiscountPage";
@@ -90,6 +91,8 @@ const App: React.FC = () => {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/amenities" element={<AmenitiesForm />} />
           <Route path="/rentaldetails" element={<RentalDetailsForm />} />
+          <Route path="/propertylist" element={<PropertyList />} />
+
         </Routes>
         <Footer />
       </FormProvider>

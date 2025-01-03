@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa"; // User icon
 import logo from "../assets/logo.png";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current route
 
   // Check if the user is authenticated by checking for user data in localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -24,6 +25,10 @@ const Navbar: React.FC = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
 
+  // Check if the current route is `/propertylist` or `/housinghome`
+  const showPostFreePropertyButton =
+    location.pathname === "/propertylist" || location.pathname === "/housinghome";
+
   return (
     <nav className="bg-white shadow-md flex justify-center relative z-50">
       <div className="w-[90vw] pr-4 flex justify-between items-center h-16">
@@ -39,6 +44,14 @@ const Navbar: React.FC = () => {
 
         {/* Navigation Buttons */}
         <div className="flex items-center space-x-6 relative">
+          {showPostFreePropertyButton && (
+            <Link
+              to="/propertydashboard"
+              className="px-4 py-2 border border-black rounded-full text-black font-medium hover:bg-black hover:text-white transition"
+            >
+              Post Free Property
+            </Link>
+          )}
           <button
             onClick={() => navigate("/all-services")}
             className="px-4 py-2 border border-black rounded-full text-black font-medium hover:bg-black hover:text-white transition"

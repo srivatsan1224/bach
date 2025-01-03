@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Gallery: React.FC = () => {
   const { formData, updateFormData } = useFormContext();
   const [localState, setLocalState] = useState(formData.gallery || {
+    photos: [],
     startTime: "",
     endTime: "",
     availableAllDay: false,
@@ -18,31 +19,90 @@ const Gallery: React.FC = () => {
     updateFormData("gallery", localState);
   }, [localState]);
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      return;
+    }
+
+    const uploadedPhotos: string[] = [];
+    const files = Array.from(e.target.files);
+
+    // Display a toast while uploading
+    toast.info("Uploading photos...");
+
+    for (const file of files) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("http://localhost:3000/api/upload-photos", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to upload photo: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        uploadedPhotos.push(data.filePath); // Assuming `filePath` is the URL of the uploaded photo
+      } catch (error) {
+        console.error("Photo upload failed:", error);
+        toast.error("Failed to upload one or more photos.");
+      }
+    }
+
+    // Update local state with the uploaded photos
+    setLocalState((prevState) => ({
+      ...prevState,
+      photos: [...prevState.photos, ...uploadedPhotos],
+    }));
+
+    toast.success("Photos uploaded successfully!");
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     toast.info("Submitting your form, please wait...");
 
     try {
+      // Retrieve user info from localStorage
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+      if (!user || !user.email) {
+        throw new Error("User information not found. Please log in again.");
+      }
+
+      // Attach the email to form data
+      const formDataWithEmail = {
+        ...formData,
+        email: user.email,
+      };
+
       const response = await fetch("http://localhost:3000/api/submit-form", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataWithEmail),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to submit form data: ${response.statusText}`);
+        const errorMessage = await response.text();
+        throw new Error(`Failed to submit form data: ${errorMessage}`);
       }
 
       const result = await response.json();
-      console.log("Form submission response:", result);
-
       toast.success("Form data submitted successfully!");
       navigate("/propertydashboard");
     } catch (error) {
-      console.error("Error submitting form data:", error);
-      toast.error("An error occurred while submitting your data. Please try again.");
+      if (error instanceof Error) {
+        console.error("Error submitting form data:", error.message);
+        toast.error(error.message || "An unknown error occurred.");
+      } else {
+        console.error("Unknown error:", error);
+        toast.error("An unknown error occurred.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -76,53 +136,23 @@ const Gallery: React.FC = () => {
             <p className="text-sm text-gray-600 mb-4">
               Add photos to get 5X more responses. 90% tenants contact on properties with photos.
             </p>
-            <button className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded shadow hover:bg-green-600">
-              Add Photos
-            </button>
-          </div>
-
-          <div className="p-6 bg-gray-50 rounded">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Schedule</h2>
-            <div className="flex space-x-4 mb-4">
-              <button className="px-4 py-2 text-sm font-medium border rounded hover:bg-gray-100">
-                Everyday
-              </button>
-              <button className="px-4 py-2 text-sm font-medium border rounded hover:bg-gray-100">
-                Weekday
-              </button>
-              <button className="px-4 py-2 text-sm font-medium border rounded hover:bg-gray-100">
-                Weekend
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="text-sm text-gray-600">Start Time</label>
-                <input
-                  type="time"
-                  value={localState.startTime}
-                  onChange={(e) => setLocalState({ ...localState, startTime: e.target.value })}
-                  className="w-full p-2 border rounded mt-1"
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handlePhotoUpload}
+              className="mb-4"
+            />
+            <div className="flex flex-wrap gap-4">
+              {localState.photos.map((photo, index) => (
+                <img
+                  key={index}
+                  src={photo}
+                  alt={`Uploaded ${index + 1}`}
+                  className="h-24 w-24 object-cover rounded"
                 />
-              </div>
-              <div>
-                <label className="text-sm text-gray-600">End Time</label>
-                <input
-                  type="time"
-                  value={localState.endTime}
-                  onChange={(e) => setLocalState({ ...localState, endTime: e.target.value })}
-                  className="w-full p-2 border rounded mt-1"
-                />
-              </div>
+              ))}
             </div>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={localState.availableAllDay}
-                onChange={(e) => setLocalState({ ...localState, availableAllDay: e.target.checked })}
-                className="w-4 h-4"
-              />
-              <span className="text-sm text-gray-600">Available All Day</span>
-            </label>
           </div>
 
           <button
