@@ -2,10 +2,10 @@ import express from "express";
 import { config } from "./config";
 import jobRoutes from "./routes/jobRoutes";
 import "./utils/dbClient"; // Ensure DB connection is initialized
-
+import cors from "cors";
 const app = express();
 const port = config.port || 3002;
-
+app.use(cors());
 // Middleware
 app.use(express.json()); // Parse JSON bodies
 

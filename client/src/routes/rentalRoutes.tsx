@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import RentalHome from "../pages/Rental/RentalHome";
 import FurnitureHome from "../pages/Rental/FurnitureHome";
@@ -10,7 +9,7 @@ import ItemDetailsPage from "../pages/Rental/ItemDetailsPage";
 const RentalRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<RentalHome />} />
+      <Route path="/rental" element={<RentalHome />} />
       <Route path="/furniture" element={<FurnitureHome />} />
       <Route path="/appliances" element={<AppliancesHome />} />
       <Route path="/electronics" element={<ElectronicsHome />} />
