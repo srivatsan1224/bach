@@ -28,6 +28,7 @@ import RentalRoutes from "./routes/rentalRoutes";
 import FoodHome from "./components/Foods/FoodHome";
 import ProductPage from "./pages/DiscountSearch/ProductPage";
 import CartPage from "./pages/DiscountSearch/CartPage";
+import { HousingItem } from "./pages/Housing/HousingItem";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -97,7 +98,7 @@ const App: React.FC = () => {
           <Route path="/amenities" element={<AmenitiesForm />} />
           <Route path="/rentaldetails" element={<RentalDetailsForm />} />
           <Route path="/propertylist" element={<PropertyList />} />
-
+          <Route path="/housingitem" element={<HousingItem />} />
         </Routes>
         <Footer />
       </FormProvider>
