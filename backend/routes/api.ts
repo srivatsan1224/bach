@@ -16,7 +16,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 
-// Environment variables
+// Envis
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING || "";
 const CONTAINER_NAME = "property-photos";
 
@@ -76,7 +76,7 @@ router.post("/upload-photos", upload.array("photos"), async (req: Request, res: 
       return;
     }
 
-    // Update the gallery with new photo paths
+    // Update the gallery with new photo path
     const updatedProperty = {
       ...existingProperty,
       gallery: {
