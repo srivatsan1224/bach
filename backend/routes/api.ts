@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import multer from "multer";
-import path from "path";
+import { BlobServiceClient } from "@azure/storage-blob";
 import {
   getContainer,
   createContainerIfNotExists,
@@ -12,18 +12,99 @@ import {
 } from "../db";
 
 const router: Router = express.Router();
+import dotenv from "dotenv";
+dotenv.config();
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Save files to 'uploads/' directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
+
+// Environment variables
+const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING || "";
+const CONTAINER_NAME = "property-photos";
+
+if (!AZURE_STORAGE_CONNECTION_STRING) {
+  throw new Error("Azure Storage connection string is required.");
+}
+
+// Initialize BlobServiceClient
+const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+
+// Configure multer for in-memory file uploads
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post("/upload-photos", upload.array("photos"), async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.files || !Array.isArray(req.files)) {
+      res.status(400).json({ message: "No files uploaded" });
+      return;
+    }
+
+    const filePaths: string[] = [];
+    const containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
+
+    // Ensure the container exists
+    await containerClient.createIfNotExists({
+      access: "container",
+    });
+
+    // Upload files to Azure Blob Storage
+    for (const file of req.files as Express.Multer.File[]) {
+      const blobName = `${Date.now()}-${file.originalname}`;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      // Upload the file
+      await blockBlobClient.uploadData(file.buffer);
+
+      const blobUrl = blockBlobClient.url;
+      filePaths.push(blobUrl);
+    }
+
+    const { email, propertyId } = req.body;
+
+    if (!email || !propertyId) {
+      res.status(400).json({ message: "Email and propertyId are required to associate photos" });
+      return;
+    }
+
+    const housingPropertyContainer = await getHousingPropertyContainer();
+
+    // Retrieve the existing property
+    const { resource: existingProperty } = await housingPropertyContainer
+      .item(propertyId, email)
+      .read();
+
+    if (!existingProperty) {
+      res.status(404).json({ message: "Property not found" });
+      return;
+    }
+
+    // Update the gallery with new photo paths
+    const updatedProperty = {
+      ...existingProperty,
+      gallery: {
+        ...(existingProperty.gallery || {}),
+        photos: [...(existingProperty.gallery?.photos || []), ...filePaths],
+      },
+    };
+
+    const { resource: updatedResource } = await housingPropertyContainer
+      .item(propertyId, email)
+      .replace(updatedProperty);
+
+    console.log("Property updated with photos:", updatedResource);
+
+    res.status(200).json({
+      message: "Photos uploaded and added to property successfully",
+      photos: filePaths,
+      updatedProperty: updatedResource,
+    });
+  } catch (error: any) {
+    console.error("Error uploading photos:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
 });
 
-const upload = multer({ storage });
 
 // Submit new property form
 router.post("/submit-form", async (req: Request, res: Response): Promise<void> => {
@@ -96,66 +177,7 @@ router.get("/properties/:email", async (req: Request, res: Response): Promise<vo
 });
 
 // Upload multiple photos
-router.post("/upload-photos", upload.array("file", 10), async (req: Request, res: Response): Promise<void> => {
-  try {
-    if (!req.files || !Array.isArray(req.files)) {
-      res.status(400).json({ message: "No files uploaded" });
-      return;
-    }
 
-    const filePaths = (req.files as Express.Multer.File[]).map((file) =>
-      path.join("uploads", file.filename)
-    );
-
-    console.log("Uploaded photos:", filePaths);
-
-    const { email, propertyId } = req.body;
-
-    if (!email || !propertyId) {
-      res.status(400).json({ message: "Email and propertyId are required to associate photos" });
-      return;
-    }
-
-    const housingPropertyContainer = await getHousingPropertyContainer();
-
-    // Retrieve the existing property
-    const { resource: existingProperty } = await housingPropertyContainer
-      .item(propertyId, email)
-      .read();
-
-    if (!existingProperty) {
-      res.status(404).json({ message: "Property not found" });
-      return;
-    }
-
-    // Update the gallery with new photo paths
-    const updatedProperty = {
-      ...existingProperty,
-      gallery: {
-        ...(existingProperty.gallery || {}),
-        photos: [...(existingProperty.gallery?.photos || []), ...filePaths],
-      },
-    };
-
-    const { resource: updatedResource } = await housingPropertyContainer
-      .item(propertyId, email)
-      .replace(updatedProperty);
-
-    console.log("Property updated with photos:", updatedResource);
-
-    res.status(200).json({
-      message: "Photos uploaded and added to property successfully",
-      photos: filePaths,
-      updatedProperty: updatedResource,
-    });
-  } catch (error: any) {
-    console.error("Error uploading photos:", error.message);
-    res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
-});
 
 // Update property
 router.put("/property/:propertyId", async (req: Request, res: Response): Promise<void> => {

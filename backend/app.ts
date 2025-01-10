@@ -4,6 +4,9 @@ import cors from "cors";
 import { setupDatabaseAndContainer } from "./db";
 import userRoutes from "./routes/userRoutes";
 import dynamicRoutes from "./routes/api";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 const app: Application = express();
 const port: number = 3000;

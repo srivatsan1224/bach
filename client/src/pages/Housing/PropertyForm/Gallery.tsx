@@ -19,47 +19,48 @@ const Gallery: React.FC = () => {
     updateFormData("gallery", localState);
   }, [localState]);
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      return;
-    }
+const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (!e.target.files || e.target.files.length === 0) {
+    return;
+  }
 
-    const uploadedPhotos: string[] = [];
-    const files = Array.from(e.target.files);
+  const uploadedPhotos: string[] = [];
+  const files = Array.from(e.target.files);
 
-    // Display a toast while uploading
-    toast.info("Uploading photos...");
+  // Display a toast while uploading
+  toast.info("Uploading photos...");
 
-    for (const file of files) {
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
+  for (const file of files) {
+    try {
+      const formData = new FormData();
+      formData.append("photos", file); // Use "photos" to match the backend
 
-        const response = await fetch("http://localhost:3000/api/upload-photos", {
-          method: "POST",
-          body: formData,
-        });
+      const response = await fetch("http://localhost:3000/api/upload-photos", {
+        method: "POST",
+        body: formData,
+      });
 
-        if (!response.ok) {
-          throw new Error(`Failed to upload photo: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        uploadedPhotos.push(data.filePath); // Assuming `filePath` is the URL of the uploaded photo
-      } catch (error) {
-        console.error("Photo upload failed:", error);
-        toast.error("Failed to upload one or more photos.");
+      if (!response.ok) {
+        throw new Error(`Failed to upload photo: ${response.statusText}`);
       }
+
+      const data = await response.json();
+      uploadedPhotos.push(...data.photos); // Use URLs from Azure Blob Storage
+    } catch (error) {
+      console.error("Photo upload failed:", error);
+      toast.error("Failed to upload one or more photos.");
     }
+  }
 
-    // Update local state with the uploaded photos
-    setLocalState((prevState) => ({
-      ...prevState,
-      photos: [...prevState.photos, ...uploadedPhotos],
-    }));
+  // Update local state with the uploaded photos
+  setLocalState((prevState) => ({
+    ...prevState,
+    photos: [...prevState.photos, ...uploadedPhotos],
+  }));
 
-    toast.success("Photos uploaded successfully!");
-  };
+  toast.success("Photos uploaded successfully!");
+};
+
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
