@@ -153,6 +153,90 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+// API to add an item to the cart
+router.post("/add-to-cart", async (req: Request, res: Response) => {
+  const { containerName, userId, product } = req.body;
+
+  if (!containerName || !userId || !product) {
+      res.status(400).json({ message: "Container name, userId, and product are required!" });
+      return;
+  }
+
+  try {
+      const container = await getContainer(containerName);
+
+      // Query the user by userId
+      const { resources: users } = await container.items
+          .query({
+              query: "SELECT * FROM c WHERE c.id = @id",
+              parameters: [{ name: "@id", value: userId }],
+          })
+          .fetchAll();
+
+      if (users.length === 0) {
+          res.status(404).json({ message: "User not found!" });
+          return;
+      }
+
+      const user = users[0];
+      const cart = user.cart || [];
+      cart.push(product);
+
+      // Update the user's cart
+      await container.item(user.id, user.email).replace({ ...user, cart });
+
+      res.status(200).json({ message: "Product added to cart successfully!" });
+  } catch (error: any) {
+      console.error("Error adding to cart:", error.message);
+      res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+router.post("/google-login", async (req: Request, res: Response) => {
+  const { containerName, user } = req.body;
+
+  if (!containerName || !user || !user.email || !user.name) {
+      res.status(400).json({ message: "Container name and valid user details (email, name) are required!" });
+      return;
+  }
+
+  try {
+      const container = await getContainer(containerName);
+
+      // Check if the user already exists
+      const { resources: existingUsers } = await container.items
+          .query({
+              query: "SELECT * FROM c WHERE c.email = @email",
+              parameters: [{ name: "@email", value: user.email }],
+          })
+          .fetchAll();
+
+      if (existingUsers.length > 0) {
+          // User already exists, return their details
+          res.status(200).json({ message: "Login successful!", user: existingUsers[0] });
+          return;
+      }
+
+      // Create a new user document
+      const userId = generateUniqueId(user.email); // Generate a unique ID
+      const newUser = {
+          id: userId,
+          name: user.name,
+          email: user.email,
+          picture: user.picture || "", // Optional profile picture
+          createdAt: new Date().toISOString(),
+      };
+
+      // Insert the new user into the database
+      await container.items.create(newUser);
+
+      res.status(200).json({ message: "User created successfully!", user: newUser });
+  } catch (error: any) {
+      console.error("Error during Google login:", error.message);
+      res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
 
 
 export default router;

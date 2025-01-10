@@ -7,6 +7,7 @@ import dynamicRoutes from "./routes/api";
 import dotenv from "dotenv";
 dotenv.config();
 
+import productRoutes from "./routes/productRoutes";
 
 const app: Application = express();
 const port: number = 3000;
@@ -28,6 +29,8 @@ app.use("/api", (req, res, next) => {
     next();
 });
 app.use("/api", dynamicRoutes);
+
+app.use("/products", productRoutes);
 // Start Server
 async function startServer(): Promise<void> {
     try {

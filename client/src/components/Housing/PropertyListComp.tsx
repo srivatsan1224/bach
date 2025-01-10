@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import Placeholder from "../../assets/HousingHome/H1.jpg";
+import h1 from "../../assets/HousingHome/H1.jpg";
+import h2 from "../../assets/HousingHome/H2.jpg";
+import h3 from "../../assets/HousingHome/H3.jpg";
 
 // Define the Property interface
 interface Property {
@@ -37,6 +41,9 @@ const PropertyListComp = () => {
   const [preferredTenants, setPreferredTenants] = useState("");
   const [rentRange, setRentRange] = useState<number>(50000);
 
+  // Alternate placeholders
+  const placeholders = [h1, h2, h3];
+
   // Fetch properties from the API
   const fetchProperties = async (queryParams = "") => {
     try {
@@ -49,6 +56,7 @@ const PropertyListComp = () => {
       }
       const data = await response.json();
       setProperties(data.properties || []);
+      console.log(data.properties);
       setLoading(false);
     } catch (err: any) {
       setError(err.message);
@@ -103,61 +111,6 @@ const PropertyListComp = () => {
             Search
           </button>
         </div>
-        <div className="container mx-auto flex flex-wrap items-center justify-between gap-4 mt-4">
-          <div className="flex flex-wrap gap-4">
-            <select
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring"
-              value={availability}
-              onChange={(e) => setAvailability(e.target.value)}
-            >
-              <option value="">Select Availability</option>
-              <option value="available">Available</option>
-              <option value="not-available">Not Available</option>
-            </select>
-            <select
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring"
-              value={propertyType}
-              onChange={(e) => setPropertyType(e.target.value)}
-            >
-              <option value="">Property Type</option>
-              <option value="apartment">Apartment</option>
-              <option value="villa">Villa</option>
-            </select>
-            <select
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring"
-              value={preferredTenants}
-              onChange={(e) => setPreferredTenants(e.target.value)}
-            >
-              <option value="">Preferred Tenants</option>
-              <option value="bachelors">Bachelors</option>
-              <option value="family">Family</option>
-            </select>
-            <select
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring"
-              value={furnishing}
-              onChange={(e) => setFurnishing(e.target.value)}
-            >
-              <option value="">Furnishing</option>
-              <option value="semi">Semi-Furnished</option>
-              <option value="fully">Fully-Furnished</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="rentRange" className="text-gray-500">
-              Rent Range: ₹{rentRange}
-            </label>
-            <input
-              id="rentRange"
-              type="range"
-              min="0"
-              max="50000"
-              value={rentRange}
-              onChange={(e) => setRentRange(Number(e.target.value))}
-              className="ml-2"
-              step="500"
-            />
-          </div>
-        </div>
       </div>
 
       {/* Recent Searches */}
@@ -165,35 +118,48 @@ const PropertyListComp = () => {
         <h2 className="text-2xl font-bold mb-6">Recent Searches</h2>
 
         {/* Grid of Properties */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {properties.map((property) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mx-auto">
+          {properties.map((property, index) => (
             <div
               key={property.id}
-              className="bg-white shadow-lg rounded-lg overflow-hidden"
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
+              {/* Image */}
               <img
-                src={property?.gallery?.photos?.[0] || "/placeholder.jpg"}
+                src={property?.gallery?.photos?.[0] || placeholders[index % placeholders.length]}
                 alt={property?.propertyDetails?.apartmentType || "Property"}
-                className="h-48 w-full object-cover"
+                className="w-full h-48 object-cover"
               />
-              <div className="p-4">
-                <h2 className="text-lg font-bold mb-2">
+              {/* Content */}
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
                   {property?.propertyDetails?.apartmentType || "Apartment"}
-                </h2>
-                <p className="text-sm text-gray-600 mb-2">
-                  {property?.localityDetails?.city},{" "}
-                  {property?.localityDetails?.locality}
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  {property?.localityDetails?.city}, {property?.localityDetails?.locality}
                 </p>
-                <p className="text-sm text-gray-500">
-                  Rent: ₹{property?.rentalDetails?.expectedRent || "10,000"} |{" "}
-                  Deposit: ₹
-                  {property?.rentalDetails?.expectedDeposit || "50,000"}
-                </p>
-                <div className="flex items-center justify-between mt-4">
-                  <button className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600">
-                    Contact Owner
+                {/* Pricing */}
+                <div className="flex items-center justify-between text-gray-700 mb-4">
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-semibold">
+                        ₹{property?.rentalDetails?.expectedRent || "10,000"}
+                      </span>{" "}
+                      <span className="text-xs">(Rent Non-Negotiable)</span>
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-semibold">
+                        ₹{property?.rentalDetails?.expectedDeposit || "50,000"}
+                      </span>{" "}
+                      <span className="text-xs">Deposit</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <button className="w-1/2 bg-black text-white text-sm py-2 rounded-lg hover:bg-gray-800 transition">
+                    Show More
                   </button>
-                  <button className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600">
+                  <button className="w-1/2 bg-black text-white text-sm py-2 rounded-lg hover:bg-gray-800 transition">
                     Schedule Visit
                   </button>
                 </div>

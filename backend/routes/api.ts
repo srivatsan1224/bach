@@ -237,16 +237,33 @@ router.post("/create", async (req: Request, res: Response): Promise<void> => {
 
   try {
     const container = await createContainerIfNotExists(containerName);
-    const { resource } = await container.items.create(data);
+
+    // Ensure `id` field exists for each item
+    const documents = Array.isArray(data) ? data : [data];
+    const processedDocuments = documents.map((doc) => ({
+      id: doc.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...doc,
+    }));
+
+    const results = [];
+    for (const doc of processedDocuments) {
+      const { resource } = await container.items.create(doc);
+      results.push(resource);
+    }
 
     res.status(201).json({
-      message: "Item created successfully",
-      item: resource,
+      message: "Items created successfully",
+      items: results,
     });
   } catch (error: any) {
     console.error("Error creating item:", error.message);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
+
+
+
+
+
 
 export default router;

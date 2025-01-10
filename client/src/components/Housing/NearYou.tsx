@@ -1,9 +1,11 @@
-
+import h1 from "../../assets/HousingHome/H1.jpg"
+import h2 from "../../assets/HousingHome/H2.jpg"
+import h3 from "../../assets/HousingHome/H3.jpg"
 const HomesNearYou = () => {
   const homes = [
     {
       id: 1,
-      image: "https://via.placeholder.com/300x200", // Replace with actual image URLs
+      image: h1, // Replace with actual image URLs
       title: "ABC Apartment in Chromepet",
       address: "Flat No. 402, Green Valley Apartments ....",
       rent: "₹ 10,000",
@@ -14,7 +16,7 @@ const HomesNearYou = () => {
     },
     {
       id: 2,
-      image: "https://via.placeholder.com/300x200", // Replace with actual image URLs
+      image: h2,
       title: "AJ Flats in Pallavaram",
       address: "Flat No. 402, Green Valley Apartments ....",
       rent: "₹ 10,000",
@@ -25,7 +27,7 @@ const HomesNearYou = () => {
     },
     {
       id: 3,
-      image: "https://via.placeholder.com/300x200", // Replace with actual image URLs
+      image: h3,
       title: "Ruby Builders West Tambaram",
       address: "Flat No. 402, Green Valley Apartments ....",
       rent: "₹ 10,000",

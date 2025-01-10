@@ -27,6 +27,10 @@ import FoodList from "./components/Foods/FoodList";
 import RentalRoutes from "./routes/rentalRoutes";
 import FoodHome from "./components/Foods/FoodHome";
 import ParttimeRoutes from "./routes/parttimeRoutes";
+import ProductPage from "./pages/DiscountSearch/ProductPage";
+import CartPage from "./pages/DiscountSearch/CartPage";
+import { HousingItem } from "./pages/Housing/HousingItem";
+
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
@@ -52,8 +56,10 @@ const App: React.FC = () => {
 
           {/* Rental Routes */}
           <Route path="/home/rental/*" element={<RentalRoutes />} />
+
           {/* Part-Time Routes */}
           <Route path="/parttime/*" element={<ParttimeRoutes />} />
+
           {/* User Details Page (Protected) */}
           <Route
             path="/profile"
@@ -78,6 +84,8 @@ const App: React.FC = () => {
 
           {/* Discount Search Page */}
           <Route path="/discountsearch" element={<SearchPage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/cart" element={<CartPage />} />
 
           {/* Property Dashboard */}
           <Route
@@ -93,6 +101,7 @@ const App: React.FC = () => {
           <Route path="/amenities" element={<AmenitiesForm />} />
           <Route path="/rentaldetails" element={<RentalDetailsForm />} />
           <Route path="/propertylist" element={<PropertyList />} />
+          <Route path="/housingitem" element={<HousingItem />} />
         </Routes>
         <Footer />
       </FormProvider>

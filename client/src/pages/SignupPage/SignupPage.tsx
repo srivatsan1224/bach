@@ -39,11 +39,14 @@ const SignupPage: React.FC = () => {
       if (data && data.results) {
         const result = data.results[0]; // Handle first user in results array
         if (result.status === "success") {
-          localStorage.setItem("user", JSON.stringify(result.user)); // Save user data in localStorage
-          alert("Signup successful! Redirecting to home...");
-          setTimeout(() => {
-            navigate("/home"); // Redirect to home page
-          }, 2000);
+          const user = {
+            id: result.userId,
+            name,
+            email,
+            mobileNumber,
+          };
+          localStorage.setItem("user", JSON.stringify(user)); // Save user data in localStorag
+          navigate("/"); 
         } else {
           setError(result.message || "Signup failed. Please try again.");
         }
@@ -59,21 +62,34 @@ const SignupPage: React.FC = () => {
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const { access_token } = tokenResponse;
-      localStorage.setItem("token", access_token);
       try {
-        const response = await axios.get(
+        // Fetch Google user info
+        const googleResponse = await axios.get(
           `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`
         );
 
-        // Save Google user details in localStorage
-        localStorage.setItem("user", JSON.stringify(response.data));
+        const googleUser = googleResponse.data;
 
+        // Send user data to backend
+        const backendResponse = await axios.post("http://localhost:3000/user/google-login", {
+          containerName: "Users",
+          user: {
+            email: googleUser.email,
+            name: googleUser.name,
+            picture: googleUser.picture,
+          },
+        });
+
+        const { user } = backendResponse.data;
+
+        // Save user details locally
+        localStorage.setItem("user", JSON.stringify(user));
         alert("Google signup successful! Redirecting to home...");
         setTimeout(() => {
           navigate("/home"); // Redirect to home page
         }, 2000);
       } catch (error) {
-        console.error("Failed to fetch Google user info:", error);
+        console.error("Failed to fetch or save Google user info:", error);
         setError("Google signup failed. Please try again.");
       }
     },
