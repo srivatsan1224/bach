@@ -1,31 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa"; // User icon
+import { FaUserCircle } from "react-icons/fa";
 import logo from "../assets/logo.png";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current route
+  const location = useLocation();
 
-  // Check if the user is authenticated by checking for user data in localStorage
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const isAuthenticated = !!user?.name;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{ name?: string; picture?: string }>({});
 
-  // Handle logout
+  // Fetch user data on mount
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    setIsAuthenticated(!!storedUser?.name);
+    setUser(storedUser);
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    setIsAuthenticated(false);
     navigate("/");
   };
 
-  // Dropdown state
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
+  const closeDropdown = () => setIsDropdownOpen(false);
 
-  // Check if the current route is `/propertylist` or `/housinghome`
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (isDropdownOpen && !(event.target as HTMLElement).closest(".dropdown")) {
+        closeDropdown();
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [isDropdownOpen]);
+
   const showPostFreePropertyButton =
     location.pathname === "/propertylist" || location.pathname === "/housinghome";
 
@@ -47,14 +61,22 @@ const Navbar: React.FC = () => {
           {showPostFreePropertyButton && (
             <Link
               to="/propertydashboard"
-              className="px-4 py-2 border border-black rounded-full text-black font-medium hover:bg-black hover:text-white transition"
+              className={`px-4 py-2 border rounded-full font-medium transition ${
+                location.pathname === "/propertydashboard"
+                  ? "bg-black text-white"
+                  : "border-black text-black hover:bg-black hover:text-white"
+              }`}
             >
               Post Free Property
             </Link>
           )}
           <button
             onClick={() => navigate("/all-services")}
-            className="px-4 py-2 border border-black rounded-full text-black font-medium hover:bg-black hover:text-white transition"
+            className={`px-4 py-2 border rounded-full font-medium transition ${
+              location.pathname === "/all-services"
+                ? "bg-black text-white"
+                : "border-black text-black hover:bg-black hover:text-white"
+            }`}
           >
             All Services
           </button>
@@ -66,12 +88,9 @@ const Navbar: React.FC = () => {
               Login
             </button>
           ) : (
-            <div className="relative">
+            <div className="relative dropdown">
               {/* Profile Picture or User Icon */}
-              <div
-                className="cursor-pointer"
-                onClick={toggleDropdown} // Toggle dropdown on click
-              >
+              <div className="cursor-pointer" onClick={toggleDropdown}>
                 {user?.picture ? (
                   <img
                     src={user.picture}
@@ -89,7 +108,7 @@ const Navbar: React.FC = () => {
                   <button
                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                     onClick={() => {
-                      setIsDropdownOpen(false);
+                      closeDropdown();
                       navigate("/profile");
                     }}
                   >
@@ -97,10 +116,7 @@ const Navbar: React.FC = () => {
                   </button>
                   <button
                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      handleLogout();
-                    }}
+                    onClick={handleLogout}
                   >
                     Logout
                   </button>

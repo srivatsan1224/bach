@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { Search, MapPin, ChevronRight, Star, Menu, X } from "lucide-react";
+import DownloadSection from "../../components/HomePage/DownloadSection";
+
 const HomePage: React.FC = () => {
   const [location, setLocation] = useState<string>("");
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [userLocation, setUserLocation] = useState<string | null>(null);
-  
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
+
   const initialCards = [
     { location: "T. Nagar", places: "387 places" },
     { location: "Nungambakkam", places: "338 places" },
@@ -15,6 +19,7 @@ const HomePage: React.FC = () => {
     { location: "Mylapore", places: "186 places" },
     { location: "Alwarpet", places: "153 places" },
   ];
+
   const moreCards = [
     { location: "Tambaram", places: "289 places" },
     { location: "Perambur", places: "210 places" },
@@ -25,7 +30,30 @@ const HomePage: React.FC = () => {
     { location: "Vadapalani", places: "310 places" },
     { location: "Porur", places: "278 places" },
   ];
+
   const [visibleCards, setVisibleCards] = useState(initialCards);
+
+  const predefinedLocations = [
+    "Chennai", "Coimbatore", "Madurai", "Tiruchirappalli",
+    "Salem", "Tirunelveli", "Vellore", "Thoothukudi",
+    "Erode", "Tiruppur", "Dindigul", "Kanchipuram",
+    "Thanjavur", "Cuddalore", "Nagercoil",
+  ];
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation(`${latitude}, ${longitude}`);
+        },
+        () => {
+          setUserLocation(null);
+        }
+      );
+    }
+  }, []);
+
   const handleSeeMore = () => {
     if (!showMore) {
       setVisibleCards([...visibleCards, ...moreCards]);
@@ -34,40 +62,6 @@ const HomePage: React.FC = () => {
     }
     setShowMore(!showMore);
   };
-  const predefinedLocations = [
-    "Chennai",
-    "Coimbatore",
-    "Madurai",
-    "Tiruchirappalli",
-    "Salem",
-    "Tirunelveli",
-    "Vellore",
-    "Thoothukudi",
-    "Erode",
-    "Tiruppur",
-    "Dindigul",
-    "Kanchipuram",
-    "Thanjavur",
-    "Cuddalore",
-    "Nagercoil",
-  ];
-  
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation(`Detected location: ${latitude}, ${longitude}`);
-          // You can use an API like OpenCageData or Google Maps to convert lat/lng to a city name
-        },
-        () => {
-          setUserLocation("Location permission denied.");
-        }
-      );
-    } else {
-      setUserLocation("Geolocation is not supported by your browser.");
-    }
-  }, []);
 
   const handleSearch = () => {
     if (location.trim() === "") {
@@ -79,343 +73,234 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navbar */}
       
 
-      {/* Hero Section */}
-      <section className="relative bg-orange-500 text-white px-6 py-12 text-center">
-        {/* Background and Content */}
-        <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold">Tasty Food, Anytime, Anywhere.</h1>
-        <h2 className="mt-2 text-lg">Tasty Solutions for the Busy Bachelor!</h2>
-        <p className="mt-4 text-lg">
-          We get that food can be a challenge for busy bachelors. That’s why our
-          platform delivers fresh, tasty, and convenient meals designed just for
-          you.
-        </p>
-        <div className="flex items-center justify-center mt-6 relative">
-          {/* Input Field */}
-          <div className="relative w-full max-w-md">
-            <input
-              type="text"
-              placeholder="Enter your location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              onFocus={() => setDropdownVisible(true)}
-              className="px-4 py-2 border rounded-l-md w-full text-black"
-            />
-            {/* Dropdown */}
-            {dropdownVisible && (
-              <ul
-                className="absolute bg-white text-black border rounded-md mt-1 w-full z-10"
-                onMouseLeave={() => setDropdownVisible(false)}
-              >
-                {predefinedLocations.map((loc) => (
-                  <li
-                    key={loc}
-                    onClick={() => {
-                      setLocation(loc);
-                      setDropdownVisible(false);
-                    }}
-                    className={`px-4 py-2 cursor-pointer hover:bg-gray-200 ${
-                      location === loc ? "bg-gray-300 text-black font-bold" : ""
-                    }`}
-                  >
-                    {loc}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          {/* Search Button */}
-          <button
-            onClick={handleSearch}
-            className="px-6 py-2 bg-black text-white rounded-r-md hover:bg-gray-800 transition-all"
-          >
-            Search
-          </button>
+      {/* Enhanced Hero Section with Images */}
+      <section className="relative pt-24 pb-16 bg-gradient-to-br from-orange-500 to-orange-600 overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-orange-400 opacity-20"></div>
+          <div className="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-orange-400 opacity-20"></div>
         </div>
-        
-      </div>
 
-        {/* Left Side Image */}
-        <div
-          className="absolute top-0 left-0 h-full w-1/4"
-          style={{
-            backgroundImage: "url('/src/assets/Foodimg/topleft.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            clipPath: "polygon(0 0, 100% 0, 70% 100%, 0% 100%)",
-          }}
-        ></div>
+        {/* Left floating image */}
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 hidden lg:block">
+          <img
+            src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"
+            alt="Delicious Pizza"
+            className="w-72 h-96 object-cover rounded-r-3xl shadow-2xl opacity-90"
+          />
+        </div>
 
-        {/* Right Side Image */}
-        <div
-          className="absolute top-0 right-0 h-full w-1/4"
-          style={{
-            backgroundImage: "url('/src/assets/Foodimg/FoodHomeright.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            clipPath: "polygon(0% 0, 100% 0, 100% 100%, 0 100%)",
-          }}
-        ></div>
-      </section>
+        {/* Right floating image */}
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 hidden lg:block">
+          <img
+            src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=800"
+            alt="Fresh Food"
+            className="w-72 h-96 object-cover rounded-l-3xl shadow-2xl opacity-90"
+          />
+        </div>
 
-      {/* Choose What You Love Section */}
-      <section className="py-12 bg-gray-50">
-        <h2 className="text-center text-3xl font-bold mb-8">Choose What You Love!!!</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6">
-          {[
-            { title: "Home Foods", desc: "Tastes Just Like Home", extra: "FREE DELIVERY", image: "src/assets/Foodimg/card1.png" },
-            { title: "Restaurants", desc: "Food at Your Fingertips", extra: "FREE DELIVERY", image: "src/assets/Foodimg/card2.png" },
-            { title: "Dine - In", desc: "Savor Every Bite Here", extra: "FREE DELIVERY", image: "src/assets/Foodimg/card3.png" },
-            { title: "Party Orders", desc: "Celebrate With Great Food", extra: "FREE DELIVERY", image: "src/assets/Foodimg/card4.png" },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="p-6 text-left rounded-lg bg-orange-500 text-white shadow-lg hover:shadow-xl relative overflow-hidden"
-            >
-              <div
-                className="h-40 w-full bg-cover bg-center rounded-t-md"
-                style={{ backgroundImage: `url(${item.image})` }}
-              ></div>
-              <div className="mt-4">
-                <h3 className="text-lg font-bold">{item.title}</h3>
-                <p className="mt-2 text-sm">{item.desc}</p>
-                <p className="mt-1 text-sm font-medium">{item.extra}</p>
-              </div>
-              <span className="absolute bottom-4 right-4 text-xl">&rarr;</span>
+        {/* Main content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-3xl mx-auto">
+            {/* Small floating images */}
+            <div className="absolute -left-16 top-0 hidden xl:block">
+              <img
+                src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400"
+                alt="Food"
+                className="w-32 h-32 object-cover rounded-full shadow-xl transform -rotate-12"
+              />
             </div>
-          ))}
+            <div className="absolute -right-16 top-0 hidden xl:block">
+              <img
+                src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400"
+                alt="Food"
+                className="w-32 h-32 object-cover rounded-full shadow-xl transform rotate-12"
+              />
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 text-white">
+              Delicious Food,{" "}
+              <span className="relative">
+                Delivered
+                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 358 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9C118.957 4.47226 274.104 2.86548 355 3.00001" stroke="white" strokeWidth="6" strokeLinecap="round"/>
+                </svg>
+              </span>{" "}
+              to Your Door
+            </h1>
+            
+            <p className="text-xl mb-8 text-orange-100">
+              Fresh, tasty meals crafted for busy professionals. Quick delivery, amazing taste.
+            </p>
+
+            <div className="relative max-w-2xl mx-auto">
+              <div className="flex items-center bg-white rounded-lg shadow-lg">
+                <MapPin className="text-gray-400 ml-4" size={24} />
+                <input
+                  type="text"
+                  placeholder="Enter your delivery location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  onFocus={() => setDropdownVisible(true)}
+                  className="flex-1 px-4 py-3 text-gray-700 focus:outline-none rounded-l-lg"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="bg-orange-500 text-white px-8 py-3 rounded-r-lg hover:bg-orange-600 transition-colors flex items-center"
+                >
+                  <Search size={20} className="mr-2" />
+                  Find Food
+                </button>
+              </div>
+
+              {dropdownVisible && (
+                <div className="absolute w-full mt-2 bg-white rounded-lg shadow-lg z-10">
+                  {predefinedLocations.map((loc) => (
+                    <div
+                      key={loc}
+                      onClick={() => {
+                        setLocation(loc);
+                        setDropdownVisible(false);
+                      }}
+                      className="px-4 py-2 hover:bg-orange-50 cursor-pointer text-gray-700 flex items-center"
+                    >
+                      <MapPin size={16} className="mr-2 text-orange-500" />
+                      {loc}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Popular cuisines tags */}
+            <div className="mt-8 flex flex-wrap justify-center gap-2">
+              {["Pizza", "Burgers", "Sushi", "Indian", "Italian"].map((cuisine) => (
+                <span key={cuisine} className="px-4 py-1 bg-white/10 rounded-full text-sm text-white">
+                  {cuisine}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
-      <section className="py-12 bg-gray-50">
-  <h2 className="text-center text-3xl font-bold mb-8">Explore More Tasty Options</h2>
-  <div className="flex flex-wrap justify-center gap-6 px-6">
-    {[
-      { title: "Healthy", image: "src/assets/Foodimg/healthy.png" },
-      { title: "Home style", image: "src/assets/Foodimg/HomeStyle.png" },
-      { title: "Biriyani", image: "src/assets/Foodimg/biriyani.png" },
-      { title: "Pizza", image: "src/assets/Foodimg/pizza.png" },
-      { title: "Chicken", image: "src/assets/Foodimg/chicken.png" },
-      { title: "Burger", image: "src/assets/Foodimg/Burger.png" },
-      { title: "Momo", image: "src/assets/Foodimg/momo.png" },
-      { title: "Rolls", image: "src/assets/Foodimg/rolls.png" },
-    ].map((item, index) => (
-      <div
-        key={index}
-        className="flex flex-col items-center"
-      >
-        <div
-          className="h-24 w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 bg-cover bg-center rounded-full"
-          style={{ backgroundImage: `url(${item.image})` }}
-        ></div>
-        <p className="text-sm md:text-base lg:text-lg mt-2 text-center">{item.title}</p>
-      </div>
-    ))}
-  </div>
-</section>
-<section className="py-12 bg-gray-50">
-  <h2 className="text-center text-3xl font-bold mb-8">Super Delicious</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
-    {[
-      { title: "Spinach and Cheese Pasta", image: "src/assets/Foodimg/spinachnoodles.png", rating: "★★★★★" },
-      { title: "Fancy Glazed Donuts", image: "src/assets/Foodimg/fancydonut.png", rating: "★★★★★" },
-      { title: "Mighty Cheesy Breakfast Burger", image: "src/assets/Foodimg/breakfastburge.png", rating: "★★★★★" },
-    ].map((item, index) => (
-      <div
-        key={index}
-        className="rounded-lg overflow-hidden shadow-lg bg-white transition-transform transform hover:scale-105"
-      >
-        <div
-          className="h-48 bg-cover bg-center"
-          style={{ backgroundImage: `url(${item.image})` }}
-        ></div>
-        <div className="p-4">
-          <p className="text-sm text-orange-500">{item.rating}</p>
-          <h3 className="text-lg font-semibold mt-2">{item.title}</h3>
-        </div>
-      </div>
-    ))}
-  </div>
-</section>
-<section className="py-12 bg-white">
-      <h2 className="text-center text-3xl font-bold mb-8">
-        Popular localities in and around{" "}
-        <span className="text-orange-500">Chennai</span>
-      </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 px-6">
-        {visibleCards.map((item, index) => (
-          <div
-            key={index}
-            className="p-4 border rounded-lg bg-gray-50 hover:shadow-lg transition-shadow flex flex-col justify-between"
-          >
-            <h3 className="text-lg font-semibold">{item.location}</h3>
-            <p className="text-sm text-gray-600">{item.places}</p>
-            <span className="mt-2 text-orange-500 text-right cursor-pointer">→</span>
+
+      {/* Categories Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-12">Popular Categories</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { title: "Home Foods", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800", desc: "Authentic Home Cooking" },
+              { title: "Restaurants", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800", desc: "Top Local Restaurants" },
+              { title: "Dine-In", image: "https://images.unsplash.com/photo-1592861956120-e524fc739696?w=800", desc: "Premium Dining Experience" },
+              { title: "Party Orders", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800", desc: "Perfect for Celebrations" },
+            ].map((category, index) => (
+              <div key={index} className="group cursor-pointer">
+                <div className="relative rounded-xl overflow-hidden">
+                  <img
+                    src={category.image}
+                    alt={category.title}
+                    className="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
+                    <h3 className="text-white font-bold text-xl">{category.title}</h3>
+                    <p className="text-white/80 text-sm">{category.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-        <div
-          className="p-4 border rounded-lg bg-orange-500 text-white hover:shadow-lg transition-shadow flex items-center justify-center cursor-pointer"
-          onClick={handleSeeMore}
-        >
-          <h3 className="text-lg font-semibold">
-            {showMore ? "Show Less" : "See More"}
-          </h3>
         </div>
-      </div>
-    </section>
+      </section>
 
-    {/* Footer */}
-      <footer className="bg-black text-white py-10">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Logo and Description */}
-        <div>
-          <div className="mb-4">
-            <h1 className="text-3xl font-bold">BACHELORS</h1>
+      {/* Featured Dishes */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-12">Featured Dishes</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Spinach Pasta",
+                image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800",
+                rating: 4.9,
+                price: "₹299"
+              },
+              {
+                title: "Glazed Donuts",
+                image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800",
+                rating: 4.8,
+                price: "₹199"
+              },
+              {
+                title: "Breakfast Burger",
+                image: "https://images.unsplash.com/photo-1586816001966-79b736744398?w=800",
+                rating: 4.7,
+                price: "₹249"
+              }
+            ].map((dish, index) => (
+              <div key={index} className="group cursor-pointer">
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden transform group-hover:-translate-y-1 transition-all duration-300">
+                  <div className="relative">
+                    <img
+                      src={dish.image}
+                      alt={dish.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute top-4 right-4 bg-white px-2 py-1 rounded-full text-sm font-semibold text-orange-500">
+                      {dish.price}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center mb-2">
+                      <Star className="text-yellow-400 fill-current" size={16} />
+                      <span className="ml-1 text-sm font-medium">{dish.rating}</span>
+                    </div>
+                    <h3 className="font-bold text-lg mb-1">{dish.title}</h3>
+                    <button className="mt-2 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                      Order Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            High level experience in web design and development knowledge,
-            producing quality work.
-          </p>
-          <p className="mt-4 text-sm text-gray-500">© 2025 All Rights Reserved</p>
         </div>
-        {/* Follow Us */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Follow us</h3>
-          <div className="flex items-center space-x-4 mb-4">
-            <a href="#" className="text-gray-400 hover:text-white">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white">
-              <i className="fab fa-telegram-plane"></i>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white">
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white">
-              <i className="fab fa-globe"></i>
-            </a>
+      </section>
+            <DownloadSection/>
+      {/* Localities Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Popular Areas in <span className="text-orange-500">Chennai</span>
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {visibleCards.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold text-lg">{item.location}</h3>
+                    <p className="text-gray-500 text-sm mt-1">{item.places}</p>
+                  </div>
+                  <ChevronRight className="text-orange-500" size={20} />
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={handleSeeMore}
+              className="bg-orange-500 text-white p-6 rounded-xl hover:bg-orange-600 transition-colors flex items-center justify-center"
+            >
+              <span className="font-semibold">{showMore ? "Show Less" : "See More"}</span>
+            </button>
           </div>
-          <p className="text-sm text-gray-400">
-            Call us <br />
-            <a href="tel:+18008543680" className="hover:underline">
-              +1 800 854-36-80
-            </a>
-          </p>
         </div>
+      </section>
 
-        {/* Product Links */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Product</h3>
-          <ul className="space-y-2">
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Landing Page
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Popup Builder
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Web-design
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Content
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Integrations
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Use Cases */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Use Cases</h3>
-          <ul className="space-y-2">
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Web-designers
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Marketers
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Small Business
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Website Builder
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Company Links */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Company</h3>
-          <ul className="space-y-2">
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                About Us
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Careers
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                FAQs
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Teams
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Contact Us
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Footer Bottom Links */}
-      <div className="mt-10 border-t border-gray-800 pt-4 text-sm text-gray-500 text-center">
-        <a href="#" className="mx-2 hover:underline">
-          Privacy Policy
-        </a>
-        <a href="#" className="mx-2 hover:underline">
-          Terms of Use
-        </a>
-        <a href="#" className="mx-2 hover:underline">
-          Sales and Refunds
-        </a>
-        <a href="#" className="mx-2 hover:underline">
-          Legal
-        </a>
-        <a href="#" className="mx-2 hover:underline">
-          Site Map
-        </a>
-      </div>
-    </footer>
+      
     </div>
   );
 };
