@@ -26,7 +26,7 @@ import RestaurantList from "./components/Foods/RestaurantList";
 import FoodList from "./components/Foods/FoodList";
 import RentalRoutes from "./routes/rentalRoutes";
 import FoodHome from "./components/Foods/FoodHome";
-
+import ParttimeRoutes from "./routes/parttimeRoutes";
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
@@ -52,7 +52,8 @@ const App: React.FC = () => {
 
           {/* Rental Routes */}
           <Route path="/home/rental/*" element={<RentalRoutes />} />
-
+          {/* Part-Time Routes */}
+          <Route path="/parttime/*" element={<ParttimeRoutes />} />
           {/* User Details Page (Protected) */}
           <Route
             path="/profile"
@@ -92,7 +93,6 @@ const App: React.FC = () => {
           <Route path="/amenities" element={<AmenitiesForm />} />
           <Route path="/rentaldetails" element={<RentalDetailsForm />} />
           <Route path="/propertylist" element={<PropertyList />} />
-
         </Routes>
         <Footer />
       </FormProvider>
