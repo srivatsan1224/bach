@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import { toast } from "react-toastify";
@@ -6,75 +6,68 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Gallery: React.FC = () => {
   const { formData, updateFormData } = useFormContext();
-  const [localState, setLocalState] = useState(formData.gallery || {
-    photos: [],
-    startTime: "",
-    endTime: "",
-    availableAllDay: false,
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    updateFormData("gallery", localState);
-  }, [localState]);
-
-const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (!e.target.files || e.target.files.length === 0) {
-    return;
-  }
-
-  const uploadedPhotos: string[] = [];
-  const files = Array.from(e.target.files);
-
-  // Display a toast while uploading
-  toast.info("Uploading photos...");
-
-  for (const file of files) {
-    try {
-      const formData = new FormData();
-      formData.append("photos", file); // Use "photos" to match the backend
-
-      const response = await fetch("http://localhost:3000/api/upload-photos", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to upload photo: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      uploadedPhotos.push(...data.photos); // Use URLs from Azure Blob Storage
-    } catch (error) {
-      console.error("Photo upload failed:", error);
-      toast.error("Failed to upload one or more photos.");
+    if (!formData.gallery) {
+      updateFormData("gallery", { photos: [], startTime: "", endTime: "", availableAllDay: false });
     }
-  }
+  }, [formData.gallery, updateFormData]);
 
-  // Update local state with the uploaded photos
-  setLocalState((prevState) => ({
-    ...prevState,
-    photos: [...prevState.photos, ...uploadedPhotos],
-  }));
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
 
-  toast.success("Photos uploaded successfully!");
-};
+    const uploadedPhotos: string[] = [];
+    const files = Array.from(e.target.files);
 
+    setIsUploading(true);
+    toast.info("Uploading photos...");
+
+    for (const file of files) {
+      try {
+        const formData = new FormData();
+        formData.append("photos", file); // Ensure the key matches the backend field name
+
+        const response = await fetch("http://localhost:3000/api/upload-photos", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Failed to upload photo: ${errorMessage}`);
+        }
+
+        const data: { photoUrl: string } = await response.json();
+        uploadedPhotos.push(data.photoUrl);
+      } catch (error) {
+        console.error("Photo upload failed:", error);
+        toast.error("Failed to upload one or more photos.");
+      }
+    }
+
+    updateFormData("gallery", {
+      ...formData.gallery,
+      photos: [...(formData.gallery?.photos || []), ...uploadedPhotos],
+    });
+
+    toast.success("Photos uploaded successfully!");
+    setIsUploading(false);
+  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     toast.info("Submitting your form, please wait...");
 
     try {
-      // Retrieve user info from localStorage
       const user = JSON.parse(localStorage.getItem("user") || "{}");
 
       if (!user || !user.email) {
         throw new Error("User information not found. Please log in again.");
       }
 
-      // Attach the email to form data
       const formDataWithEmail = {
         ...formData,
         email: user.email,
@@ -93,17 +86,11 @@ const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         throw new Error(`Failed to submit form data: ${errorMessage}`);
       }
 
-      const result = await response.json();
       toast.success("Form data submitted successfully!");
       navigate("/propertydashboard");
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error submitting form data:", error.message);
-        toast.error(error.message || "An unknown error occurred.");
-      } else {
-        console.error("Unknown error:", error);
-        toast.error("An unknown error occurred.");
-      }
+    } catch (error: any) {
+      console.error("Error submitting form data:", error);
+      toast.error(error.message || "An unknown error occurred.");
     } finally {
       setIsSubmitting(false);
     }
@@ -112,7 +99,12 @@ const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-white shadow rounded">
       <div className="flex items-center mb-4">
-        <button className="text-sm text-gray-600 font-semibold">Back</button>
+        <button
+          onClick={() => navigate("/previous-page")}
+          className="text-sm text-gray-600 font-semibold hover:text-gray-800"
+        >
+          Back
+        </button>
         <div className="flex-grow h-2 bg-gray-200 mx-4 rounded">
           <div className="h-full bg-green-500 rounded" style={{ width: "90%" }}></div>
         </div>
@@ -139,13 +131,16 @@ const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
             </p>
             <input
               type="file"
+              name="photos"
               accept="image/*"
               multiple
               onChange={handlePhotoUpload}
               className="mb-4"
+              disabled={isUploading}
             />
+            {isUploading && <p className="text-sm text-gray-500">Uploading...</p>}
             <div className="flex flex-wrap gap-4">
-              {localState.photos.map((photo, index) => (
+              {formData.gallery?.photos.map((photo, index) => (
                 <img
                   key={index}
                   src={photo}
@@ -158,9 +153,11 @@ const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isUploading}
             className={`mt-6 w-full px-4 py-2 text-sm font-medium rounded shadow ${
-              isSubmitting ? "bg-gray-500 text-gray-200" : "bg-black text-white hover:bg-gray-800"
+              isSubmitting || isUploading
+                ? "bg-gray-500 text-gray-200"
+                : "bg-black text-white hover:bg-gray-800"
             }`}
           >
             {isSubmitting ? "Submitting..." : "Submit"}

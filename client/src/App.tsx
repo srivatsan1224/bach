@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import UserDetails from "./pages/UserDetails";
-import HousingHome from "./pages/Housing/HousingHome";
+
 import PostProperty from "./pages/Housing/PostProperty";
 import Main from "./pages/Housing/PropertyForm/Main";
 import PropertyDetailsForm from "./pages/Housing/PropertyForm/PropertyDetails";
@@ -29,7 +29,8 @@ import FoodHome from "./components/Foods/FoodHome";
 import ParttimeRoutes from "./routes/parttimeRoutes";
 import ProductPage from "./pages/DiscountSearch/ProductPage";
 import CartPage from "./pages/DiscountSearch/CartPage";
-import { HousingItem } from "./pages/Housing/HousingItem";
+import  HousingItem  from "./pages/Housing/HosuingDetails/HousingItem";
+import HousingHome from "./pages/Housing/HousingHome";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -102,6 +103,8 @@ const App: React.FC = () => {
           <Route path="/rentaldetails" element={<RentalDetailsForm />} />
           <Route path="/propertylist" element={<PropertyList />} />
           <Route path="/housingitem" element={<HousingItem />} />
+<Route path="/housingitem/:propertyId" element={<HousingItem />} />
+
         </Routes>
         <Footer />
       </FormProvider>

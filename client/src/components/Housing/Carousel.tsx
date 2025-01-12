@@ -1,129 +1,118 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Search, MapPin, Building, Home, ChevronDown, ArrowRight } from "lucide-react";
+import { Link } from 'react-router-dom';
 
-const Carousel = () => {
-  const images = [
-    "https://images.unsplash.com/photo-1496252223350-db9ad24b108c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1551717256-ad2ac9ab0261?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1657302156653-a08a4681f449?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+const Hero = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("PG/Hostel");
+  const [selectedCity, setSelectedCity] = useState("Chennai");
+  
+  const popularSearches = [
+    'PGs in Anna Nagar',
+    'Flats in T.Nagar',
+    'Hostels in Velachery',
+    'Co-living in OMR'
   ];
 
-  const cities = ["Chennai", "Bangalore", "Mumbai", "Hyderabad", "Delhi", "Pune"];
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [rentType, setRentType] = useState("PG/Hostel");
-  const [bhkType, setBhkType] = useState("1 BHK");
-  const [location, setLocation] = useState("Chennai");
-  const [citySearch, setCitySearch] = useState("");
-  const [filteredCities, setFilteredCities] = useState(cities);
-  const [showCityDropdown, setShowCityDropdown] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [images.length]);
-
-  // Update filtered cities on city search input change
-  useEffect(() => {
-    setFilteredCities(
-      cities.filter((city) =>
-        city.toLowerCase().includes(citySearch.toLowerCase())
-      )
-    );
-  }, [citySearch]);
-
   return (
-    <div className="flex justify-center items-center p-5 w-full">
-      <div
-        className="relative w-full p-8 rounded-md shadow-lg bg-cover bg-center pt-56 pb-56 transition-all duration-1000 ease-in-out"
-        style={{ backgroundImage: `url(${images[currentIndex]})` }}
-      >
-        <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-black/80 to-transparent pointer-events-none"></div>
-        <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-black/80 to-transparent pointer-events-none"></div>
-        <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg"></div>
+    <div className='p-8'>
+    
+    <div className="relative min-h-[80vh] flex items-center justify-center overflow-hidden p-8 rounded-xl">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075')] bg-cover bg-center ">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/50 to-gray-900/90 " />
+      </div>
 
-        <div className="relative z-10 text-white text-center">
-          <h1 className="text-4xl md:text-6xl font-bold">
-            Safer Homes, Better Community
-          </h1>
-          <p className="mt-4 text-lg md:text-xl">
-            The Bachelor's Housing Solution You Can Rely On!
-          </p>
+      {/* Content */}
+      <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+        <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+          <span className="text-white">Find Your Perfect </span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-500">
+            Bachelor Home
+          </span>
+        </h1>
+        
+        <p className="text-xl text-gray-200 mb-12 max-w-2xl mx-auto animate-fade-in-up">
+          Discover verified PGs, apartments, and co-living spaces tailored for bachelors across India
+        </p>
 
-          <div className="mt-6 bg-white rounded-full shadow-lg px-4 py-2 flex items-center justify-between max-w-5xl mx-auto space-x-4">
-            <input
-              type="text"
-              placeholder="Search"
-              className="flex-grow text-gray-700 placeholder-gray-500 px-4 py-3 bg-transparent focus:outline-none rounded-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-
-            <select
-              value={rentType}
-              onChange={(e) => setRentType(e.target.value)}
-              className="px-4 py-3 bg-gray-100 rounded-full text-gray-700 focus:outline-none"
-            >
-              <option>PG/Hostel</option>
-              <option>Flat</option>
-            </select>
-
-            <select
-              value={bhkType}
-              onChange={(e) => setBhkType(e.target.value)}
-              className="px-4 py-3 bg-gray-100 rounded-full text-gray-700 focus:outline-none"
-            >
-              <option>1 BHK</option>
-              <option>2 BHK</option>
-              <option>3 BHK</option>
-            </select>
-
-            <div className="relative">
+        {/* Search Box */}
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl shadow-2xl max-w-4xl mx-auto animate-fade-in-up">
+          <div className="grid md:grid-cols-12 gap-4">
+            {/* Search Input */}
+            <div className="md:col-span-5 relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-emerald-500 transition-colors" size={20} />
               <input
                 type="text"
-                placeholder="City"
-                className="px-4 py-3 bg-gray-100 rounded-full text-gray-700 focus:outline-none"
-                value={location}
-                onClick={() => setShowCityDropdown(!showCityDropdown)}
-                onChange={(e) => setCitySearch(e.target.value)}
+                placeholder="Search by locality, landmark, or project..."
+                className="w-full h-12 pl-12 rounded-xl bg-white/90 hover:bg-white focus:ring-2 focus:ring-emerald-400/50 transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {showCityDropdown && (
-                <div className="absolute top-12 left-0 w-full bg-white rounded-lg shadow-lg max-h-40 overflow-y-auto">
-                  <input
-                    type="text"
-                    placeholder="Search city"
-                    className="w-full px-4 py-2 text-sm text-gray-700 border-b border-gray-200 focus:outline-none"
-                    value={citySearch}
-                    onChange={(e) => setCitySearch(e.target.value)}
-                  />
-                  {filteredCities.map((city, index) => (
-                    <div
-                      key={index}
-                      className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setLocation(city);
-                        setShowCityDropdown(false);
-                      }}
-                    >
-                      {city}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
+
+            {/* Property Type */}
+            <div className="md:col-span-3 relative group">
+              <Building className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-emerald-500 transition-colors" size={20} />
+              <select 
+                className="w-full h-12 pl-12 pr-4 rounded-xl bg-white/90 hover:bg-white focus:ring-2 focus:ring-emerald-400/50 transition-all appearance-none cursor-pointer"
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+              >
+                <option>PG/Hostel</option>
+                <option>Apartment</option>
+                <option>Co-living</option>
+                <option>Co-Working Space</option>
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none " size={16} />
+            </div>
+
+            {/* City Selection */}
+            <div className="md:col-span-2 relative group">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-emerald-500 transition-colors" size={20} />
+              <select
+                className="w-full h-12 pl-12 pr-4 rounded-xl bg-white/90 hover:bg-white focus:ring-2 focus:ring-emerald-400/50 transition-all appearance-none cursor-pointer"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                <option>Chennai</option>
+                <option>Bangalore</option>
+                <option>Mumbai</option>
+                <option>Delhi</option>
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
+
+            {/* Search Button */}
+            <div className="md:col-span-2">
               <Link to='/propertylist'>
-            <button className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition">
-              Search
-            </button>
-            </Link>
+              <button className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-medium hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group">
+                <span className="flex items-center justify-center gap-2">
+                  Search
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Popular Searches */}
+          <div className="mt-6 flex flex-wrap gap-3 justify-center text-white/80 text-sm">
+            <span className="text-white/60">Popular:</span>
+            {popularSearches.map((item) => (
+              <button 
+                key={item} 
+                className="px-4 py-1 rounded-full border border-white/20 hover:bg-white/10 hover:border-white/40 transition-colors"
+              >
+                {item}
+              </button>
+            ))}
           </div>
         </div>
       </div>
     </div>
+    </div>
   );
 };
 
-export default Carousel;
+export default Hero;

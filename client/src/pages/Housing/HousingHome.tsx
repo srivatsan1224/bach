@@ -12,8 +12,9 @@ export default function HousingHome() {
         <ExclusiveServices/>
         <PostPropertySection/>
         <HomesNearYou/>
+         <AppDownloadSection/>
         <FeaturesSection/>
-        <AppDownloadSection/>
+       
     </div>
   )
 }
