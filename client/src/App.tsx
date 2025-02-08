@@ -25,13 +25,13 @@ import VendorDashboard from "./components/Foods/VendorDashboard";
 import RestaurantList from "./components/Foods/RestaurantList";
 import FoodList from "./components/Foods/FoodList";
 import RentalRoutes from "./routes/rentalRoutes";
-import FoodHome from "./components/Foods/FoodHome";
 import ParttimeRoutes from "./routes/parttimeRoutes";
 import ProductPage from "./pages/DiscountSearch/ProductPage";
 import CartPage from "./pages/DiscountSearch/CartPage";
 import  HousingItem  from "./pages/Housing/HosuingDetails/HousingItem";
 import HousingHome from "./pages/Housing/HousingHome";
 import { Analytics } from "@vercel/analytics/react"
+import FoodHome from "./components/Foods/FoodHome";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;

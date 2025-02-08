@@ -13,7 +13,6 @@ export default function PostProperty() {
       </Link>
 
       {/* Page Title */}
-      <h1 className="text-2xl font-bold mb-6">Rent your Property For Free</h1>
       </div>
       <PropertyDashboard/>
       
