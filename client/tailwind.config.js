@@ -3,33 +3,40 @@ module.exports = {
   darkMode: ["class"],
   content: [
     "./index.html",
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{js,ts,jsx,tsx}"
+    "./pages/**/*.{ts,tsx,js,jsx}",
+    "./components/**/*.{ts,tsx,js,jsx}",
+    "./app/**/*.{ts,tsx,js,jsx}",
+    "./src/**/*.{ts,tsx,js,jsx}"
   ],
   prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       fontFamily: {
-        custom: ["Space Grotesk", "cursive"],
+        custom: ["Space Grotesk", "sans-serif"],
       },
       colors: {
-        background: "hsl(var(--background))", // 🔹 Fix for `bg-background`
-        foreground: "hsl(var(--foreground))",
-        primary: "hsl(var(--primary))",
-        "primary-emerald": "#10B981",
-        "primary-teal": "#0D9488",
-        teelGreen: "#4CAF50", 
-        "teelGreen-hover": "#45A049",
-        border: "hsl(var(--border))",
+        primary: {
+          DEFAULT: "#2563eb",
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
+          800: "#1e40af",
+          900: "#1e3a8a",
+        },
+        accent: {
+          DEFAULT: "#8b5cf6",
+          foreground: "white",
+        },
+        background: "#ffffff",
+        foreground: "#0f172a",
+        muted: "#f8fafc",
+        "muted-foreground": "#64748b",
+        border: "#e2e8f0",
       },
       keyframes: {
         fadeUp: {
@@ -58,7 +65,7 @@ module.exports = {
         "fade-in": "fadeIn 0.5s ease-out",
         "slide-in": "slideIn 0.5s ease-out",
         "scale-in": "scaleIn 0.3s ease-out forwards",
-        "float": "float 3s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
       },
     },
   },

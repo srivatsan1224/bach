@@ -32,6 +32,7 @@ import  HousingItem  from "./pages/Housing/HosuingDetails/HousingItem";
 import HousingHome from "./pages/Housing/HousingHome";
 import { Analytics } from "@vercel/analytics/react"
 import FoodHome from "./components/Foods/FoodHome";
+import EventsHome from "./pages/Events/Home";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -106,6 +107,7 @@ const App: React.FC = () => {
           <Route path="/propertylist" element={<PropertyList />} />
           <Route path="/housingitem" element={<HousingItem />} />
 <Route path="/housingitem/:propertyId" element={<HousingItem />} />
+          <Route path='/eventshome' element={<EventsHome/>}/>
 
         </Routes>
         <Footer />
