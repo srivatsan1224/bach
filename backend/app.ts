@@ -5,6 +5,7 @@ import { setupDatabaseAndContainer } from "./db";
 import userRoutes from "./routes/userRoutes";
 import dynamicRoutes from "./routes/api";
 import dotenv from "dotenv";
+import eventRoutes from "./routes/eventRoutes";;
 dotenv.config();
 
 import productRoutes from "./routes/productRoutes";
@@ -29,7 +30,7 @@ app.use("/api", (req, res, next) => {
     next();
 });
 app.use("/api", dynamicRoutes);
-
+app.use("/events",eventRoutes);
 app.use("/products", productRoutes);
 // Start Server
 async function startServer(): Promise<void> {

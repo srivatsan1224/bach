@@ -1,51 +1,79 @@
-import VideoHero from '../../components/EventsComp/VideoHero';
-import FeaturedEventBanner from '../../components/EventsComp/FeaturedEventBanner';
-import Categories from '../../components/EventsComp/Categories';
-import { Calendar, MapPin, Clock, Star, Heart, Share2, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import HeroSection from "../../components/EventsComp/HeroSection";
+import EventCard from "../../components/EventsComp/EventCard";
+import CategoryCard from "../../components/EventsComp/CategoryCard";
+import NewsletterSection from "../../components/EventsComp/NewsletterSection";
+
+// Sample categories data (remains static)
+const categories = [
+  { name: "Music", icon: "Music", gradient: "from-pink-500 to-rose-500", count: "2.5k events" },
+  { name: "Sports", icon: "Dumbbell", gradient: "from-blue-500 to-cyan-500", count: "1.8k events" },
+  { name: "Arts", icon: "Palette", gradient: "from-violet-500 to-purple-500", count: "3.2k events" },
+  { name: "Food", icon: "UtensilsCrossed", gradient: "from-orange-500 to-amber-500", count: "1.5k events" },
+  { name: "Technology", icon: "Laptop", gradient: "from-emerald-500 to-teal-500", count: "2.1k events" },
+  { name: "Business", icon: "Briefcase", gradient: "from-blue-600 to-indigo-600", count: "1.9k events" },
+  { name: "Lifestyle", icon: "Heart", gradient: "from-red-500 to-pink-500", count: "2.7k events" },
+  { name: "Education", icon: "GraduationCap", gradient: "from-amber-500 to-orange-500", count: "2.3k events" },
+];
 
 const Index = () => {
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch upcoming events from backend API
+    const fetchUpcomingEvents = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/events");
+        const data = await response.json();
+        console.log(data);
+        setUpcomingEvents(data); // Set fetched data into state
+      } catch (error) {
+        console.error("Error fetching upcoming events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUpcomingEvents();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background">
-      <VideoHero />
-      <FeaturedEventBanner />
-      <Categories />
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <HeroSection />
 
-      {/* Featured Organizers */}
-      <div className="py-20 bg-muted">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold mb-4 text-foreground">Top Event Organizers</h2>
-          <p className="text-muted-foreground mb-12 text-lg">Learn from the best in the industry</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* ... keep existing code (organizer mapping) */}
+      {/* Featured Events Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10">
+        <h2 className="text-3xl font-bold text-gray-100 mb-6">Upcoming Events</h2>
+        {loading ? (
+          <p className="text-center text-gray-600">Loading events...</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map((event) => <EventCard key={event.id} event={event} />)
+            ) : (
+              <p className="col-span-full text-center text-gray-600">No upcoming events found.</p>
+            )}
           </div>
+        )}
+      </div>
+
+      {/* Categories Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Explore by Category</h2>
+          <p className="text-xl text-gray-600">Find the perfect event that matches your interests</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {categories.map((category, index) => (
+            <CategoryCard key={index} category={category} />
+          ))}
         </div>
       </div>
 
-      {/* Trending Events */}
-      <div className="py-20 bg-background">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-            <div>
-              <h2 className="text-3xl font-bold mb-4 text-foreground">Trending Events</h2>
-              <p className="text-muted-foreground text-lg">Discover what's popular right now</p>
-            </div>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <button className="text-primary-600 hover:text-primary-700 font-medium">View All</button>
-              <div className="flex gap-2">
-                <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary-600 hover:border-primary-600">
-                  <ChevronRight className="w-5 h-5 rotate-180" />
-                </button>
-                <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary-600 hover:border-primary-600">
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* ... keep existing code (event mapping) */}
-          </div>
-        </div>
-      </div>
+      {/* Newsletter Section */}
+      <NewsletterSection />
     </div>
   );
 };

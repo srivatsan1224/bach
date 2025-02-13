@@ -1,59 +1,59 @@
-import React from "react";
-import { FaShippingFast, FaHeadset, FaShieldAlt } from "react-icons/fa";
-import ad from "../../assets/DiscountPage/ads.png"
+import React from 'react';
+import { Truck, Headset as HeadsetMic, ShieldCheck } from 'lucide-react';
 
 const AdSection: React.FC = () => {
   return (
-    <div className="container mx-auto w-[90%] my-8">
-      {/* Ad Section */}
-      <div className="w-full h-auto rounded-lg overflow-hidden">
+    <div className="w-[90%] mx-auto my-16">
+      {/* Main Ad Banner */}
+      <div className="relative h-[300px] rounded-xl overflow-hidden mb-12">
         <img
-          src={ad}// Replace with your actual ad image URL
-          alt="Ad"
+          src="https://images.unsplash.com/photo-1607082349566-187342175e2f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+          alt="Special Offer"
           className="w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex items-center">
+          <div className="text-white p-12">
+            <h2 className="text-4xl font-bold mb-4">Special Offer</h2>
+            <p className="text-xl mb-6 max-w-md">
+              Get an extra 20% off when you spend $100 or more
+            </p>
+            <button className="bg-white text-gray-900 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+              Shop Now
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Info Section */}
-      <div className="grid grid-cols-3 gap-8 mt-12">
-        {/* Free and Fast Delivery */}
-        <div className="text-center">
-          <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gray-300 rounded-full">
-            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
-              <FaShippingFast className="text-white text-2xl" />
+      {/* Features Section */}
+      <div className="grid grid-cols-3 gap-8">
+        {[
+          {
+            icon: Truck,
+            title: "Free Shipping",
+            description: "Free shipping on all orders over $50",
+          },
+          {
+            icon: HeadsetMic,
+            title: "24/7 Support",
+            description: "Round the clock customer service",
+          },
+          {
+            icon: ShieldCheck,
+            title: "Secure Payment",
+            description: "100% secure payment methods",
+          },
+        ].map(({ icon: Icon, title, description }) => (
+          <div
+            key={title}
+            className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center group"
+          >
+            <div className="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center group-hover:bg-blue-100 transition-colors mb-4">
+              <Icon className="h-8 w-8 text-blue-600" />
             </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
+            <p className="text-gray-600">{description}</p>
           </div>
-          <h3 className="text-lg font-semibold mt-4">FREE AND FAST DELIVERY</h3>
-          <p className="text-sm text-gray-500">
-            Free delivery for all orders over ₹10k
-          </p>
-        </div>
-
-        {/* 24/7 Customer Service */}
-        <div className="text-center">
-          <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gray-300 rounded-full">
-            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
-              <FaHeadset className="text-white text-2xl" />
-            </div>
-          </div>
-          <h3 className="text-lg font-semibold mt-4">24/7 CUSTOMER SERVICE</h3>
-          <p className="text-sm text-gray-500">
-            Friendly 24/7 customer support
-          </p>
-        </div>
-
-        {/* Money Back Guarantee */}
-        <div className="text-center">
-          <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gray-300 rounded-full">
-            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
-              <FaShieldAlt className="text-white text-2xl" />
-            </div>
-          </div>
-          <h3 className="text-lg font-semibold mt-4">MONEY BACK GUARANTEE</h3>
-          <p className="text-sm text-gray-500">
-            We return money within 30 days
-          </p>
-        </div>
+        ))}
       </div>
     </div>
   );

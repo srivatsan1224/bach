@@ -109,7 +109,8 @@ export const features = [
   </defs>
   </svg>
   `,
-      label: "Events",
+      label: "Events",      
+            route: "/eventshome"
     },
     {
       icon: `

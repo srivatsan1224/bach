@@ -2,8 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import { toast } from "react-toastify";
-import { ChevronLeft, Upload, Image as ImageIcon, Check, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Upload, Image as ImageIcon, Check, AlertCircle } from "lucide-react";
+import { BlobServiceClient } from "@azure/storage-blob"; // Azure SDK
 import "react-toastify/dist/ReactToastify.css";
+
+// ✅ Azure Storage Configuration
+const AZURE_STORAGE_ACCOUNT = "roshan"; // Example: "mystorageaccount"
+const CONTAINER_NAME = "uploads"; // Example: "uploads"
+const SAS_TOKEN = "sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-04-02T18:19:43Z&st=2025-02-08T10:19:43Z&spr=https&sig=4%2BMge9lZm1bQP7Zksl%2FgOsbL7oYNrXBiTkGOFlDJ0EY%3D";
 
 const Gallery: React.FC = () => {
   const { formData, updateFormData } = useFormContext();
@@ -17,6 +23,7 @@ const Gallery: React.FC = () => {
     }
   }, [formData.gallery, updateFormData]);
 
+  // ✅ Function to upload images to Azure Blob Storage
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -24,38 +31,49 @@ const Gallery: React.FC = () => {
     const files = Array.from(e.target.files);
 
     setIsUploading(true);
-    toast.info("Uploading photos...");
+    toast.info("Uploading photos to Azure...");
 
-    for (const file of files) {
-      try {
-        const formData = new FormData();
-        formData.append("photos", file);
+    try {
+      // ✅ Create Blob Service Client
+      const blobServiceClient = new BlobServiceClient(
+        `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net?${SAS_TOKEN}`
+      );
 
-        const response = await fetch("http://localhost:3000/api/upload-photos", {
-          method: "POST",
-          body: formData,
-        });
+      // ✅ Get container reference
+      const containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
 
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          throw new Error(`Failed to upload photo: ${errorMessage}`);
+      for (const file of files) {
+        try {
+          // ✅ Create a unique blob (file reference)
+          const blobClient = containerClient.getBlockBlobClient(file.name);
+
+          // ✅ Upload options
+          const options = { blobHTTPHeaders: { blobContentType: file.type } };
+
+          // ✅ Upload file to Azure Blob Storage
+          await blobClient.uploadBrowserData(file, options);
+
+          // ✅ Store the uploaded image URL
+          uploadedPhotos.push(blobClient.url);
+        } catch (error) {
+          console.error("Photo upload failed:", error);
+          toast.error(`Failed to upload ${file.name}`);
         }
-
-        const data: { photoUrl: string } = await response.json();
-        uploadedPhotos.push(data.photoUrl);
-      } catch (error) {
-        console.error("Photo upload failed:", error);
-        toast.error("Failed to upload one or more photos.");
       }
+
+      // ✅ Update formData with new image URLs
+      updateFormData("gallery", {
+        ...formData.gallery,
+        photos: [...(formData.gallery?.photos || []), ...uploadedPhotos],
+      });
+
+      toast.success("Photos uploaded successfully!");
+    } catch (error) {
+      console.error("Azure upload error:", error);
+      toast.error("Failed to upload photos.");
+    } finally {
+      setIsUploading(false);
     }
-
-    updateFormData("gallery", {
-      ...formData.gallery,
-      photos: [...(formData.gallery?.photos || []), ...uploadedPhotos],
-    });
-
-    toast.success("Photos uploaded successfully!");
-    setIsUploading(false);
   };
 
   const handleSubmit = async () => {
@@ -157,33 +175,26 @@ const Gallery: React.FC = () => {
             <div className="flex-1 p-8">
               <div className="max-w-3xl mx-auto">
                 <div className="bg-teal-50 rounded-2xl p-8 mb-8">
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-teal-100 rounded-xl">
-                      <ImageIcon className="w-6 h-6 text-teal-600" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-teal-900 mb-2">Gallery</h2>
-                      <p className="text-teal-700 mb-6">
-                        Add photos to get 5X more responses. 90% tenants contact on properties with photos.
-                      </p>
-                      <label className="relative inline-block">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handlePhotoUpload}
-                          className="hidden"
-                          disabled={isUploading}
-                        />
-                        <span className="inline-flex items-center px-6 py-3 bg-white border border-teal-200 rounded-xl hover:bg-teal-50 cursor-pointer transition-colors">
-                          <Upload className="w-5 h-5 text-teal-600 mr-2" />
-                          <span className="text-teal-700 font-medium">
-                            {isUploading ? "Uploading..." : "Upload Photos"}
-                          </span>
-                        </span>
-                      </label>
-                    </div>
-                  </div>
+                  <h2 className="text-xl font-bold text-teal-900 mb-2">Gallery</h2>
+                  <p className="text-teal-700 mb-6">
+                    Add photos to get 5X more responses. 90% tenants contact on properties with photos.
+                  </p>
+                  <label className="relative inline-block">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                      disabled={isUploading}
+                    />
+                    <span className="inline-flex items-center px-6 py-3 bg-white border border-teal-200 rounded-xl hover:bg-teal-50 cursor-pointer transition-colors">
+                      <Upload className="w-5 h-5 text-teal-600 mr-2" />
+                      <span className="text-teal-700 font-medium">
+                        {isUploading ? "Uploading..." : "Upload Photos"}
+                      </span>
+                    </span>
+                  </label>
                 </div>
 
                 {/* Photo Grid */}
@@ -208,20 +219,9 @@ const Gallery: React.FC = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting || isUploading}
-                  className={`w-full px-6 py-3 rounded-xl text-white font-medium shadow-lg transition-all ${
-                    isSubmitting || isUploading
-                      ? "bg-teal-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800"
-                  }`}
+                  className="w-full px-6 py-3 rounded-xl text-white font-medium shadow-lg bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800"
                 >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center">
-                      <AlertCircle className="w-5 h-5 mr-2 animate-spin" />
-                      Submitting...
-                    </span>
-                  ) : (
-                    "Submit Property"
-                  )}
+                  {isSubmitting ? "Submitting..." : "Submit Property"}
                 </button>
               </div>
             </div>

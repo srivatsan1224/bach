@@ -5,7 +5,7 @@ const DownloadBanner = () => {
   return (
     <div className="flex  m-2 justify-center items-center h-[526px] p-5">
       <div
-        className="flex w-[1370PX] justify-between items-center h-full bg-cover bg-center px-10 rounded-3xl"
+        className="flex w-[1480PX] justify-between items-center h-full bg-cover bg-center px-10 rounded-3xl"
         style={{
           backgroundImage: `url(${ddbg})`,
         }}
