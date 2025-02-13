@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaStar, FaMapMarkerAlt, FaHeart, FaSearch } from "react-icons/fa";
+import { MdDeliveryDining } from "react-icons/md";
 import axios from "axios";
 
 interface Restaurant {
@@ -8,17 +11,29 @@ interface Restaurant {
   address: string;
   rating: number;
   image: string;
+  cuisine?: string;
+  deliveryTime?: string;
+  priceRange?: string;
 }
 
 const RestaurantList: React.FC = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCuisine, setSelectedCuisine] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         const response = await axios.get<Restaurant[]>("http://localhost:5000/api/restaurants");
-        setRestaurants(response.data);
+        // Adding some mock data for demonstration
+        const enhancedData = response.data.map(restaurant => ({
+          ...restaurant,
+          cuisine: ["Italian", "Japanese", "Indian", "Mexican"][Math.floor(Math.random() * 4)],
+          deliveryTime: `${15 + Math.floor(Math.random() * 30)} mins`,
+          priceRange: ["$", "$$", "$$$"][Math.floor(Math.random() * 3)]
+        }));
+        setRestaurants(enhancedData);
       } catch (error) {
         console.error("Failed to fetch restaurants:", error);
       }
@@ -27,27 +42,120 @@ const RestaurantList: React.FC = () => {
     fetchRestaurants();
   }, []);
 
+  const filteredRestaurants = restaurants.filter(restaurant => {
+    const matchesSearch = restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         restaurant.cuisine?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCuisine = selectedCuisine === "all" || restaurant.cuisine === selectedCuisine;
+    return matchesSearch && matchesCuisine;
+  });
+
+  const cuisines = ["all", ...new Set(restaurants.map(r => r.cuisine || ""))];
+
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Restaurants</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {restaurants.map((restaurant) => (
-          <div
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header Section */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Discover Amazing Restaurants
+        </h1>
+        <p className="text-lg text-gray-600">
+          Find and explore the best restaurants in your area
+        </p>
+      </div>
+
+      {/* Search and Filter Section */}
+      <div className="mb-8 space-y-4">
+        <div className="relative max-w-xl mx-auto">
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search restaurants or cuisines..."
+            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex flex-wrap justify-center gap-2">
+          {cuisines.map((cuisine) => (
+            <button
+              key={cuisine}
+              onClick={() => setSelectedCuisine(cuisine)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                selectedCuisine === cuisine
+                  ? "bg-orange-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {cuisine.charAt(0).toUpperCase() + cuisine.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Restaurant Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {filteredRestaurants.map((restaurant) => (
+          <motion.div
             key={restaurant.id}
-            className="bg-white p-4 shadow-md rounded-md hover:shadow-lg transition cursor-pointer"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.03 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer group"
             onClick={() => navigate(`/restaurant/${restaurant.id}`)}
           >
-            <img
-              src={restaurant.image}
-              alt={restaurant.name}
-              className="w-full h-40 object-cover rounded-md"
-            />
-            <h3 className="mt-4 text-xl font-bold">{restaurant.name}</h3>
-            <p className="mt-2 text-gray-600">{restaurant.address}</p>
-            <p className="mt-2 text-sm">⭐ {restaurant.rating}</p>
-          </div>
+            <div className="relative">
+              <img
+                src={restaurant.image}
+                alt={restaurant.name}
+                className="w-full h-48 object-cover transition-transform group-hover:scale-105"
+              />
+              <button className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors">
+                <FaHeart className="text-gray-600 hover:text-red-500 transition-colors" />
+              </button>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                <div className="flex items-center space-x-1">
+                  <span className="px-2 py-1 rounded-full bg-orange-500 text-white text-xs font-medium">
+                    {restaurant.priceRange}
+                  </span>
+                  <span className="px-2 py-1 rounded-full bg-green-500 text-white text-xs font-medium">
+                    {restaurant.cuisine}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{restaurant.name}</h3>
+              
+              <div className="flex items-center text-gray-600 mb-2">
+                <FaMapMarkerAlt className="text-gray-400 mr-2" />
+                <p className="text-sm truncate">{restaurant.address}</p>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <FaStar className="text-yellow-400 mr-1" />
+                  <span className="font-medium">{restaurant.rating}</span>
+                  <span className="text-gray-500 text-sm ml-1">(200+ reviews)</span>
+                </div>
+                
+                <div className="flex items-center text-gray-600">
+                  <MdDeliveryDining className="text-green-500 mr-1" />
+                  <span className="text-sm">{restaurant.deliveryTime}</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         ))}
       </div>
+
+      {/* Empty State */}
+      {filteredRestaurants.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">No restaurants found matching your criteria</p>
+        </div>
+      )}
     </div>
   );
 };

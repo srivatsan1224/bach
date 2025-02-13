@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, MapPin, ChevronRight, Star, Menu, X } from "lucide-react";
 import DownloadSection from "../../components/HomePage/DownloadSection";
+import { useNavigate } from "react-router-dom";
 
 const HomePage: React.FC = () => {
   const [location, setLocation] = useState<string>("");
@@ -8,6 +9,7 @@ const HomePage: React.FC = () => {
   const [userLocation, setUserLocation] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const navigate = useNavigate(); // Hook to navigate between routes
 
   const initialCards = [
     { location: "T. Nagar", places: "387 places" },
@@ -197,7 +199,7 @@ const HomePage: React.FC = () => {
               { title: "Dine-In", image: "https://images.unsplash.com/photo-1592861956120-e524fc739696?w=800", desc: "Premium Dining Experience" },
               { title: "Party Orders", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800", desc: "Perfect for Celebrations" },
             ].map((category, index) => (
-              <div key={index} className="group cursor-pointer">
+              <div key={index} className="group cursor-pointer" onClick={() => navigate("/restaurant")}>
                 <div className="relative rounded-xl overflow-hidden">
                   <img
                     src={category.image}
@@ -240,7 +242,7 @@ const HomePage: React.FC = () => {
                 price: "₹249"
               }
             ].map((dish, index) => (
-              <div key={index} className="group cursor-pointer">
+              <div key={index} className="group cursor-pointer" onClick={() => navigate("/restaurant")}>
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden transform group-hover:-translate-y-1 transition-all duration-300">
                   <div className="relative">
                     <img

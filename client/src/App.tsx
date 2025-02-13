@@ -1,12 +1,12 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"; // ❌ Removed BrowserRouter from here
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { FormProvider } from "./pages/Housing/PropertyForm/FormContext"; // Ensure correct import path for FormProvider
+import { FormProvider } from "./pages/Housing/PropertyForm/FormContext";
+import { CartProvider } from "./components/Foods/context/CartContext"; 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import UserDetails from "./pages/UserDetails";
-
 import PostProperty from "./pages/Housing/PostProperty";
 import Main from "./pages/Housing/PropertyForm/Main";
 import PropertyDetailsForm from "./pages/Housing/PropertyForm/PropertyDetails";
@@ -28,13 +28,15 @@ import RentalRoutes from "./routes/rentalRoutes";
 import ParttimeRoutes from "./routes/parttimeRoutes";
 import ProductPage from "./pages/DiscountSearch/ProductPage";
 import CartPage from "./pages/DiscountSearch/CartPage";
-import  HousingItem  from "./pages/Housing/HosuingDetails/HousingItem";
+import HousingItem from "./pages/Housing/HosuingDetails/HousingItem";
 import HousingHome from "./pages/Housing/HousingHome";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 import FoodHome from "./components/Foods/FoodHome";
 import EventsHome from "./pages/Events/Home";
 import ExploreEvents from "./pages/Events/ExploreEvents";
 import EventListing from "./pages/Events/EventListing";
+import CartPage1 from "./components/Foods/CartPage1";
+import CartButton from "./components/Foods/CartButton";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -47,76 +49,65 @@ const App: React.FC = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <Analytics/>
+      <Analytics />
       <FormProvider>
-        <Navbar />
-        <Routes>
-          {/* Login Page */}
-          <Route path="/login" element={<LoginPage />} />
+        <CartProvider> {/* ✅ Moved CartProvider outside Routes */}
+          <Navbar />
+          <Routes>
+            {/* Authentication Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/SignUp" element={<SignupPage />} />
 
-          {/* Sign Up Page */}
-          <Route path="/SignUp" element={<SignupPage />} />
+            {/* Home Page */}
+            <Route path="/" element={<Home />} />
 
-          {/* Home Page */}
-          <Route path="/" element={<Home />} />
+            {/* Rental & Part-Time Routes */}
+            <Route path="/home/rental/*" element={<RentalRoutes />} />
+            <Route path="/parttime/*" element={<ParttimeRoutes />} />
 
-          {/* Rental Routes */}
-          <Route path="/home/rental/*" element={<RentalRoutes />} />
+            {/* User Profile (Protected) */}
+            <Route
+              path="/profile"
+              element={isAuthenticated() ? <UserDetails /> : <LoginPage />}
+            />
 
-          {/* Part-Time Routes */}
-          <Route path="/parttime/*" element={<ParttimeRoutes />} />
+            {/* Housing Routes */}
+            <Route path="/housinghome" element={<HousingHome />} />
+            <Route path="/propertydashboard" element={isAuthenticated() ? <PostProperty /> : <LoginPage />} />
+            <Route path="/propertyform" element={<Main />} />
+            <Route path="/propertydetails" element={<PropertyDetailsForm />} />
+            <Route path="/locality" element={<LocalityDetailsForm />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/amenities" element={<AmenitiesForm />} />
+            <Route path="/rentaldetails" element={<RentalDetailsForm />} />
+            <Route path="/propertylist" element={<PropertyList />} />
+            <Route path="/housingitem" element={<HousingItem />} />
+            <Route path="/housingitem/:propertyId" element={<HousingItem />} />
 
-          {/* User Details Page (Protected) */}
-          <Route
-            path="/profile"
-            element={isAuthenticated() ? <UserDetails /> : <LoginPage />}
-          />
+            {/* Discount & Shopping Routes */}
+            <Route path="/discount" element={<DiscountPage />} />
+            <Route path="/discountsearch" element={<SearchPage />} />
+            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/cart" element={<CartPage />} />
 
-          {/* Food Home */}
-          <Route path="/foodhome" element={<FoodHome />} />
+            {/* Food Routes */}
+            <Route path="/foodhome" element={<FoodHome />} />
+            <Route path="/restaurant" element={<RestaurantList />} />
+            <Route path="/restaurant/:id" element={<FoodList />} />
+            <Route path="/foodvendor" element={<VendorDashboard />} />
+            <Route path="/filters" element={<FiltersPage />} />
+            <Route path="/restaurant1/:id" element={<RestaurantDetails />} />
+            <Route path="/cart1" element={<CartPage1 />} />
 
-          {/* Restaurant Pages */}
-          <Route path="/restaurant" element={<RestaurantList />} />
-          <Route path="/restaurant/:id" element={<FoodList />} />
-          <Route path="/foodvendor" element={<VendorDashboard />} />
-          <Route path="/filters" element={<FiltersPage />} />
-          <Route path="/restaurant1/:id" element={<RestaurantDetails />} />
+            {/* Event Routes */}
+            <Route path="/eventshome" element={<EventsHome />} />
+            <Route path="/explore-events" element={<ExploreEvents />} />
+            <Route path="/events/:id" element={<EventListing />} />
+          </Routes>
 
-          {/* Housing Home */}
-          <Route path="/housinghome" element={<HousingHome />} />
-
-          {/* Discount Page */}
-          <Route path="/discount" element={<DiscountPage />} />
-
-          {/* Discount Search Page */}
-          <Route path="/discountsearch" element={<SearchPage />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/cart" element={<CartPage />} />
-
-          {/* Property Dashboard */}
-          <Route
-            path="/propertydashboard"
-            element={isAuthenticated() ? <PostProperty /> : <LoginPage />}
-          />
-
-          {/* Property Forms */}
-          <Route path="/propertyform" element={<Main />} />
-          <Route path="/propertydetails" element={<PropertyDetailsForm />} />
-          <Route path="/locality" element={<LocalityDetailsForm />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/amenities" element={<AmenitiesForm />} />
-          <Route path="/rentaldetails" element={<RentalDetailsForm />} />
-          <Route path="/propertylist" element={<PropertyList />} />
-          <Route path="/housingitem" element={<HousingItem />} />
-<Route path="/housingitem/:propertyId" element={<HousingItem />} />
-          <Route path='/eventshome' element={<EventsHome/>}/>
-          <Route path='/explore-events' element={<ExploreEvents/>}/>
-          <Route path='/events/:id' element={<EventListing />} />
-
-          
-
-        </Routes>
-        <Footer />
+          <CartButton />
+          <Footer />
+        </CartProvider>
       </FormProvider>
     </GoogleOAuthProvider>
   );
