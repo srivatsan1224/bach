@@ -1,61 +1,53 @@
-import  { useState } from "react";
-import { FiChevronDown, FiX } from "react-icons/fi";
+import { useState } from "react";
+import { ChevronDown, X } from "lucide-react";
 
 const FAQ = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const toggleFAQ = (index: number) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
-
   const faqs = [
     {
       question: "What services does the app provide?",
-      answer:
-        "Our app offers housing rentals, furniture and appliance rentals, and essential lifestyle services, all in one place.",
+      answer: "Our app offers housing rentals, furniture and appliance rentals, and essential lifestyle services, all in one place."
     },
     {
       question: "How does the app ensure safety and reliability?",
-      answer:
-        "We verify all listings and provide customer support to ensure a secure experience.",
+      answer: "We verify all listings and provide customer support to ensure a secure experience."
     },
     {
       question: "What payment methods are accepted?",
-      answer:
-        "We accept various payment methods including credit/debit cards, UPI, and net banking.",
-    },
+      answer: "We accept various payment methods including credit/debit cards, UPI, and net banking."
+    }
   ];
 
   return (
-    <div className="w-[66vw] mx-auto py-12">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+    <div className="max-w-4xl mx-auto py-16 px-4 animate-fade-in">
+      <h2 className="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-teal-600">
         Frequently Asked Questions
       </h2>
+      
       <div className="space-y-4">
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="bg-white shadow-md rounded-lg border border-gray-200"
+            className="rounded-2xl border border-emerald-100 bg-white shadow-sm hover:shadow-md transition-all duration-300"
           >
-            {/* Header */}
-            <div
-              className="flex justify-between items-center p-4 cursor-pointer"
-              onClick={() => toggleFAQ(index)}
+            <button
+              className="flex w-full items-center justify-between p-6 text-left"
+              onClick={() => setActiveIndex(activeIndex === index ? null : index)}
             >
-              <h3 className="text-lg font-semibold text-gray-800">
-                {faq.question}
-              </h3>
-              <span className="text-xl text-gray-600">
-                {activeIndex === index ? <FiX /> : <FiChevronDown />}
-              </span>
-            </div>
+              <span className="text-lg font-medium text-gray-900">{faq.question}</span>
+              {activeIndex === index ? (
+                <X className="h-5 w-5 text-emerald-500" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-emerald-500" />
+              )}
+            </button>
 
-            {/* Content */}
             {activeIndex === index && (
-              <div className="p-4 border-t border-gray-200">
-                <p className="text-gray-700 mb-4">{faq.answer}</p>
-                <button className="px-4 py-2 bg-orange-500 text-white rounded-md font-medium hover:bg-orange-600 transition">
-                  Learn more
+              <div className="px-6 pb-6 animate-fade-in">
+                <p className="text-gray-600">{faq.answer}</p>
+                <button className="mt-4 px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full font-medium hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+                  Learn More
                 </button>
               </div>
             )}

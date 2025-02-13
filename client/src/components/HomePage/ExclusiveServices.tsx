@@ -1,15 +1,69 @@
 import { services } from "../../assets/HomePage/services";
-import {places} from "../../assets/HomePage/places"
-const ExclusiveServices: React.FC = () => {
-    return (
-      <div className="p-6 bg-gray-50">
-        {/* Section Title */}
-        <h2 className="text-2xl lg:text-4xl font-bold text-center mb-8">
-          Our Exclusive Services
-        </h2>
+
+const ExclusiveServices = () => {
   
+  const videoUrl = "https://www.youtube.com/embed/8gcRTMr-rlg?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&loop=1&playlist=8gcRTMr-rlg";
+
+  const cities = [
+    { name: "Mumbai", image: "https://images.unsplash.com/photo-1577717903315-1691ae25ab3f" },
+    { name: "Delhi", image: "https://images.unsplash.com/photo-1587474260584-136574528ed5" },
+    { name: "Bangalore", image: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2" },
+    { name: "Chennai", image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220" },
+    { name: "Kolkata", image: "https://images.unsplash.com/photo-1558431382-27e303142255" },
+    { name: "Hyderabad", image: "https://images.unsplash.com/photo-1600577916048-804c9191e36c" },
+  ].slice(0, 6);
+
+  return (
+    <>
+     
+  
+    <div className=" bg-gray-50 p-16 px-28 flex flex-col lg:flex-row items-center justify-center gap-8 px-6">
+      {/* Video Section */}
+      <div className="w-full lg:w-1/2 h-96 relative shadow-lg rounded-xl overflow-hidden">
+        {/* YouTube Video Embed */}
+        <iframe
+          src={videoUrl}
+          className="absolute top-0 left-0 w-full h-full"
+          frameBorder="0"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+        />
+        {/* Overlay Content */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4 text-white">
+          <h2 className="text-xl font-bold animate-fade-up">Find Perfect Housing Options</h2>
+          <p className="text-sm animate-fade-up delay-100">
+            Discover your ideal living space with verified listings and transparent pricing.
+          </p>
+        </div>
+      </div>
+
+      {/* Cities Section */}
+      <div className="w-full lg:w-1/2">
+     
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {cities.map((city) => (
+            <div
+              key={city.name}
+              className="group relative h-40 rounded-xl overflow-hidden shadow-lg transition-all duration-500 hover:scale-105"
+            >
+              <img
+                src={city.image}
+                alt={city.name}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent group-hover:from-black/90 transition-all duration-500">
+                <div className="absolute bottom-0 left-0 p-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                  <h3 className="text-lg font-bold text-white">{city.name}</h3>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    
       {/* Services Section */}
-<div className="w-[70vw] flex flex-wrap justify-center gap-6 mb-12 mx-auto">
+<div className="w-[70vw] flex flex-wrap justify-center gap-6 mb-12 mx-auto py-10">
   {services.map((service, index) => (
     <div
       key={index}
@@ -34,27 +88,8 @@ const ExclusiveServices: React.FC = () => {
     </div>
   ))}
 </div>
+    </>
+  );
+};
 
-  
-        {/* Places Section */}
-        <div className="flex flex-wrap justify-center gap-10">
-  {places.map((place, index) => (
-    <div key={index} className="flex flex-col items-center">
-      <div
-        className="w-32 h-32 rounded-full overflow-hidden shadow-lg flex items-center justify-center bg-gray-50 border border-gray-300"
-        dangerouslySetInnerHTML={{ __html: place.svg }}
-      />
-      <p className="mt-4 text-center font-semibold text-gray-900">
-        {place.name}
-      </p>
-    </div>
-  ))}
-</div>
-
-
-      </div>
-    );
-  };
-
-  
-  export default ExclusiveServices;
+export default ExclusiveServices;

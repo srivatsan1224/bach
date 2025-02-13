@@ -5,11 +5,7 @@ import CategoryButton from "./CategoryButtonProps";
 import { MapPin, Search, Bell, MessageCircle, Plus } from "react-feather";
 import DownloadSection from "../../components/HomePage/DownloadSection";
 
-// Import images directly from assets
-import FurnitureImg from "../../assets/RentalImages/furniture.png";
-import AppliancesImg from "../../assets/RentalImages/appliances.png";
-import ElectronicsImg from "../../assets/RentalImages/electronics.png";
-import FitnessImg from "../../assets/RentalImages/fitness.png";
+
 import BackgroundImg from "../../assets/RentalImages/background.png";
 import RefrigeratorImg from "../../assets/RentalImages/refrigerator.png";
 import TableImg from "../../assets/RentalImages/table.png";

@@ -127,7 +127,7 @@ export async function getUserProperties(email: string): Promise<any[]> {
 export async function updatePropertyListing(propertyId: string, email: string, updateData: any): Promise<any> {
   try {
     const container = await getHousingPropertyContainer();
-
+    
     const { resource: existingProperty } = await container.item(propertyId).read();
 
     if (existingProperty.email !== email) {

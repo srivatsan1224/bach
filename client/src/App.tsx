@@ -25,12 +25,16 @@ import VendorDashboard from "./components/Foods/VendorDashboard";
 import RestaurantList from "./components/Foods/RestaurantList";
 import FoodList from "./components/Foods/FoodList";
 import RentalRoutes from "./routes/rentalRoutes";
-import FoodHome from "./components/Foods/FoodHome";
 import ParttimeRoutes from "./routes/parttimeRoutes";
 import ProductPage from "./pages/DiscountSearch/ProductPage";
 import CartPage from "./pages/DiscountSearch/CartPage";
 import  HousingItem  from "./pages/Housing/HosuingDetails/HousingItem";
 import HousingHome from "./pages/Housing/HousingHome";
+import { Analytics } from "@vercel/analytics/react"
+import FoodHome from "./components/Foods/FoodHome";
+import EventsHome from "./pages/Events/Home";
+import ExploreEvents from "./pages/Events/ExploreEvents";
+import EventListing from "./pages/Events/EventListing";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -43,6 +47,7 @@ const App: React.FC = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
+      <Analytics/>
       <FormProvider>
         <Navbar />
         <Routes>
@@ -104,6 +109,11 @@ const App: React.FC = () => {
           <Route path="/propertylist" element={<PropertyList />} />
           <Route path="/housingitem" element={<HousingItem />} />
 <Route path="/housingitem/:propertyId" element={<HousingItem />} />
+          <Route path='/eventshome' element={<EventsHome/>}/>
+          <Route path='/explore-events' element={<ExploreEvents/>}/>
+          <Route path='/events/:id' element={<EventListing />} />
+
+          
 
         </Routes>
         <Footer />

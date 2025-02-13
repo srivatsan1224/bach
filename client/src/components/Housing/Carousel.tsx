@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, MapPin, Building, Home, ChevronDown, ArrowRight } from "lucide-react";
+import { useState } from 'react';
+import { Search, MapPin, Building,  ChevronDown, ArrowRight } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const Hero = () => {

@@ -48,3 +48,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+console.log('Home component rendered');

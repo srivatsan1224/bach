@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useFormContext } from "./FormContext";
+import { ChevronLeft, Plus, Minus, Phone, MapPin } from 'lucide-react';
 
 const AmenitiesForm: React.FC = () => {
   const { formData, updateFormData } = useFormContext();
@@ -46,128 +47,206 @@ const AmenitiesForm: React.FC = () => {
     "Power Backup",
   ];
 
+  const navigationSteps = [
+    "Property Details",
+    "Locality Details",
+    "Rental Details",
+    "Amenities",
+    "Gallery",
+    "Schedule",
+  ];
+
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-white shadow rounded">
-      <div className="flex items-center mb-4">
-        <button className="text-sm text-gray-600 font-semibold">Back</button>
-        <div className="flex-grow h-2 bg-gray-200 mx-4 rounded">
-          <div className="h-full bg-green-500 rounded" style={{ width: "90%" }}></div>
-        </div>
-        <span className="text-sm font-semibold">Completed</span>
-      </div>
-
-      <div className="grid grid-cols-12 gap-4">
-        <nav className="col-span-3">
-          <ul className="space-y-4 text-sm font-medium">
-            <li className="text-gray-600">Property Details</li>
-            <li className="text-gray-600">Locality Details</li>
-            <li className="text-gray-600">Rental Details</li>
-            <li className="text-gray-900 font-bold">Amenities</li>
-            <li className="text-gray-600">Gallery</li>
-            <li className="text-gray-600">Schedule</li>
-          </ul>
-        </nav>
-
-        <div className="col-span-9">
-          <h2 className="text-lg font-bold text-gray-900 mb-6">Amenities</h2>
-
-          {/* Bathroom, Balcony, Water Supply */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div>
-              <label className="text-sm text-gray-600 mb-2 block">Bathrooms</label>
-              <div className="flex items-center border rounded p-2">
-                <button
-                  onClick={() => setLocalState((prev) => ({ ...prev, bathrooms: Math.max(0, prev.bathrooms - 1) }))}
-                  className="px-3 py-1"
-                >
-                  -
-                </button>
-                <span className="flex-grow text-center">{localState.bathrooms}</span>
-                <button
-                  onClick={() => setLocalState((prev) => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
-                  className="px-3 py-1"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 mb-2 block">Balcony</label>
-              <div className="flex items-center border rounded p-2">
-                <button
-                  onClick={() => setLocalState((prev) => ({ ...prev, balcony: Math.max(0, prev.balcony - 1) }))}
-                  className="px-3 py-1"
-                >
-                  -
-                </button>
-                <span className="flex-grow text-center">{localState.balcony}</span>
-                <button
-                  onClick={() => setLocalState((prev) => ({ ...prev, balcony: prev.balcony + 1 }))}
-                  className="px-3 py-1"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 mb-2 block">Water Supply</label>
-              <select
-                value={localState.waterSupply}
-                onChange={(e) => setLocalState({ ...localState, waterSupply: e.target.value })}
-                className="w-full border p-2 rounded"
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-white py-8">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Progress Bar */}
+          <div className="p-6 border-b border-teal-100">
+            <div className="flex items-center">
+              <button 
+                onClick={() => window.history.back()}
+                className="flex items-center text-teal-700 hover:text-teal-800 font-medium"
               >
-                <option value="">Select</option>
-                <option value="24 hours">24 Hours</option>
-                <option value="Limited">Limited</option>
-              </select>
+                <ChevronLeft className="w-5 h-5 mr-1" />
+                Back
+              </button>
+              <div className="flex-grow mx-6">
+                <div className="h-2 bg-teal-100 rounded-full">
+                  <div 
+                    className="h-full bg-teal-600 rounded-full transition-all duration-300" 
+                    style={{ width: "80%" }}
+                  ></div>
+                </div>
+              </div>
+              <span className="text-sm font-medium text-teal-700">4 of 5 completed</span>
             </div>
           </div>
 
-          {/* Secondary Number and Directions */}
-          <div className="mb-6">
-            <label className="text-sm text-gray-600 mb-2 block">Secondary Number</label>
-            <div className="flex">
-              <span className="flex items-center px-3 bg-gray-200 border">+91</span>
-              <input
-                type="text"
-                value={localState.secondaryNumber}
-                onChange={(e) => setLocalState({ ...localState, secondaryNumber: e.target.value })}
-                className="flex-grow border p-2 rounded-r"
-              />
+          <div className="flex">
+            {/* Navigation Sidebar */}
+            <div className="w-64 bg-teal-50 p-6">
+              <nav>
+                <ul className="space-y-4">
+                  {navigationSteps.map((step, index) => (
+                    <li
+                      key={step}
+                      className={`px-4 py-2 rounded-lg transition-colors ${
+                        step === "Amenities"
+                          ? "bg-teal-600 text-white font-semibold"
+                          : "text-teal-700 hover:bg-teal-100"
+                      }`}
+                    >
+                      {step}
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1 p-8">
+              <h2 className="text-2xl font-bold text-teal-900 mb-8">Amenities</h2>
+
+              {/* Counter Inputs */}
+              <div className="grid grid-cols-3 gap-6 mb-8">
+                {/* Bathrooms */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-teal-700">
+                    Bathrooms
+                  </label>
+                  <div className="flex items-center justify-between px-4 py-2 border border-teal-200 rounded-xl bg-white">
+                    <button
+                      onClick={() => setLocalState(prev => ({ ...prev, bathrooms: Math.max(0, prev.bathrooms - 1) }))}
+                      className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </button>
+                    <span className="text-lg font-medium text-teal-900">{localState.bathrooms}</span>
+                    <button
+                      onClick={() => setLocalState(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
+                      className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Balcony */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-teal-700">
+                    Balcony
+                  </label>
+                  <div className="flex items-center justify-between px-4 py-2 border border-teal-200 rounded-xl bg-white">
+                    <button
+                      onClick={() => setLocalState(prev => ({ ...prev, balcony: Math.max(0, prev.balcony - 1) }))}
+                      className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </button>
+                    <span className="text-lg font-medium text-teal-900">{localState.balcony}</span>
+                    <button
+                      onClick={() => setLocalState(prev => ({ ...prev, balcony: prev.balcony + 1 }))}
+                      className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Water Supply */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-teal-700">
+                    Water Supply
+                  </label>
+                  <select
+                    value={localState.waterSupply}
+                    onChange={(e) => setLocalState(prev => ({ ...prev, waterSupply: e.target.value }))}
+                    className="w-full px-4 py-2 border border-teal-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  >
+                    <option value="">Select availability</option>
+                    <option value="24 hours">24 Hours</option>
+                    <option value="Limited">Limited Hours</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Contact Details */}
+              <div className="space-y-6 mb-8">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-teal-700">
+                    Secondary Contact Number
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-4 border border-r-0 border-teal-200 rounded-l-xl bg-teal-50 text-teal-700">
+                      <Phone className="w-5 h-5" />
+                      +91
+                    </span>
+                    <input
+                      type="text"
+                      value={localState.secondaryNumber}
+                      onChange={(e) => setLocalState(prev => ({ ...prev, secondaryNumber: e.target.value }))}
+                      className="flex-1 px-4 py-2 border border-teal-200 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                      placeholder="Additional contact number"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-teal-700">
+                    Directions for Tenants
+                  </label>
+                  <div className="relative">
+                    <MapPin className="absolute left-4 top-3 text-teal-500 w-5 h-5" />
+                    <input
+                      type="text"
+                      value={localState.directions}
+                      onChange={(e) => setLocalState(prev => ({ ...prev, directions: e.target.value }))}
+                      className="w-full pl-12 pr-4 py-2 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                      placeholder="E.g., Take the road opposite to Amrita College, take right after 300m..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Amenities Selection */}
+              <div className="space-y-4 mb-8">
+                <h3 className="text-lg font-semibold text-teal-900">
+                  Available Amenities
+                </h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {amenitiesList.map((amenity) => (
+                    <label
+                      key={amenity}
+                      className="flex items-center space-x-3 p-3 border border-teal-200 rounded-xl hover:bg-teal-50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={localState.selectedAmenities.includes(amenity)}
+                        onChange={() => toggleAmenity(amenity)}
+                        className="w-4 h-4 text-teal-600 border-teal-300 rounded focus:ring-teal-500"
+                      />
+                      <span className="text-sm text-teal-700">{amenity}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Navigation Buttons */}
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => window.history.back()}
+                  className="px-6 py-2 border border-teal-200 rounded-xl text-teal-700 hover:bg-teal-50"
+                >
+                  Previous
+                </button>
+                <Link to="/gallery">
+                  <button className="px-6 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 shadow-lg">
+                    Save & Continue
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-          <div className="mb-6">
-            <label className="text-sm text-gray-600 mb-2 block">Add Directions Tip for your tenants</label>
-            <input
-              type="text"
-              value={localState.directions}
-              onChange={(e) => setLocalState({ ...localState, directions: e.target.value })}
-              className="w-full border p-2 rounded"
-              placeholder="Eg: Take the road opposite to Amrita College, take right after 300m..."
-            />
-          </div>
-
-          {/* Amenities List */}
-          <h3 className="text-sm font-bold text-gray-900 mb-4">Select the available amenities</h3>
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            {amenitiesList.map((amenity) => (
-              <label key={amenity} className="flex items-center space-x-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={localState.selectedAmenities.includes(amenity)}
-                  onChange={() => toggleAmenity(amenity)}
-                />
-                <span>{amenity}</span>
-              </label>
-            ))}
-          </div>
-
-          {/* Save & Next */}
-          <Link to="/gallery">
-            <button className="w-full px-4 py-2 bg-red-600 text-white text-sm font-medium rounded shadow hover:bg-red-700">
-              Save & Next
-            </button>
-          </Link>
         </div>
       </div>
     </div>

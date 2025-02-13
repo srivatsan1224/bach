@@ -1,5 +1,6 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { ShoppingCart, Heart } from 'lucide-react';
 
 interface Product {
   id: number;
@@ -7,86 +8,78 @@ interface Product {
   price: string;
   oldPrice: string;
   discount: string;
-  image: string; // URL of the image
+  image: string;
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Singo Maple",
-    price: "₹ 1.264.000",
-    oldPrice: "₹ 1.500.000",
-    discount: "20% Off",
-    image: "https://via.placeholder.com/150?text=Product+1", // Sample image
-  },
-  {
-    id: 2,
-    name: "Singo Ebony",
-    price: "₹ 1.264.000",
-    oldPrice: "₹ 1.500.000",
-    discount: "20% Off",
-    image: "https://via.placeholder.com/150?text=Product+2", // Sample image
-  },
-  {
-    id: 3,
-    name: "Rakai Ebony",
-    price: "₹ 1.118.000",
-    oldPrice: "₹ 1.280.000",
-    discount: "15% Off",
-    image: "https://via.placeholder.com/150?text=Product+3", // Sample image
-  },
-  {
-    id: 4,
-    name: "Way Kambas Mini Maple",
-    price: "₹ 1.024.000",
-    oldPrice: "₹ 1.280.000",
-    discount: "10% Off",
-    image: "https://via.placeholder.com/150?text=Product+4", // Sample image
-  },
-  {
-    id: 5,
-    name: "Way Kambas Mini Maple",
-    price: "₹ 1.024.000",
-    oldPrice: "₹ 1.280.000",
-    discount: "10% Off",
-    image: "https://via.placeholder.com/150?text=Product+5", // Sample image
-  },
-];
-
 const TopDeals: React.FC = () => {
-  const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleNavigate = (id: number) => {
-    navigate(`/product/${id}`); // Navigate to the product details page
-  };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/products');
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-[90%] mx-auto my-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto w-[90%] my-8">
-      <h2 className="text-2xl font-semibold mb-6">Top Deals</h2>
+    <div className="w-[90%] mx-auto my-16">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">Today's Best Deals</h2>
+        <button className="text-blue-600 hover:text-blue-700 font-medium">View All</button>
+      </div>
+
       <div className="grid grid-cols-5 gap-6">
         {products.map((product) => (
           <div
             key={product.id}
-            className="bg-gray-50 border rounded-lg overflow-hidden shadow-md relative group cursor-pointer"
-            onClick={() => handleNavigate(product.id)} // Navigate on click
+            className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow group"
           >
-            {/* Product Image */}
-            <div className="w-full h-60 bg-gray-200 flex items-center justify-center">
+            <div className="relative">
               <img
                 src={product.image}
                 alt={product.name}
-                className="max-w-full max-h-full object-contain"
+                className="w-full h-48 object-cover"
               />
-            </div>
-            {/* Product Details */}
-            <div className="p-4">
-              <h3 className="text-lg font-medium">{product.name}</h3>
-              <p className="text-sm text-gray-500">{product.discount}</p>
-              <div className="mt-2 flex items-center space-x-2">
-                <span className="text-xl font-semibold">{product.price}</span>
-                <span className="text-sm line-through text-gray-400">
-                  {product.oldPrice}
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50">
+                  <Heart className="h-5 w-5 text-gray-600" />
+                </button>
+              </div>
+              <div className="absolute top-3 left-3">
+                <span className="bg-red-500 text-white px-2 py-1 text-sm rounded-full">
+                  {product.discount}
                 </span>
+              </div>
+            </div>
+            <div className="p-4">
+              <h3 className="font-medium text-gray-900 mb-2 truncate">{product.name}</h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-lg font-bold text-blue-600">{product.price}</span>
+                  <span className="ml-2 text-sm text-gray-400 line-through">{product.oldPrice}</span>
+                </div>
+                <button className="bg-blue-50 p-2 rounded-full hover:bg-blue-100 transition-colors">
+                  <ShoppingCart className="h-5 w-5 text-blue-600" />
+                </button>
               </div>
             </div>
           </div>
@@ -95,7 +88,5 @@ const TopDeals: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default TopDeals;

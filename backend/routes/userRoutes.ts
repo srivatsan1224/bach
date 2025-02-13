@@ -75,18 +75,18 @@ router.post("/signup", async (req: Request, res: Response): Promise<void> => {
 
 // API to retrieve a user by unique ID
 router.get("/get", async (req: Request, res: Response): Promise<void> => {
-  const { containerName, userId }: { containerName?: string; userId?: string } = req.query;
-
-  if (!containerName || !userId) {
-    res
-      .status(400)
-      .json({ message: "Container name and userId are required!" });
+  const { userId }: { userId?: string } = req.query;
+ 
+  if (!userId) {
+    res.status(400).json({ message: "User ID is required!" });
     return;
   }
 
   try {
-    const container = await getContainer(containerName);
+    // Default to the "Users" container
+    const container = await getContainer("Users");
 
+    // Query the container to find the user with the given userId
     const { resources: users } = await container.items
       .query({
         query: "SELECT * FROM c WHERE c.id = @id",
@@ -98,13 +98,14 @@ router.get("/get", async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "User not found!" });
       return;
     }
-    
+
     res.status(200).json(users[0]);
   } catch (error: any) {
     console.error("Error retrieving user:", error.message);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
+
 // API to handle login with email and password
 // API to handle login with email and password
 router.post("/login", async (req: Request, res: Response): Promise<void> => {
@@ -153,44 +154,6 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// API to add an item to the cart
-router.post("/add-to-cart", async (req: Request, res: Response) => {
-  const { containerName, userId, product } = req.body;
-
-  if (!containerName || !userId || !product) {
-      res.status(400).json({ message: "Container name, userId, and product are required!" });
-      return;
-  }
-
-  try {
-      const container = await getContainer(containerName);
-
-      // Query the user by userId
-      const { resources: users } = await container.items
-          .query({
-              query: "SELECT * FROM c WHERE c.id = @id",
-              parameters: [{ name: "@id", value: userId }],
-          })
-          .fetchAll();
-
-      if (users.length === 0) {
-          res.status(404).json({ message: "User not found!" });
-          return;
-      }
-
-      const user = users[0];
-      const cart = user.cart || [];
-      cart.push(product);
-
-      // Update the user's cart
-      await container.item(user.id, user.email).replace({ ...user, cart });
-
-      res.status(200).json({ message: "Product added to cart successfully!" });
-  } catch (error: any) {
-      console.error("Error adding to cart:", error.message);
-      res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-});
 
 router.post("/google-login", async (req: Request, res: Response) => {
   const { containerName, user } = req.body;
@@ -236,6 +199,153 @@ router.post("/google-login", async (req: Request, res: Response) => {
       res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
+
+
+// API to add an item to the cart
+router.post("/add-to-cart", async (req: Request, res: Response) => {
+  const { containerName, userId, product } = req.body;
+
+  if (!containerName || !userId || !product) {
+      res.status(400).json({ message: "Container name, userId, and product are required!" });
+      return;
+  }
+
+  try {
+      const container = await getContainer(containerName);
+
+      // Query the user by userId
+      const { resources: users } = await container.items
+          .query({
+              query: "SELECT * FROM c WHERE c.id = @id",
+              parameters: [{ name: "@id", value: userId }],
+          })
+          .fetchAll();
+
+      if (users.length === 0) {
+          res.status(404).json({ message: "User not found!" });
+          return;
+      }
+
+      const user = users[0];
+      const cart = user.cart || [];
+      cart.push(product);
+
+      // Update the user's cart
+      await container.item(user.id, user.email).replace({ ...user, cart });
+
+      res.status(200).json({ message: "Product added to cart successfully!" });
+  } catch (error: any) {
+      console.error("Error adding to cart:", error.message);
+      res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+// Update cart item quantity
+router.put("/cart/update", async (req: Request, res: Response): Promise<void> => {
+
+  const { userId, itemId, quantity }: { userId: string; itemId: string; quantity: number } = req.body;
+
+  if (!userId || !itemId || quantity < 1) {
+    res.status(400).json({ message: "User ID, Item ID, and valid quantity are required!" });
+    return;
+  }
+
+  try {
+    const container = await getContainer("Users");
+
+    // Query the container to find the user with the given userId (which is the email)
+    const { resources: users } = await container.items
+    .query({
+      query: "SELECT * FROM c WHERE c.id = @id",
+      parameters: [{ name: "@id", value: userId }],
+    })
+    .fetchAll();
+
+    if (users.length === 0) {
+      console.log(users);
+      res.status(404).json({ message: "User not found!" });
+      return;
+    }
+
+    const user = users[0];
+
+    if (!user.cart) {
+      console.log(user.cart);
+      res.status(404).json({ message: "Cart not found for the user!" });
+      return;
+    }
+
+    // Update the quantity of the specified item
+    user.cart = user.cart.map((item: any) =>
+      item.id === itemId ? { ...item, quantity } : item
+    );
+
+    // Save the updated user document with the partition key (email)
+    const { resource: updatedUser } = await container.item(user.id, user.email).replace(user);
+
+    res.status(200).json({
+      message: "Cart updated successfully!",
+      updatedCart: updatedUser.cart,
+    });
+  } catch (error: any) {
+    console.error("Error updating cart:", error.message);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+
+
+// Checkout and update order history
+router.post("/cart/checkout", async (req: Request, res: Response): Promise<void> => {
+  const { userId }: { userId: string } = req.body;
+
+  if (!userId) {
+    res.status(400).json({ message: "User ID is required!" });
+    return;
+  }
+
+  try {
+    const container = await getContainer("Users");
+
+    // Query the container to find the user with the given userId (which is the email)
+    const { resources: users } = await container.items
+      .query({
+        query: "SELECT * FROM c WHERE c.id = @id",
+        parameters: [{ name: "@id", value: userId }],
+      })
+      .fetchAll();
+
+    if (users.length === 0) {
+      res.status(404).json({ message: "User not found!" });
+      return;
+    }
+
+    const user = users[0];
+
+    if (!user.cart || user.cart.length === 0) {
+      res.status(404).json({ message: "Cart is empty!" });
+      return;
+    }
+
+    // Add cart items to order history
+    user.orderHistory = [...(user.orderHistory || []), ...user.cart];
+
+    // Clear the cart
+    user.cart = [];
+
+    // Save the updated user document with the partition key (email)
+    const { resource: updatedUser } = await container.item(user.id, user.email).replace(user);
+
+    res.status(200).json({
+      message: "Checkout successful! Order history updated.",
+      orderHistory: updatedUser.orderHistory,
+    });
+  } catch (error: any) {
+    console.error("Error during checkout:", error.message);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
 
 
 
