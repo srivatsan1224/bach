@@ -37,6 +37,7 @@ import ExploreEvents from "./pages/Events/ExploreEvents";
 import EventListing from "./pages/Events/EventListing";
 import CartPage1 from "./components/Foods/CartPage1";
 import CartButton from "./components/Foods/CartButton";
+import PaintingPage from "./pages/Housing/PaintingPage";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -83,6 +84,7 @@ const App: React.FC = () => {
             <Route path="/propertylist" element={<PropertyList />} />
             <Route path="/housingitem" element={<HousingItem />} />
             <Route path="/housingitem/:propertyId" element={<HousingItem />} />
+            <Route path="/home/painting" element={<PaintingPage/>} />
 
             {/* Discount & Shopping Routes */}
             <Route path="/discount" element={<DiscountPage />} />
