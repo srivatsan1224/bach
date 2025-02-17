@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for routing
 import * as LucideIcons from "lucide-react"; // Import all Lucide icons dynamically
 import HeroSection from "../../components/EventsComp/HeroSection";
 import EventCard from "../../components/EventsComp/EventCard";
@@ -20,6 +21,7 @@ const categories = [
 const Index: React.FC = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     // Fetch upcoming events from backend API
@@ -38,6 +40,11 @@ const Index: React.FC = () => {
     fetchUpcomingEvents();
   }, []);
 
+  // Handle event card click to navigate to event details page
+  const handleEventClick = (eventId: string) => {
+    navigate(`/events/${eventId}`); // Use navigate to redirect to event details page
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -51,7 +58,13 @@ const Index: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {upcomingEvents.length > 0 ? (
-              upcomingEvents.map((event) => <EventCard key={event.id} event={event} />)
+              upcomingEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onClick={() => handleEventClick(event.id)} // Attach click handler
+                />
+              ))
             ) : (
               <p className="col-span-full text-center text-gray-600">No upcoming events found.</p>
             )}
