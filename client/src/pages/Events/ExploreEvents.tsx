@@ -146,7 +146,7 @@ const ExploreEvents = () => {
             <CategoryCard
               key={index}
               category={category}
-              onClick={() => navigate(`/category/${category.name.toLowerCase()}`)}
+              
             />
           ))}
         </div>

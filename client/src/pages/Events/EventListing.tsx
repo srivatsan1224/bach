@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronDown, ChevronUp, Minus, Plus, MapPin, Calendar, Users, Clock, Star, Shield, Award } from 'lucide-react';
 
 interface Highlight {
@@ -42,8 +42,10 @@ interface Event {
 }
 
 function EventListing() {
-  const { id } = useParams();
-  console.log('EventListing',id);
+  const { id } = useParams(); // Use useParams first
+  const navigate = useNavigate(); // Then use navigate
+  console.log('EventListing', id);
+  
   const [event, setEvent] = useState<Event | null>(null);
   const [relatedEvents, setRelatedEvents] = useState<Event[]>([]);
   const [ticketCount, setTicketCount] = useState(1);
@@ -107,7 +109,7 @@ function EventListing() {
       {/* Header */}
       <header className="glass-effect sticky top-0 z-50 border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200">
+          <button onClick={() => navigate(-1)} className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200">
             <ChevronLeft className="w-5 h-5 mr-1" />
             <span>back</span>
           </button>
@@ -178,10 +180,7 @@ function EventListing() {
               <h2 className="text-2xl font-bold mb-6 gradient-text">Event Schedule</h2>
               <div className="space-y-3">
                 {event.agenda.map((item) => (
-                  <div
-                    key={item.id}
-                    className="agenda-item p-4 rounded-xl card-shadow hover:bg-gradient-to-r hover:from-white hover:to-gray-50"
-                  >
+                  <div key={item.id} className="agenda-item p-4 rounded-xl card-shadow hover:bg-gradient-to-r hover:from-white hover:to-gray-50">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 to-blue-500 flex items-center justify-center text-white font-bold">
                         {item.id}
