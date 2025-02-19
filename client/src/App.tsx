@@ -37,6 +37,8 @@ import ExploreEvents from "./pages/Events/ExploreEvents";
 import EventListing from "./pages/Events/EventListing";
 import CartPage1 from "./components/Foods/CartPage1";
 import CartButton from "./components/Foods/CartButton";
+import EventForm from "./pages/EventForm";
+
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -103,6 +105,7 @@ const App: React.FC = () => {
             <Route path="/eventshome" element={<EventsHome />} />
             <Route path="/explore-events" element={<ExploreEvents />} />
             <Route path="/events/:id" element={<EventListing />} />
+            <Route path="/eventsForm" element={<EventForm/>}/>
           </Routes>
 
           <CartButton />
