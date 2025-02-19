@@ -4,8 +4,8 @@ import { ShoppingBag, Smartphone, Shirt, Watch, Home, Sparkles, Headphones, More
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/effect-fade';
+
+
 
 const Banner: React.FC = () => {
   const navigate = useNavigate();

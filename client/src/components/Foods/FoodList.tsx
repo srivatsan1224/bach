@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaStar, FaHeart, FaSearch, FaFilter } from "react-icons/fa";
+import { FaStar, FaHeart, FaSearch } from "react-icons/fa";
 import { IoRestaurant } from "react-icons/io5";
 import axios from "axios";
 import { useCart } from './context/CartContext';
@@ -13,6 +13,7 @@ interface FoodItem {
   cost: number;
   rating: number;
   ingredients: string;
+  category: string;  // Added category field
 }
 
 const FoodList: React.FC = () => {
@@ -69,11 +70,12 @@ const FoodList: React.FC = () => {
   const filteredItems = foodItems.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.ingredients.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
     const matchesPrice = priceFilter === "all" ||
                         (priceFilter === "low" && item.cost <= 300) ||
                         (priceFilter === "medium" && item.cost > 300 && item.cost <= 600) ||
                         (priceFilter === "high" && item.cost > 600);
-    return matchesSearch && matchesPrice;
+    return matchesSearch && matchesCategory && matchesPrice;
   });
 
   return (
@@ -119,6 +121,18 @@ const FoodList: React.FC = () => {
               <option value="low">Under ₹300</option>
               <option value="medium">₹300 - ₹600</option>
               <option value="high">Above ₹600</option>
+            </select>
+
+            {/* Category Filter */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="all">All Categories</option>
+              <option value="vegan">Vegan</option>
+              <option value="non-vegan">Non-Vegan</option>
+              <option value="desserts">Desserts</option>
             </select>
           </div>
         </div>

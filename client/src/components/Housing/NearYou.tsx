@@ -1,4 +1,4 @@
-import React from 'react';
+
 import h1 from "../../assets/HousingHome/H1.jpg";
 import h2 from "../../assets/HousingHome/H2.jpg";
 import h3 from "../../assets/HousingHome/H3.jpg";

@@ -47,10 +47,10 @@ const HomePage: React.FC = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setUserLocation(`${latitude}, ${longitude}`);
+          setUserLocation(`${latitude}, ${longitude}`); // Set user's location
         },
         () => {
-          setUserLocation(null);
+          setUserLocation(null); // If geolocation fails
         }
       );
     }
@@ -75,14 +75,17 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      
-
       {/* Enhanced Hero Section with Images */}
       <section className="relative pt-24 pb-16 bg-gradient-to-br from-orange-500 to-orange-600 overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-orange-400 opacity-20"></div>
-          <div className="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-orange-400 opacity-20"></div>
+        {/* Mobile Menu Toggle */}
+        <div className="absolute top-4 left-4 z-20 lg:hidden">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? (
+              <X className="text-white" size={24} />
+            ) : (
+              <Menu className="text-white" size={24} />
+            )}
+          </button>
         </div>
 
         {/* Left floating image */}
@@ -106,22 +109,6 @@ const HomePage: React.FC = () => {
         {/* Main content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
-            {/* Small floating images */}
-            <div className="absolute -left-16 top-0 hidden xl:block">
-              <img
-                src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400"
-                alt="Food"
-                className="w-32 h-32 object-cover rounded-full shadow-xl transform -rotate-12"
-              />
-            </div>
-            <div className="absolute -right-16 top-0 hidden xl:block">
-              <img
-                src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400"
-                alt="Food"
-                className="w-32 h-32 object-cover rounded-full shadow-xl transform rotate-12"
-              />
-            </div>
-
             <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 text-white">
               Delicious Food,{" "}
               <span className="relative">
@@ -132,7 +119,6 @@ const HomePage: React.FC = () => {
               </span>{" "}
               to Your Door
             </h1>
-            
             <p className="text-xl mb-8 text-orange-100">
               Fresh, tasty meals crafted for busy professionals. Quick delivery, amazing taste.
             </p>
@@ -176,14 +162,12 @@ const HomePage: React.FC = () => {
               )}
             </div>
 
-            {/* Popular cuisines tags */}
-            <div className="mt-8 flex flex-wrap justify-center gap-2">
-              {["Pizza", "Burgers", "Sushi", "Indian", "Italian"].map((cuisine) => (
-                <span key={cuisine} className="px-4 py-1 bg-white/10 rounded-full text-sm text-white">
-                  {cuisine}
-                </span>
-              ))}
-            </div>
+            {/* Display User Location */}
+            {userLocation && (
+              <div className="mt-4 text-white text-lg">
+                <p>Your current location: {userLocation}</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -193,11 +177,11 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-12">Popular Categories</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
+            {[ 
               { title: "Home Foods", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800", desc: "Authentic Home Cooking" },
               { title: "Restaurants", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800", desc: "Top Local Restaurants" },
               { title: "Dine-In", image: "https://images.unsplash.com/photo-1592861956120-e524fc739696?w=800", desc: "Premium Dining Experience" },
-              { title: "Party Orders", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800", desc: "Perfect for Celebrations" },
+              { title: "Party Orders", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800", desc: "Perfect for Celebrations" }
             ].map((category, index) => (
               <div key={index} className="group cursor-pointer" onClick={() => navigate("/restaurant")}>
                 <div className="relative rounded-xl overflow-hidden">
@@ -223,24 +207,9 @@ const HomePage: React.FC = () => {
           <h2 className="text-3xl font-bold text-center mb-12">Featured Dishes</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              {
-                title: "Spinach Pasta",
-                image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800",
-                rating: 4.9,
-                price: "₹299"
-              },
-              {
-                title: "Glazed Donuts",
-                image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800",
-                rating: 4.8,
-                price: "₹199"
-              },
-              {
-                title: "Breakfast Burger",
-                image: "https://images.unsplash.com/photo-1586816001966-79b736744398?w=800",
-                rating: 4.7,
-                price: "₹249"
-              }
+              { title: "Spinach Pasta", image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800", rating: 4.9, price: "₹299" },
+              { title: "Glazed Donuts", image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800", rating: 4.8, price: "₹199" },
+              { title: "Breakfast Burger", image: "https://images.unsplash.com/photo-1586816001966-79b736744398?w=800", rating: 4.7, price: "₹249" }
             ].map((dish, index) => (
               <div key={index} className="group cursor-pointer" onClick={() => navigate("/restaurant")}>
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden transform group-hover:-translate-y-1 transition-all duration-300">
@@ -270,7 +239,9 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-            <DownloadSection/>
+
+      <DownloadSection />
+
       {/* Localities Section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -301,8 +272,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      
     </div>
   );
 };

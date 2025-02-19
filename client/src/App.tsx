@@ -31,12 +31,12 @@ import CartPage from "./pages/DiscountSearch/CartPage";
 import HousingItem from "./pages/Housing/HosuingDetails/HousingItem";
 import HousingHome from "./pages/Housing/HousingHome";
 import { Analytics } from "@vercel/analytics/react";
-import FoodHome from "./components/Foods/FoodHome";
 import EventsHome from "./pages/Events/Home";
 import ExploreEvents from "./pages/Events/ExploreEvents";
 import EventListing from "./pages/Events/EventListing";
 import CartPage1 from "./components/Foods/CartPage1";
 import CartButton from "./components/Foods/CartButton";
+import HomePage from "./components/Foods/FoodHome";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -91,7 +91,7 @@ const App: React.FC = () => {
             <Route path="/cart" element={<CartPage />} />
 
             {/* Food Routes */}
-            <Route path="/foodhome" element={<FoodHome />} />
+            <Route path="/foodhome" element={<HomePage/>} />
             <Route path="/restaurant" element={<RestaurantList />} />
             <Route path="/restaurant/:id" element={<FoodList />} />
             <Route path="/foodvendor" element={<VendorDashboard />} />

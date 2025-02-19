@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Star } from 'lucide-react';
 
 interface ProductTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
-  product: any;
-  specifications: any;
+  product: {
+    description: string;
+    rating: number;
+  };
+  specifications: Record<string, Record<string, string>>;
 }
 
 const ProductTabs: React.FC<ProductTabsProps> = ({
@@ -66,18 +69,21 @@ const ProductTabs: React.FC<ProductTabsProps> = ({
                   <div className="text-sm text-gray-500">out of 5</div>
                 </div>
                 <div className="flex-1">
-                  {[5, 4, 3, 2, 1].map((star) => (
-                    <div key={star} className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">{star}</span>
-                      <Star className="w-4 h-4 text-yellow-400" />
-                      <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                        <div
-                          className="h-full bg-yellow-400 rounded-full"
-                          style={{ width: `${Math.random() * 100}%` }}
-                        />
+                  {[5, 4, 3, 2, 1].map((star) => {
+                    const ratingWidth = useMemo(() => `${Math.random() * 100}%`, []);
+                    return (
+                      <div key={star} className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">{star}</span>
+                        <Star className="w-4 h-4 text-yellow-400" />
+                        <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                          <div
+                            className="h-full bg-yellow-400 rounded-full"
+                            style={{ width: ratingWidth }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>

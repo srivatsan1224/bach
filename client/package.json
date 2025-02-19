@@ -33,7 +33,7 @@
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.1.0",
     "react-toastify": "^11.0.2",
-    "swiper": "^11.2.3",
+    "swiper": "^11.2.4",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
