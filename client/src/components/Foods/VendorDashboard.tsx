@@ -41,7 +41,7 @@ const VendorDashboard: React.FC = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get<Restaurant[]>('http://localhost:5000/api/restaurants');
+        const response = await axios.get<Restaurant[]>('https://bachelors-food-backend.onrender.com/api/restaurants');
         setRestaurants(response.data);
       } catch (error) {
         console.error('Failed to fetch restaurants:', error);
@@ -54,7 +54,7 @@ const VendorDashboard: React.FC = () => {
   // Handle restaurant submission
   const handleAddRestaurant = async () => {
     try {
-      const response = await axios.post<Restaurant>('http://localhost:5000/api/restaurants', restaurant);
+      const response = await axios.post<Restaurant>('https://bachelors-food-backend.onrender.com/api/restaurants', restaurant);
       setRestaurants((prev) => [...prev, response.data]); // Append new restaurant
       setRestaurant({ name: '', address: '', phone: '', rating: 0, image: '' });
       alert(`Restaurant "${response.data.name}" added successfully!`);
@@ -73,7 +73,7 @@ const VendorDashboard: React.FC = () => {
 
     try {
       const response = await axios.post<FoodItem>(
-        `http://localhost:5000/api/restaurants/${selectedRestaurant}/food`,
+        `https://bachelors-food-backend.onrender.com/api/restaurants/${selectedRestaurant}/food`,
         foodItem
       );
       alert(`Food item "${response.data.name}" added successfully!`);

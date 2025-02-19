@@ -179,7 +179,7 @@ export default function EventForm() {
       // Optionally, you might show a loading indicator here
   
       // Post the event data to your backend API endpoint
-      const response = await fetch("http://localhost:3000/events/createEvent", {
+      const response = await fetch("https://bachelors-roshan-backend.onrender.com/events/createEvent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

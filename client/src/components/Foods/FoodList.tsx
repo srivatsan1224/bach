@@ -29,10 +29,10 @@ const FoodList: React.FC = () => {
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const foodResponse = await axios.get<FoodItem[]>(`http://localhost:5000/api/restaurants/${id}/food`);
+        const foodResponse = await axios.get<FoodItem[]>(`https://bachelors-food-backend.onrender.com/api/restaurants/${id}/food`);
         setFoodItems(foodResponse.data);
 
-        const restaurantResponse = await axios.get<{ name: string }>(`http://localhost:5000/api/restaurants/${id}`);
+        const restaurantResponse = await axios.get<{ name: string }>(`https://bachelors-food-backend.onrender.com/api/restaurants/${id}`);
         setRestaurantName(restaurantResponse.data.name);
       } catch (error) {
         console.error("Failed to fetch food items:", error);

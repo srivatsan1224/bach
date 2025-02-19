@@ -21,7 +21,7 @@ const SearchPage: React.FC = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:3000/products/search", {
+      const response = await axios.get("https://bachelors-roshan-backend.onrender.com/products/search", {
         params: {
           search: searchQuery,
           category: selectedCategory,

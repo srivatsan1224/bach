@@ -47,7 +47,7 @@ const PropertyListComp = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:3000/api/properties/sushase74@gmail.com${queryParams}`
+        `https://bachelors-roshan-backend.onrender.com/api/properties/sushase74@gmail.com${queryParams}`
       );
       if (!response.ok) {
         throw new Error(`Failed to fetch properties: ${response.statusText}`);

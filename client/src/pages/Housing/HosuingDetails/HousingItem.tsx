@@ -26,7 +26,7 @@ export const HousingItem: React.FC = () => {
 
       try {
         console.log("Fetching property with ID:", propertyId);
-const response = await fetch(`http://localhost:3000/api/property/${propertyId}`);
+const response = await fetch(`https://bachelors-roshan-backend.onrender.com/api/property/${propertyId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch property: ${response.statusText}`);
         }

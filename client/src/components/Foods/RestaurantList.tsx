@@ -25,7 +25,7 @@ const RestaurantList: React.FC = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get<Restaurant[]>("http://localhost:5000/api/restaurants");
+        const response = await axios.get<Restaurant[]>("https://bachelors-food-backend.onrender.com/api/restaurants");
         // Adding some mock data for demonstration
         const enhancedData = response.data.map(restaurant => ({
           ...restaurant,

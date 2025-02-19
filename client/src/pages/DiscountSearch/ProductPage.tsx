@@ -37,7 +37,7 @@ const ProductPage: React.FC = () => {
 
         // Fetch cart data from backend using the userId (email)
         const response = await axios.get(
-          `http://localhost:3000/user/get?userId=${userId}`
+          `https://bachelors-roshan-backend.onrender.com/user/get?userId=${userId}`
         );
 
         const cartData = response.data.cart || [];
@@ -77,7 +77,7 @@ const ProductPage: React.FC = () => {
     }
 
     try {
-      await axios.post("http://localhost:3000/user/add-to-cart", {
+      await axios.post("https://bachelors-roshan-backend.onrender.com/user/add-to-cart", {
         containerName: "Users",
         userId: user.id,
         product: {

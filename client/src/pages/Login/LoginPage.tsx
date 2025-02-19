@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:3000/user/login", {
+      const response = await axios.post("https://bachelors-roshan-backend.onrender.com/user/login", {
         containerName: "Users",
         email,
         password,
@@ -63,7 +63,7 @@ const LoginPage: React.FC = () => {
         const userData = googleResponse.data;
 
         // Call backend to store user details
-        const backendResponse = await axios.post("http://localhost:3000/user/google-login", {
+        const backendResponse = await axios.post("https://bachelors-roshan-backend.onrender.com/user/google-login", {
           containerName: "Users",
           user: {
             email: userData.email,
