@@ -87,9 +87,9 @@ const AmenitiesForm: React.FC = () => {
             <div className="w-64 bg-teal-50 p-6">
               <nav>
                 <ul className="space-y-4">
-                  {navigationSteps.map((step, index) => (
+                  {navigationSteps.map((step) => (
                     <li
-                      key={step}
+                      key={step} // No need for index, use step as key
                       className={`px-4 py-2 rounded-lg transition-colors ${
                         step === "Amenities"
                           ? "bg-teal-600 text-white font-semibold"
@@ -116,14 +116,14 @@ const AmenitiesForm: React.FC = () => {
                   </label>
                   <div className="flex items-center justify-between px-4 py-2 border border-teal-200 rounded-xl bg-white">
                     <button
-                      onClick={() => setLocalState(prev => ({ ...prev, bathrooms: Math.max(0, prev.bathrooms - 1) }))}
+                      onClick={() => setLocalState(prev => ({ ...prev, bathrooms: Math.max(0, prev.bathrooms - 1) }))} 
                       className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
                     >
                       <Minus className="w-5 h-5" />
                     </button>
                     <span className="text-lg font-medium text-teal-900">{localState.bathrooms}</span>
                     <button
-                      onClick={() => setLocalState(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
+                      onClick={() => setLocalState(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))} 
                       className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
                     >
                       <Plus className="w-5 h-5" />
@@ -138,14 +138,14 @@ const AmenitiesForm: React.FC = () => {
                   </label>
                   <div className="flex items-center justify-between px-4 py-2 border border-teal-200 rounded-xl bg-white">
                     <button
-                      onClick={() => setLocalState(prev => ({ ...prev, balcony: Math.max(0, prev.balcony - 1) }))}
+                      onClick={() => setLocalState(prev => ({ ...prev, balcony: Math.max(0, prev.balcony - 1) }))} 
                       className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
                     >
                       <Minus className="w-5 h-5" />
                     </button>
                     <span className="text-lg font-medium text-teal-900">{localState.balcony}</span>
                     <button
-                      onClick={() => setLocalState(prev => ({ ...prev, balcony: prev.balcony + 1 }))}
+                      onClick={() => setLocalState(prev => ({ ...prev, balcony: prev.balcony + 1 }))} 
                       className="p-1 hover:bg-teal-50 rounded-full text-teal-600"
                     >
                       <Plus className="w-5 h-5" />
@@ -216,7 +216,7 @@ const AmenitiesForm: React.FC = () => {
                 <div className="grid grid-cols-3 gap-4">
                   {amenitiesList.map((amenity) => (
                     <label
-                      key={amenity}
+                      key={amenity} // Using amenity as the key
                       className="flex items-center space-x-3 p-3 border border-teal-200 rounded-xl hover:bg-teal-50 cursor-pointer"
                     >
                       <input

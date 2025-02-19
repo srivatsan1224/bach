@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronDown, ChevronUp, Minus, Plus, MapPin, Calendar, Users, Clock, Star, Shield, Award } from 'lucide-react';
 

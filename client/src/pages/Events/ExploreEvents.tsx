@@ -7,21 +7,35 @@ import CategoryCard from "../../components/EventsComp/CategoryCard";
 import NewsletterSection from "../../components/EventsComp/NewsletterSection";
 import { categories } from "../../data/eventData";
 
-const ExploreEvents = () => {
+// Define Event type with id as string (to match EventProps in EventCard)
+interface Event {
+  id: string; // id is string here
+  title: string;
+  location: string;
+  price: string;
+  rating: number;
+  image: string;
+  date: string;
+  reviews: number;
+  tag: string;
+}
+
+const ExploreEvents: React.FC = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [locationQuery, setLocationQuery] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 200]);
-  const [ratingFilter, setRatingFilter] = useState(0);
-  const [filteredEvents, setFilteredEvents] = useState([]);
-  const [allEvents, setAllEvents] = useState([]);
-  const [showFilters, setShowFilters] = useState(false); // State to toggle filter visibility
+  
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [locationQuery, setLocationQuery] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
+  const [ratingFilter, setRatingFilter] = useState<number>(0);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const [showFilters, setShowFilters] = useState<boolean>(false); // State to toggle filter visibility
 
   useEffect(() => {
     // Fetch all events from the backend on initial load
     const fetchEvents = async () => {
       const response = await fetch("http://localhost:3000/events");
-      const data = await response.json();
+      const data: Event[] = await response.json(); // Type the response data as Event[]
       setAllEvents(data);
       setFilteredEvents(data);
     };
@@ -41,7 +55,7 @@ const ExploreEvents = () => {
 
   // Handle event card click to navigate to event details page
   const handleEventClick = (eventId: string) => {
-    navigate(`/events/${eventId}`);
+    navigate(`/events/${eventId}`); // Use eventId as string
   };
 
   // Filter events based on search query, location query, price, and rating
@@ -118,6 +132,53 @@ const ExploreEvents = () => {
         </div>
       </div>
 
+      {/* Filter Section (conditionally rendered) */}
+      {showFilters && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <div className="bg-white rounded-xl shadow-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Filters</h3>
+
+            {/* Price Range Filter */}
+            <div className="mb-4">
+              <label className="block text-sm text-gray-600 mb-2">Price Range</label>
+              <input
+                type="range"
+                min="0"
+                max="200"
+                value={priceRange[0]}
+                onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
+                className="w-full"
+              />
+              <input
+                type="range"
+                min="0"
+                max="200"
+                value={priceRange[1]}
+                onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                className="w-full"
+              />
+              <div className="flex justify-between">
+                <span>${priceRange[0]}</span>
+                <span>${priceRange[1]}</span>
+              </div>
+            </div>
+
+            {/* Rating Filter */}
+            <div className="mb-4">
+              <label className="block text-sm text-gray-600 mb-2">Rating</label>
+              <input
+                type="number"
+                value={ratingFilter}
+                onChange={(e) => setRatingFilter(Math.max(0, parseInt(e.target.value)))}
+                min="0"
+                max="5"
+                className="w-full border border-gray-200 rounded-xl p-2"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Featured Events Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
         <div className="flex justify-between items-center mb-8">
@@ -127,7 +188,6 @@ const ExploreEvents = () => {
           {filteredEvents.map((event) => (
             <EventCard
               key={event.id}
-
               event={event}
               onClick={() => handleEventClick(event.id)}
             />
@@ -146,7 +206,6 @@ const ExploreEvents = () => {
             <CategoryCard
               key={index}
               category={category}
-              
             />
           ))}
         </div>

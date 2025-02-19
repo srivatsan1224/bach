@@ -14,7 +14,7 @@ import {
   Info,
   Loader2,
 } from "lucide-react";
-import type { EventData } from "./types";
+import type { EventData } from '../data/eventData'
 import { BlobServiceClient } from "@azure/storage-blob";
 
 // Azure Storage configuration

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import { toast } from "react-toastify";
-import { ChevronLeft, Upload, Image as ImageIcon, Check, AlertCircle } from "lucide-react";
+import { ChevronLeft, Upload, Check} from "lucide-react";
 import { BlobServiceClient } from "@azure/storage-blob"; // Azure SDK
 import "react-toastify/dist/ReactToastify.css";
 

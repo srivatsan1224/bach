@@ -18,8 +18,21 @@ const categories = [
   { name: "Education", icon: LucideIcons.GraduationCap, gradient: "from-amber-500 to-orange-500", count: "2.3k events" },
 ];
 
+// Define Event type
+interface Event {
+  id: string; // Event ID (could be a number or string depending on your backend response)
+  title: string;
+  location: string;
+  price: string;
+  rating: number;
+  image: string;
+  date: string;
+  reviews: number;
+  tag: string;
+}
+
 const Index: React.FC = () => {
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]); // Define the state with the correct type
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); // Initialize navigate
 
@@ -28,7 +41,7 @@ const Index: React.FC = () => {
     const fetchUpcomingEvents = async () => {
       try {
         const response = await fetch("http://localhost:3000/events");
-        const data = await response.json();
+        const data: Event[] = await response.json(); // Ensure the data is typed as Event[]
         setUpcomingEvents(data); // Set fetched data into state
       } catch (error) {
         console.error("Error fetching upcoming events:", error);
