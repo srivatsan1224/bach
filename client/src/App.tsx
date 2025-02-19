@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom"; // ❌ Removed BrowserRouter from here
+import { Routes, Route, useLocation } from "react-router-dom"; // Import useLocation here
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FormProvider } from "./pages/Housing/PropertyForm/FormContext";
 import { CartProvider } from "./components/Foods/context/CartContext"; 
@@ -39,7 +39,6 @@ import CartButton from "./components/Foods/CartButton";
 import HomePage from "./components/Foods/FoodHome";
 import EventForm from "./pages/EventForm";
 
-
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
@@ -49,12 +48,17 @@ const App: React.FC = () => {
     return user !== null; // Returns true if user data is present in localStorage
   };
 
+  // Use location to get the current path
+  const location = useLocation();
+
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <Analytics />
       <FormProvider>
-        <CartProvider> {/* ✅ Moved CartProvider outside Routes */}
-          <Navbar />
+        <CartProvider> 
+          {/* Conditionally render Navbar based on the route */}
+          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Navbar />} 
+          
           <Routes>
             {/* Authentication Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -109,7 +113,9 @@ const App: React.FC = () => {
           </Routes>
 
           <CartButton />
-          <Footer />
+          {/* Conditionally render Navbar based on the route */}
+          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Footer />} 
+          
         </CartProvider>
       </FormProvider>
     </GoogleOAuthProvider>
