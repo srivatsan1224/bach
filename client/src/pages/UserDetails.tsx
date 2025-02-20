@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  LogOut, Mail, User, MapPin, Calendar, Edit2, Camera, 
-  Home, Store, Ticket, ShoppingBag, Heart, Clock,
-  Settings, Bell, CreditCard, Building, Utensils, CalendarDays
+  LogOut, Mail, User, MapPin, Calendar,  Camera, 
+  Home,  Ticket, ShoppingBag, Heart, Clock,
+  Settings, Bell, CreditCard, Building, Utensils,
 } from 'lucide-react';
 
 const UserDetails: React.FC = () => {
