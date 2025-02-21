@@ -1,38 +1,45 @@
+import { useNavigate } from "react-router-dom";
 
 const ExclusiveServices = () => {
+    const navigate = useNavigate();
+
   const services = [
     {
       id: 1,
       icon: "📦",
       title: "Packers & Movers",
       label: "Lowest Price",
+      path: "/housinghome/packersandmovers",
     },
     {
       id: 2,
       icon: "💳",
       title: "Pay rent",
       label: "New Offers",
+      path: "/housinghome/payrent",
     },
     {
       id: 3,
       icon: "📜",
       title: "Rental Agreement",
       label: "Flat 30% off",
+      path: "/housinghome/rentalagreement",
     },
     {
       id: 4,
       icon: "💸",
       title: "Click & Earn",
       label: "New",
+      path: "/housinghome/clickandearn",
     },
     {
       id: 5,
       icon: "🖌️",
       title: "Painting & Cleaning",
       label: "New",
+      path: "/housinghome/paintingandcleaning",
     },
   ];
-
   return (
     <div className="w-full bg-gradient-to-br from-white to-gray-50 py-12 md:py-16">
       {/* Title Section */}
@@ -53,6 +60,8 @@ const ExclusiveServices = () => {
             <div 
               key={service.id}
               className="group flex-shrink-0 w-[280px] md:w-[320px] snap-center overflow-hidden hover:shadow-xl transition-all duration-300 rounded-xl bg-white/50 backdrop-blur-sm first:ml-auto last:mr-auto"
+                            onClick={() => navigate(service.path)}
+
             >
               <div className="p-6 md:p-8">
                 <div className="relative flex flex-col items-center">
