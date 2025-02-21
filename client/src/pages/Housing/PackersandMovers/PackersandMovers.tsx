@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Star, Shield, Clock, Users, Check, X, Package, ChevronDown, ChevronUp, Quote } from 'lucide-react';
+import { MapPin, Star, Shield, Clock, Users, Check, X, Package, ChevronDown, ChevronUp } from 'lucide-react';
 
 const PackersMovers = () => {
   const [selectedTab, setSelectedTab] = useState('Within City');
