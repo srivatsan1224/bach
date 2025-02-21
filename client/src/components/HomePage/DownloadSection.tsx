@@ -1,4 +1,4 @@
-import React from "react";
+
 import { motion } from "framer-motion";
 
 const DownloadApp = () => {
@@ -105,7 +105,7 @@ const DownloadApp = () => {
                   className="absolute -bottom-10 -left-10 w-48 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300"
                 />
 
-                {/* In your actual implementation, use these instead of the placeholders:
+               
                 <img
                   src={unsplashImages.mainApp}
                   alt="App Interface"
@@ -115,7 +115,7 @@ const DownloadApp = () => {
                   src={unsplashImages.secondaryApp}
                   alt="App Usage"
                   className="absolute -bottom-10 -left-10 w-48 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300"
-                /> */}
+                /> 
               </div>
               
               {/* Stats Cards */}
