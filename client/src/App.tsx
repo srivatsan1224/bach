@@ -38,6 +38,9 @@ import CartPage1 from "./components/Foods/CartPage1";
 import CartButton from "./components/Foods/CartButton";
 import HomePage from "./components/Foods/FoodHome";
 import EventForm from "./pages/EventForm";
+import PaintingandServices from "./pages/Housing/Painting/PaintingandService";
+import PackersMovers from "./pages/Housing/PackersandMovers/PackersandMovers";
+import Payrent from "./pages/Housing/Payrent/Payrent";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -89,6 +92,11 @@ const App: React.FC = () => {
             <Route path="/propertylist" element={<PropertyList />} />
             <Route path="/housingitem" element={<HousingItem />} />
             <Route path="/housingitem/:propertyId" element={<HousingItem />} />
+             <Route path="/housinghome/paintingandcleaning" element={<PaintingandServices />} />
+            <Route path="/housingitem" element={<HousingItem />} />
+          <Route path="/housinghome/payrent" element={<Payrent />} />
+                    <Route path="/housinghome/packersandmovers" element={<PackersMovers />} />
+
 
             {/* Discount & Shopping Routes */}
             <Route path="/discount" element={<DiscountPage />} />
