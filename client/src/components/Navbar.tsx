@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
-import logo from "../assets/logo.png";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Menu, X, Search, Bell, User, ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const Navbar: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false); // State for Services dropdown
   const [user, setUser] = useState<{ name?: string; picture?: string }>({});
 
-  // Fetch user data on mount
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
     setIsAuthenticated(!!storedUser?.name);
@@ -22,111 +20,205 @@ const Navbar: React.FC = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    navigate("/");
   };
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-
   const closeDropdown = () => setIsDropdownOpen(false);
+  const toggleServicesDropdown = () => setIsServicesDropdownOpen(!isServicesDropdownOpen); // Toggle Services dropdown
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (isDropdownOpen && !(event.target as HTMLElement).closest(".dropdown")) {
         closeDropdown();
       }
+      if (isServicesDropdownOpen && !(event.target as HTMLElement).closest(".services-dropdown")) {
+        setIsServicesDropdownOpen(false); // Close services dropdown if clicked outside
+      }
     };
     document.addEventListener("click", handleOutsideClick);
     return () => document.removeEventListener("click", handleOutsideClick);
-  }, [isDropdownOpen]);
-
-  const showPostFreePropertyButton =
-    location.pathname === "/propertylist" || location.pathname === "/housinghome";
+  }, [isDropdownOpen, isServicesDropdownOpen]);
 
   return (
-    <nav className="bg-white shadow-md flex justify-center relative z-50">
-      <div className="w-[90vw] pr-4 flex justify-between items-center h-16">
-        {/* Logo */}
-        <div>
-          <img
-            src={logo}
-            alt="Bachelors Logo"
-            className="h-20 cursor-pointer"
-            onClick={() => navigate("/")}
-          />
-        </div>
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <span className="text-2xl font-bold bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent">
+                Bachelors
+              </span>
+            </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex items-center space-x-6 relative">
-          {showPostFreePropertyButton && (
-            <Link
-              to="/propertydashboard"
-              className={`px-4 py-2 border rounded-full font-medium transition ${
-                location.pathname === "/propertydashboard"
-                  ? "bg-black text-white"
-                  : "border-black text-black hover:bg-black hover:text-white"
-              }`}
-            >
-              Post Free Property
-            </Link>
-          )}
-          <button
-            onClick={() => navigate("/all-services")}
-            className={`px-4 py-2 border rounded-full font-medium transition ${
-              location.pathname === "/all-services"
-                ? "bg-black text-white"
-                : "border-black text-black hover:bg-black hover:text-white"
-            }`}
-          >
-            All Services
-          </button>
-          {!isAuthenticated ? (
-            <button
-              onClick={() => navigate("/login")}
-              className="px-4 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition"
-            >
-              Login
-            </button>
-          ) : (
-            <div className="relative dropdown">
-              {/* Profile Picture or User Icon */}
-              <div className="cursor-pointer" onClick={toggleDropdown}>
-                {user?.picture ? (
-                  <img
-                    src={user.picture}
-                    alt="User Profile"
-                    className="w-10 h-10 rounded-full border border-gray-300 shadow-md"
-                  />
-                ) : (
-                  <FaUserCircle className="w-10 h-10 text-gray-600" />
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8 relative">
+              <Link to="/" className="text-gray-600 hover:text-emerald-600 transition-colors">Home</Link>
+              <div className="relative">
+                <button
+                  onClick={toggleServicesDropdown}
+                  className="text-gray-600 hover:text-emerald-600 transition-colors"
+                >
+                  Services
+                </button>
+                {isServicesDropdownOpen && (
+                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 services-dropdown">
+                    <Link
+                      to="/housing"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    >
+                      Housing
+                    </Link>
+                    <Link
+                      to="/home-food"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    >
+                      Home Food
+                    </Link>
+                    <Link
+                      to="/jobs"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    >
+                      Jobs
+                    </Link>
+                    <Link
+                      to="/property-rental"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    >
+                      Property Rental
+                    </Link>
+                    <Link
+                      to="/events"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    >
+                      Events
+                    </Link>
+                    <Link
+                      to="/discount-bazaar"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    >
+                      Discount Bazaar
+                    </Link>
+                  </div>
                 )}
               </div>
+              <Link to="/properties" className="text-gray-600 hover:text-emerald-600 transition-colors">Properties</Link>
+              <Link to="/about" className="text-gray-600 hover:text-emerald-600 transition-colors">About</Link>
+              <Link to="/contact" className="text-gray-600 hover:text-emerald-600 transition-colors">Contact</Link>
+            </div>
 
-              {/* Dropdown Menu */}
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 w-40 z-50">
-                  <button
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    onClick={() => {
-                      closeDropdown();
-                      navigate("/profile");
-                    }}
+            {/* Action Buttons */}
+            <div className="hidden md:flex items-center space-x-4">
+              <button className="p-2 text-gray-600 hover:text-emerald-600 transition-colors">
+                <Search className="w-5 h-5" />
+              </button>
+              <button className="p-2 text-gray-600 hover:text-emerald-600 transition-colors">
+                <Bell className="w-5 h-5" />
+              </button>
+              <button className="p-2 text-gray-600 hover:text-emerald-600 transition-colors">
+                <ShoppingCart className="w-5 h-5" />
+              </button>
+              
+              {!isAuthenticated ? (
+                <Link to="/login" className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-full hover:shadow-lg transition-all">
+                  <User className="w-4 h-4" />
+                  <span>Sign In</span>
+                </Link>
+              ) : (
+                <div className="relative dropdown">
+                  <div 
+                    className="cursor-pointer flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-full hover:shadow-lg transition-all" 
+                    onClick={toggleDropdown}
                   >
-                    Profile
-                  </button>
-                  <button
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
+                    {user?.picture ? (
+                      <img
+                        src={user.picture}
+                        alt="User Profile"
+                        className="w-6 h-6 rounded-full"
+                      />
+                    ) : (
+                      <User className="w-4 h-4" />
+                    )}
+                    <span>{user.name || "Profile"}</span>
+                  </div>
+
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        to="/settings"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      >
+                        Settings
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="p-2 text-gray-600 hover:text-emerald-600 transition-colors"
+              >
+                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Menu */}
+          <motion.div
+            initial="closed"
+            animate={isOpen ? "open" : "closed"}
+            variants={{
+              open: { opacity: 1, height: "auto" },
+              closed: { opacity: 0, height: 0 }
+            }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden overflow-hidden"
+          >
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              <Link to="/" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Home</Link>
+              <Link to="/services" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Services</Link>
+              <Link to="/properties" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Properties</Link>
+              <Link to="/about" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">About</Link>
+              <Link to="/contact" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Contact</Link>
+            </div>
+            <div className="px-5 py-3 border-t border-gray-100">
+              {!isAuthenticated ? (
+                <Link to="/login" className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-full hover:shadow-lg transition-all">
+                  <User className="w-4 h-4" />
+                  <span>Sign In</span>
+                </Link>
+              ) : (
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-full hover:shadow-lg transition-all"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              )}
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      {/* Spacer div to prevent content from hiding under navbar */}
+      <div className="h-16" />
+    </>
   );
 };
 

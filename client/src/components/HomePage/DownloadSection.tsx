@@ -1,48 +1,155 @@
-const DownloadSection = () => {
+import React from "react";
+import { motion } from "framer-motion";
+
+const DownloadApp = () => {
+  // In your actual implementation, you can use these Unsplash URLs:
+  const unsplashImages = {
+    mainApp: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80", // Modern phone interface
+    secondaryApp: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=400", // Smaller feature image
+  };
+
   return (
-    <div className="flex m-2 justify-center items-center h-[526px] p-5">
-      <div
-        className="flex w-[1480px] justify-between items-center h-full bg-cover bg-center px-10 rounded-3xl bg-gradient-to-r from-emerald-500 to-teal-600"
-      >
-        {/* Left Text Section */}
-        <div className="flex flex-col justify-center items-start w-1/2">
-          <h1 className="text-4xl font-semibold text-white mb-6">
-            One App, Endless Possibilities –
-            <br /> Download Now!
-          </h1>
-          <div className="flex flex-wrap space-x-4">
-            <a
-              href="#"
-              className="flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-teal-600 font-semibold text-sm tracking-wider uppercase hover:text-teal-700 transition-colors">
+            Download Now
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6 text-gray-900">
+            Experience Innovation
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            Transform your daily routine with our cutting-edge mobile application. 
+            Designed for simplicity, built for excellence.
+          </p>
+        </motion.div>
+
+        <div className="relative rounded-3xl overflow-hidden bg-white shadow-xl">
+          {/* Subtle Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-teal-50 opacity-90" />
+          
+          {/* Main Content */}
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 p-8 md:p-16">
+            {/* Text Content */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-gray-900 max-w-xl"
             >
-              <span className="mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/></svg>
-              </span>
-              <span>Download on the App Store</span>
-            </a>
-            <a
-              href="#"
-              className="flex items-center justify-center bg-white text-black px-6 py-3 rounded-lg shadow-md hover:bg-gray-100 transition-colors"
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Your Digital Lifestyle Companion
+              </h2>
+              <p className="text-gray-600 text-lg mb-8">
+                Access premium features, seamless integration, and personalized experiences. 
+                Join thousands of satisfied users who've elevated their daily routines.
+              </p>
+              
+              <div className="flex flex-wrap gap-4">
+                {/* App Store Button */}
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-3 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-colors"
+                >
+                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                  </svg>
+                  <div className="text-left">
+                    <div className="text-xs opacity-90">Download on the</div>
+                    <div className="text-sm font-semibold">App Store</div>
+                  </div>
+                </motion.button>
+                
+                {/* Play Store Button */}
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-3 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-colors"
+                >
+                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                  </svg>
+                  <div className="text-left">
+                    <div className="text-xs opacity-90">Get it on</div>
+                    <div className="text-sm font-semibold">Google Play</div>
+                  </div>
+                </motion.button>
+              </div>
+            </motion.div>
+            
+            {/* Phone Images & Stats */}
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative"
             >
-              <span className="mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6.2c0-.66.51-1.2 1.14-1.2h15.72c.63 0 1.14.54 1.14 1.2v11.6c0 .66-.51 1.2-1.14 1.2H4.14c-.63 0-1.14-.54-1.14-1.2V6.2Z"/><path d="M3 10.5h18"/></svg>
-              </span>
-              <span>Get it on Google Play</span>
-            </a>
+              <div className="relative">
+                {/* For the artifact, we use placeholders */}
+                <img
+                  src="/api/placeholder/400/600"
+                  alt="App Interface"
+                  className="w-full max-w-sm rounded-2xl shadow-lg transform hover:scale-105 transition-transform duration-300"
+                />
+                <img
+                  src="/api/placeholder/200/300"
+                  alt="App Usage"
+                  className="absolute -bottom-10 -left-10 w-48 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300"
+                />
+
+                {/* In your actual implementation, use these instead of the placeholders:
+                <img
+                  src={unsplashImages.mainApp}
+                  alt="App Interface"
+                  className="w-full max-w-sm rounded-2xl shadow-lg transform hover:scale-105 transition-transform duration-300"
+                />
+                <img
+                  src={unsplashImages.secondaryApp}
+                  alt="App Usage"
+                  className="absolute -bottom-10 -left-10 w-48 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300"
+                /> */}
+              </div>
+              
+              {/* Stats Cards */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="absolute -top-10 -right-10 bg-white/80 backdrop-blur rounded-xl p-4 shadow-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-teal-500" />
+                  <span className="font-medium text-gray-900">50K+ Active Users</span>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="absolute top-1/2 -left-16 bg-white/80 backdrop-blur rounded-xl p-4 shadow-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-teal-500" />
+                  <span className="font-medium text-gray-900">4.9 ★ Rating</span>
+                </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
-
-        {/* Right Image Section */}
-        <div className="w-1/2 flex justify-center">
-          <img
-            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80"
-            alt="Mobile App"
-            className="max-w-md rounded-lg shadow-2xl transform -rotate-12 hover:rotate-0 transition-transform duration-500"
-          />
-        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default DownloadSection;
+export default DownloadApp; 

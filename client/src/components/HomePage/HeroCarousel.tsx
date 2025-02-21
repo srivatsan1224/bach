@@ -2,6 +2,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Building, Star, Users } from "lucide-react";
 
 // Image imports
 import Carousel1 from "../../assets/HomePage/Carousel1.jpg";
@@ -54,8 +56,30 @@ const HeroCarousel = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-center items-center mt-4 bg-gray-50">
-      <div className="w-[90vw] h-[70vh] overflow-hidden rounded-3xl shadow-lg">
+    <>
+    <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="py-6 flex justify-center gap-8 text-gray-600 text-sm"
+        >
+          <span className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-emerald-600" />
+            20k+ Happy Residents
+          </span>
+          <span className="flex items-center gap-2">
+            <Building className="w-4 h-4 text-emerald-600" />
+            500+ Premium Properties
+          </span>
+          <span className="flex items-center gap-2">
+            <Star className="w-4 h-4 text-emerald-600" />
+            4.9 Average Rating
+          </span>
+        </motion.div>
+    <div className="flex flex-col justify-center items-center mt-4 bg-gray-50">
+      <div className="w-[90vw] h-[70vh] overflow-hidden rounded-3xl shadow-lg relative">
+        
+
         <Swiper
           spaceBetween={30}
           slidesPerView={1}
@@ -88,7 +112,7 @@ const HeroCarousel = () => {
                       <path
                         d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"
                         className="fill-gray-800 group-hover:fill-gray-800"
-                      ></path>
+                      />
                     </svg>
                   </button>
                 </div>
@@ -97,7 +121,30 @@ const HeroCarousel = () => {
           ))}
         </Swiper>
       </div>
+
+     
     </div>
+     <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="grid grid-cols-2 md:grid-cols-4 gap-8 py-4 border-t border-gray-100 mt-4"
+      >
+        {[
+          { label: "Premium Properties", value: "2,000+" },
+          { label: "Satisfied Residents", value: "50,000+" },
+          { label: "Cities Available", value: "100+" },
+          { label: "Luxury Partners", value: "200+" }
+        ].map((stat, index) => (
+          <div key={index} className="text-center">
+            <h4 className="text-3xl font-bold text-emerald-700">
+              {stat.value}
+            </h4>
+            <p className="text-gray-600 mt-2">{stat.label}</p>
+          </div>
+        ))}
+      </motion.div>
+      </>
   );
 };
 
