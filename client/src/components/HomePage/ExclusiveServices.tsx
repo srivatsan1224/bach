@@ -113,6 +113,7 @@ const ServicesGrid = () => {
                     {/* Link to navigate to service page */}
                     <Link
                       to={service.route}
+                      onClick={() => window.scrollTo(0, 0)}
                       className="relative z-10 text-emerald-600 font-medium hover:text-emerald-700 transition-colors inline-flex items-center gap-2 group"
                     >
                       Learn More
@@ -138,6 +139,7 @@ const ServicesGrid = () => {
         >
           <Link
             to="/services"
+            onClick={() => window.scrollTo(0, 0)}
             className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full font-medium hover:shadow-lg hover:scale-105 active:scale-100 transition-all duration-300"
           >
             Explore All Services

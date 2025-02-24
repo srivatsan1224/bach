@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useCallback } from "react";
 import h1 from "../../assets/HousingHome/H1.jpg";
 import h2 from "../../assets/HousingHome/H2.jpg";
 import h3 from "../../assets/HousingHome/H3.jpg";
@@ -29,8 +28,12 @@ interface Property {
   };
 }
 
+const PAGE_SIZE = 12; // Adjust number of items per page
+
 const PropertyListComp = () => {
   const [properties, setProperties] = useState<Property[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
@@ -43,30 +46,7 @@ const PropertyListComp = () => {
 
   const placeholders = [h1, h2, h3];
 
-  const fetchProperties = async (queryParams = "") => {
-    try {
-      setLoading(true);
-      // Updated endpoint to fetch all properties
-      const response = await fetch(
-        `https://bachelors-roshan-backend.onrender.com/api/properties${queryParams}`
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch properties: ${response.statusText}`);
-      }
-      const data = await response.json();
-      setProperties(data.properties || []);
-      setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProperties();
-  }, []);
-
-  const applyFilters = () => {
+  const buildQueryParams = (pageNumber = 1) => {
     const filters: Record<string, string> = {};
     if (searchText) filters.searchText = searchText;
     if (availability) filters.availability = availability;
@@ -74,9 +54,55 @@ const PropertyListComp = () => {
     if (furnishing) filters.furnishing = furnishing;
     if (preferredTenants) filters.preferredTenants = preferredTenants;
     if (rentRange) filters.rentRange = rentRange.toString();
+    // Add pagination params
+    filters.limit = PAGE_SIZE.toString();
+    filters.page = pageNumber.toString();
 
-    const queryParams = new URLSearchParams(filters).toString();
-    fetchProperties(`?${queryParams}`);
+    return new URLSearchParams(filters).toString();
+  };
+
+  const fetchProperties = useCallback(async (pageNumber = 1, append = false) => {
+    try {
+      setLoading(true);
+      const queryParams = buildQueryParams(pageNumber);
+      const response = await fetch(
+        `https://bachelors-roshan-backend.onrender.com/api/properties?${queryParams}`
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch properties: ${response.statusText}`);
+      }
+      const data = await response.json();
+      const fetchedProperties = data.properties || [];
+      setProperties((prev) =>
+        append ? [...prev, ...fetchedProperties] : fetchedProperties
+      );
+      // Check if more properties exist (if fewer than PAGE_SIZE returned, assume no more)
+      setHasMore(fetchedProperties.length === PAGE_SIZE);
+      setLoading(false);
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  }, [searchText, availability, propertyType, furnishing, preferredTenants, rentRange]);
+
+  useEffect(() => {
+    // When filters change, reset to page 1 and fetch new data
+    setPage(1);
+    fetchProperties(1, false);
+  }, [fetchProperties]);
+
+  const applyFilters = () => {
+    // Reset to page 1 when filters are applied
+    setPage(1);
+    fetchProperties(1, false);
+  };
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchProperties(nextPage, true);
+    }
   };
 
   const handlePropertyClick = (propertyId: string) => {
@@ -85,10 +111,9 @@ const PropertyListComp = () => {
 
   const handleContactOwner = (email: string) => {
     alert(`Contacting owner at ${email}`);
-    // You can replace this alert with your logic for contacting the owner.
   };
 
-  if (loading) {
+  if (loading && page === 1) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
@@ -112,7 +137,6 @@ const PropertyListComp = () => {
       <div className="bg-white shadow-lg sticky top-0 z-50 transition-all duration-300">
         <div className="container mx-auto py-6 px-4">
           <div className="flex flex-wrap items-center gap-4 max-w-full mx-auto">
-            {/* Combined Search and Filters */}
             <div className="relative flex-grow group">
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-emerald-500 transition-colors"
@@ -211,6 +235,7 @@ const PropertyListComp = () => {
                     placeholders[index % placeholders.length]
                   }
                   alt={property?.propertyDetails?.apartmentType || "Property"}
+                  loading="lazy"
                   className="w-full h-56 object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
@@ -266,6 +291,17 @@ const PropertyListComp = () => {
             </div>
           ))}
         </div>
+
+        {hasMore && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={loadMore}
+              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-medium hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

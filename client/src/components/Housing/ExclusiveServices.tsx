@@ -41,6 +41,12 @@ const ExclusiveServices = () => {
     },
   ];
 
+  const handleClick = (path: string) => {
+    // Scroll to the top before navigating
+    window.scrollTo(0, 0);
+    navigate(path);
+  };
+
   return (
     <div className="w-full bg-gradient-to-br from-white to-gray-50 py-12 md:py-16">
       {/* Title Section */}
@@ -62,7 +68,7 @@ const ExclusiveServices = () => {
             <div
               key={service.id}
               className="group flex-shrink-0 w-full md:w-auto max-w-full md:max-w-[320px] snap-center overflow-hidden hover:shadow-xl transition-all duration-300 rounded-xl bg-white/50 backdrop-blur-sm cursor-pointer"
-              onClick={() => navigate(service.path)}
+              onClick={() => handleClick(service.path)}
             >
               <div className="p-4 md:p-8">
                 <div className="relative flex flex-col items-center">

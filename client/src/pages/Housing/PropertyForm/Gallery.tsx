@@ -92,7 +92,7 @@ const Gallery: React.FC = () => {
         email: user.email,
       };
 
-      const response = await fetch("http://localhost:3000/api/submit-form", {
+      const response = await fetch("https://bachelors-roshan-backend.onrender.com/api/submit-form", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
