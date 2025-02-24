@@ -16,7 +16,7 @@ const port = 5000;
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: 'http://localhost:5174', // Replace with your frontend URL
+    origin: 'https://bachelors-web.vercel.app',  // Replace with your frontend URL
   })
 );
 
