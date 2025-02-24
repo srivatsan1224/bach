@@ -1,7 +1,5 @@
 import React from 'react';
 import { User, Mail, Phone, MapPin, Building2, Calendar } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
 export interface OwnerSidebarProps {
   owner?: {
     name?: string;
@@ -19,7 +17,6 @@ export const OwnerSidebar: React.FC<OwnerSidebarProps> = ({
   owner = { name: "Unknown Owner", email: "unknown@example.com", mobile: "N/A" },
   property = { buildingDescription: "Building details not available", locality: "Location not specified", availableFrom: "N/A" }
 }) => {
-  const navigate = useNavigate();
 
   const handleContact = () => {
     alert(`Contacting owner at ${owner.email}`);
