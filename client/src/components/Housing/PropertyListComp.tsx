@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import h1 from "../../assets/HousingHome/H1.jpg";
 import h2 from "../../assets/HousingHome/H2.jpg";
@@ -46,8 +46,9 @@ const PropertyListComp = () => {
   const fetchProperties = async (queryParams = "") => {
     try {
       setLoading(true);
+      // Updated endpoint to fetch all properties
       const response = await fetch(
-        `https://bachelors-roshan-backend.onrender.com/api/properties/sushase74@gmail.com${queryParams}`
+        `https://bachelors-roshan-backend.onrender.com/api/properties${queryParams}`
       );
       if (!response.ok) {
         throw new Error(`Failed to fetch properties: ${response.statusText}`);
@@ -78,9 +79,10 @@ const PropertyListComp = () => {
     fetchProperties(`?${queryParams}`);
   };
 
-const handlePropertyClick = (propertyId: string) => {
-  navigate(`/housingitem/${propertyId}`);
-};
+  const handlePropertyClick = (propertyId: string) => {
+    navigate(`/housingitem/${propertyId}`);
+  };
+
   const handleContactOwner = (email: string) => {
     alert(`Contacting owner at ${email}`);
     // You can replace this alert with your logic for contacting the owner.

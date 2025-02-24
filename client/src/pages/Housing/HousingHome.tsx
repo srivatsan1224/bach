@@ -1,4 +1,4 @@
-import AppDownloadSection from "../../components/DownloadSection";
+import DownloadApp from "../../components/HomePage/DownloadSection";
 import Carousel from "../../components/Housing/Carousel";
 import ExclusiveServices from "../../components/Housing/ExclusiveServices";
 import HomesNearYou from "../../components/Housing/NearYou";
@@ -12,7 +12,7 @@ export default function HousingHome() {
         <ExclusiveServices/>
         <PostPropertySection/>
         <HomesNearYou/>
-         <AppDownloadSection/>
+        <DownloadApp/>
         <FeaturesSection/>
        
     </div>
