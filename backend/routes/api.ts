@@ -140,22 +140,22 @@ router.post("/submit-form", async (req: Request, res: Response) => {
   }
 });
 
-// Retrieve properties
-router.get("/properties/:email", async (req: Request, res: Response) => {
+// Fetch all properties without filtering by email
+router.get("/properties", async (req: Request, res: Response) => {
   try {
-    const { email } = req.params;
-    if (!email) {
-      res.status(400).json({ message: "Email is required!" });
+    const housingPropertyContainer = await getHousingPropertyContainer();
+    const querySpec = {
+      query: "SELECT * FROM c"
+    };
+
+    const { resources } = await housingPropertyContainer.items.query(querySpec).fetchAll();
+
+    if (!resources || resources.length === 0) {
+      res.status(404).json({ message: "No properties found." });
       return;
     }
 
-    const properties = await getUserProperties(email);
-    if (!properties || properties.length === 0) {
-      res.status(404).json({ message: `No properties found for email: ${email}` });
-      return;
-    }
-
-    res.status(200).json({ properties });
+    res.status(200).json({ properties: resources });
   } catch (error: any) {
     console.error("Error retrieving properties:", error.message);
     res.status(500).json({ message: "Internal server error", error: error.message });
