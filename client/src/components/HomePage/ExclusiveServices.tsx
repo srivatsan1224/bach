@@ -131,7 +131,7 @@ const ServicesGrid = () => {
                       background: `linear-gradient(to top, ${service.hexColor}CC, transparent)`,
                     }}
                   >
-                    {/* Icon in a circular, blurred container */}
+                    {/* Icon in a circular, blurrecontainer */}
                     <div className="bg-white/20 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center mb-1 backdrop-blur-sm">
                       {service.icon}
                     </div>
