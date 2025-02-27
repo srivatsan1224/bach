@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FormProvider } from "./pages/Housing/PropertyForm/FormContext";
-import { CartProvider } from "./components/Foods/context/CartContext"; 
+import { CartProvider } from "./components/Foods/context/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -41,7 +41,8 @@ import EventForm from "./pages/EventForm";
 import PaintingandServices from "./pages/Housing/Painting/PaintingandService";
 import PackersMovers from "./pages/Housing/PackersandMovers/PackersandMovers";
 import Payrent from "./pages/Housing/Payrent/Payrent";
-import ScrollToTop from './pages/ScrollToTop'
+import ScrollToTop from "./pages/ScrollToTop";
+import PostAd from "./pages/Rental/PostAd";// Included from first code
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -60,12 +61,12 @@ const App: React.FC = () => {
       <Analytics />
       <FormProvider>
         <CartProvider>
-          {/* Conditionally render Navbar based on the route */}
+          {/* Conditionally render Navbar */}
           {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Navbar />}
-          
-          {/* ScrollToTop will trigger on every route change */}
+
+          {/* Scroll to Top on Route Change */}
           <ScrollToTop />
-          
+
           <Routes>
             {/* Authentication Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -77,6 +78,7 @@ const App: React.FC = () => {
             {/* Rental & Part-Time Routes */}
             <Route path="/home/rental/*" element={<RentalRoutes />} />
             <Route path="/parttime/*" element={<ParttimeRoutes />} />
+            <Route path="/post-ad" element={<PostAd />} />
 
             {/* User Profile (Protected) */}
             <Route
@@ -86,7 +88,10 @@ const App: React.FC = () => {
 
             {/* Housing Routes */}
             <Route path="/housinghome" element={<HousingHome />} />
-            <Route path="/propertydashboard" element={isAuthenticated() ? <PostProperty /> : <LoginPage />} />
+            <Route
+              path="/propertydashboard"
+              element={isAuthenticated() ? <PostProperty /> : <LoginPage />}
+            />
             <Route path="/propertyform" element={<Main />} />
             <Route path="/propertydetails" element={<PropertyDetailsForm />} />
             <Route path="/locality" element={<LocalityDetailsForm />} />
@@ -97,7 +102,6 @@ const App: React.FC = () => {
             <Route path="/housingitem" element={<HousingItem />} />
             <Route path="/housingitem/:propertyId" element={<HousingItem />} />
             <Route path="/housinghome/paintingandcleaning" element={<PaintingandServices />} />
-            <Route path="/housingitem" element={<HousingItem />} />
             <Route path="/housinghome/payrent" element={<Payrent />} />
             <Route path="/housinghome/packersandmovers" element={<PackersMovers />} />
 
@@ -124,9 +128,9 @@ const App: React.FC = () => {
           </Routes>
 
           <CartButton />
-          {/* Conditionally render Footer based on the route */}
+
+          {/* Conditionally render Footer */}
           {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Footer />}
-          
         </CartProvider>
       </FormProvider>
     </GoogleOAuthProvider>
