@@ -4,21 +4,31 @@ import * as cors from "cors"; // Add CORS middleware
 import categoryRoutes from "./routes/categoryRoutes";
 import itemRoutes from "./routes/itemRoutes";
 import cartRoutes from "./routes/cartRoutes";
-
+import rentalRoutes from "./routes/rentalRoutes";
 // Load environment variables
 dotenv.config();
 
 const app = express();
-
+const allowedOrigins = [
+  "http://localhost:5174", // ✅ Local development
+  "http://localhost:3000", // ✅ If your frontend runs on port 3000
+  "https://bachelors-web.onrender.com" // ✅ Hosted frontend
+];
 // CORS Middleware
 app.use(
   cors({
-    origin: "http://localhost:5174", // Replace with your frontend origin
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`❌ CORS Blocked Request from: ${origin}`); // Debugging log
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
 // Middleware to parse JSON
 app.use(express.json());
 
@@ -26,6 +36,7 @@ app.use(express.json());
 app.use("/api/category", categoryRoutes);
 app.use("/api/item", itemRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/rentals", rentalRoutes);
 
 // 404 Handler for undefined routes
 app.use((_req, res) => {
