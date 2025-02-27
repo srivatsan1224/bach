@@ -5,7 +5,6 @@ import CategoryButton from "./CategoryButtonProps";
 import { MapPin, Search, Bell, MessageCircle, Plus } from "react-feather";
 import DownloadSection from "../../components/HomePage/DownloadSection";
 
-
 import BackgroundImg from "../../assets/RentalImages/background.png";
 import RefrigeratorImg from "../../assets/RentalImages/refrigerator.png";
 import TableImg from "../../assets/RentalImages/table.png";
@@ -16,34 +15,36 @@ import ChairImg from "../../assets/RentalImages/chair.png";
 import "@fontsource/inter";
 import "@fontsource/lato";
 import "@fontsource/montserrat";
+import { useNavigate } from "react-router-dom";
 
 const RentalHome = () => {
+  const navigate = useNavigate();
   const categories = [
     {
       id: 1,
       name: "Furniture",
-      img: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       description: "Quality furniture at affordable prices",
       route: "/home/rental/furniture",
     },
     {
       id: 2,
       name: "Appliances",
-      img: 'https://plus.unsplash.com/premium_photo-1718043036192-b874bb43c64f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      img: "https://plus.unsplash.com/premium_photo-1718043036192-b874bb43c64f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       description: "Quality appliances at affordable prices",
       route: "/home/rental/appliances",
     },
     {
       id: 3,
       name: "Electronics",
-      img: 'https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      img: "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       description: "Quality electronics at affordable prices",
       route: "/home/rental/electronics",
     },
     {
       id: 4,
       name: "Fitness",
-      img: 'https://img.pikbest.com/wp/202408/bodybuilding-equipment-3d-illustration-of-and-dumbbells-on-a-fitness-background-with-room-for-text_9778557.jpg!w700wp',
+      img: "https://img.pikbest.com/wp/202408/bodybuilding-equipment-3d-illustration-of-and-dumbbells-on-a-fitness-background-with-room-for-text_9778557.jpg!w700wp",
       description: "Quality fitness equipment at affordable prices",
       route: "/home/rental/fitness",
     },
@@ -101,21 +102,19 @@ const RentalHome = () => {
   return (
     <div className="font-inter bg-gray-100 min-h-screen">
       {/* Hero Section */}
-     <div
-  className="w-full h-[600px] bg-cover bg-center relative"
-  style={{
-    backgroundImage: `url(${BackgroundImg})`, // Added the closing parenthesis
-  }}
->
-
+      <div
+        className="w-full h-[600px] bg-cover bg-center relative"
+        style={{
+          backgroundImage: `url(${BackgroundImg})`, // Added the closing parenthesis
+        }}
+      >
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30" />
-        
+
         {/* Navigation */}
         <nav className="relative z-10 pt-6">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-8">
-                
                 <div className="hidden md:flex items-center space-x-2">
                   <MapPin className="w-5 h-5 text-white" />
                   <span className="text-white">Bangalore</span>
@@ -129,6 +128,7 @@ const RentalHome = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                  onClick={() => navigate("/post-ad")} // ✅ Navigate on click
                 >
                   <Plus className="w-5 h-5" />
                   <span>Post Ad</span>
@@ -149,9 +149,7 @@ const RentalHome = () => {
             <h2 className="text-5xl font-bold text-white mb-6">
               Rent Furnishings & Appliances with Ease
             </h2>
-            <p className="text-xl text-gray-200 mb-4">
-              Your Home, Simplified.
-            </p>
+            <p className="text-xl text-gray-200 mb-4">Your Home, Simplified.</p>
             <p className="text-lg text-gray-300 mb-8">
               Discover a hassle-free way to furnish your space with our curated
               selection of stylish and affordable rentals.
@@ -184,7 +182,11 @@ const RentalHome = () => {
               key={category.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
+              transition={{
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 100,
+              }}
             >
               <CategoryButton {...category} />
             </motion.div>
@@ -204,7 +206,15 @@ const RentalHome = () => {
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05, type: 'spring', stiffness: 100 }}
+                transition={{
+                  delay: index * 0.05,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+                onClick={() =>
+                  navigate(`/home/rental/${product.category}/${product.id}`)
+                } // ✅ Updated navigation
+                className="cursor-pointer"
               >
                 <LatestProductCard {...product} />
               </motion.div>
@@ -212,7 +222,7 @@ const RentalHome = () => {
           </div>
         </div>
       </section>
-<DownloadSection/>
+      <DownloadSection />
       {/* Testimonials */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
@@ -225,7 +235,11 @@ const RentalHome = () => {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05, type: 'spring', stiffness: 100 }}
+                transition={{
+                  delay: index * 0.05,
+                  type: "spring",
+                  stiffness: 100,
+                }}
               >
                 <TestimonialCard {...testimonial} />
               </motion.div>

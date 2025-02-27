@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom"; // Import useLocation here
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FormProvider } from "./pages/Housing/PropertyForm/FormContext";
-import { CartProvider } from "./components/Foods/context/CartContext"; 
+import { CartProvider } from "./components/Foods/context/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -41,7 +41,8 @@ import EventForm from "./pages/EventForm";
 import PaintingandServices from "./pages/Housing/Painting/PaintingandService";
 import PackersMovers from "./pages/Housing/PackersandMovers/PackersandMovers";
 import Payrent from "./pages/Housing/Payrent/Payrent";
-
+import PostAd from "./pages/Rental/PostAd";
+import ItemDetailsDisplay from "./components/Rental/ItemDetailsDisplay";
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
@@ -58,10 +59,11 @@ const App: React.FC = () => {
     <GoogleOAuthProvider clientId={clientId}>
       <Analytics />
       <FormProvider>
-        <CartProvider> 
+        <CartProvider>
           {/* Conditionally render Navbar based on the route */}
-          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Navbar />} 
-          
+          {location.pathname !== "/login" &&
+            location.pathname !== "/SignUp" && <Navbar />}
+
           <Routes>
             {/* Authentication Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -72,6 +74,8 @@ const App: React.FC = () => {
 
             {/* Rental & Part-Time Routes */}
             <Route path="/home/rental/*" element={<RentalRoutes />} />
+            <Route path="/post-ad" element={<PostAd />} />
+
             <Route path="/parttime/*" element={<ParttimeRoutes />} />
 
             {/* User Profile (Protected) */}
@@ -82,7 +86,10 @@ const App: React.FC = () => {
 
             {/* Housing Routes */}
             <Route path="/housinghome" element={<HousingHome />} />
-            <Route path="/propertydashboard" element={isAuthenticated() ? <PostProperty /> : <LoginPage />} />
+            <Route
+              path="/propertydashboard"
+              element={isAuthenticated() ? <PostProperty /> : <LoginPage />}
+            />
             <Route path="/propertyform" element={<Main />} />
             <Route path="/propertydetails" element={<PropertyDetailsForm />} />
             <Route path="/locality" element={<LocalityDetailsForm />} />
@@ -92,11 +99,16 @@ const App: React.FC = () => {
             <Route path="/propertylist" element={<PropertyList />} />
             <Route path="/housingitem" element={<HousingItem />} />
             <Route path="/housingitem/:propertyId" element={<HousingItem />} />
-             <Route path="/housinghome/paintingandcleaning" element={<PaintingandServices />} />
+            <Route
+              path="/housinghome/paintingandcleaning"
+              element={<PaintingandServices />}
+            />
             <Route path="/housingitem" element={<HousingItem />} />
-          <Route path="/housinghome/payrent" element={<Payrent />} />
-                    <Route path="/housinghome/packersandmovers" element={<PackersMovers />} />
-
+            <Route path="/housinghome/payrent" element={<Payrent />} />
+            <Route
+              path="/housinghome/packersandmovers"
+              element={<PackersMovers />}
+            />
 
             {/* Discount & Shopping Routes */}
             <Route path="/discount" element={<DiscountPage />} />
@@ -105,7 +117,7 @@ const App: React.FC = () => {
             <Route path="/cart" element={<CartPage />} />
 
             {/* Food Routes */}
-            <Route path="/foodhome" element={<HomePage/>} />
+            <Route path="/foodhome" element={<HomePage />} />
             <Route path="/restaurant" element={<RestaurantList />} />
             <Route path="/restaurant/:id" element={<FoodList />} />
             <Route path="/foodvendor" element={<VendorDashboard />} />
@@ -117,13 +129,13 @@ const App: React.FC = () => {
             <Route path="/eventshome" element={<EventsHome />} />
             <Route path="/explore-events" element={<ExploreEvents />} />
             <Route path="/events/:id" element={<EventListing />} />
-            <Route path="/eventsForm" element={<EventForm/>}/>
+            <Route path="/eventsForm" element={<EventForm />} />
           </Routes>
 
           <CartButton />
           {/* Conditionally render Navbar based on the route */}
-          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Footer />} 
-          
+          {location.pathname !== "/login" &&
+            location.pathname !== "/SignUp" && <Footer />}
         </CartProvider>
       </FormProvider>
     </GoogleOAuthProvider>
