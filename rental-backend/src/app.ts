@@ -12,7 +12,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5174", // ✅ Local development
   "http://localhost:3000", // ✅ If your frontend runs on port 3000
-  "https://bachelors-web.onrender.com" // ✅ Hosted frontend
+  "https://bachelors-web.vercel.app" // ✅ Hosted frontend
 ];
 // CORS Middleware
 app.use(
