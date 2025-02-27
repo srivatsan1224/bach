@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaStar, FaMapMarkerAlt, FaHeart, FaSearch } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
 import axios from "axios";
+import FoodLoader from './FoodLoader';
 
 interface Restaurant {
   id: string;
@@ -16,31 +17,89 @@ interface Restaurant {
   priceRange?: string;
 }
 
+// Cache expiration time (in milliseconds) - 1 hour
+const CACHE_EXPIRATION = 60 * 60 * 1000;
+
 const RestaurantList: React.FC = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCuisine, setSelectedCuisine] = useState("all");
+  const [isLoading, setIsLoading] = useState(true);
+  const [favoriteRestaurants, setFavoriteRestaurants] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
 
+  // Load favorites from localStorage on component mount
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const response = await axios.get<Restaurant[]>("https://bachelors-food-backend.onrender.com/api/restaurants");
-        // Adding some mock data for demonstration
-        const enhancedData = response.data.map(restaurant => ({
-          ...restaurant,
-          cuisine: ["Italian", "Japanese", "Indian", "Mexican"][Math.floor(Math.random() * 4)],
-          deliveryTime: `${15 + Math.floor(Math.random() * 30)} mins`,
-          priceRange: ["$", "$$", "$$$"][Math.floor(Math.random() * 3)]
-        }));
-        setRestaurants(enhancedData);
-      } catch (error) {
-        console.error("Failed to fetch restaurants:", error);
-      }
-    };
-
-    fetchRestaurants();
+    const savedFavorites = localStorage.getItem('restaurantFavorites');
+    if (savedFavorites) {
+      setFavoriteRestaurants(new Set(JSON.parse(savedFavorites)));
+    }
   }, []);
+
+  // Save favorites to localStorage whenever they change
+  useEffect(() => {
+    if (favoriteRestaurants.size > 0) {
+      localStorage.setItem('restaurantFavorites', JSON.stringify([...favoriteRestaurants]));
+    }
+  }, [favoriteRestaurants]);
+
+  const toggleFavorite = (e: React.MouseEvent, restaurantId: string) => {
+    e.stopPropagation(); // Prevent navigation when clicking the heart icon
+    
+    const newFavorites = new Set(favoriteRestaurants);
+    if (favoriteRestaurants.has(restaurantId)) {
+      newFavorites.delete(restaurantId);
+    } else {
+      newFavorites.add(restaurantId);
+    }
+    setFavoriteRestaurants(newFavorites);
+  };
+
+  const fetchRestaurants = useCallback(async () => {
+    setIsLoading(true);
+    
+    try {
+      // Check if we have cached data
+      const cachedData = localStorage.getItem('restaurants');
+      const cacheTimestamp = localStorage.getItem('restaurantsCache_timestamp');
+      
+      const now = new Date().getTime();
+      const isCacheValid = cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_EXPIRATION;
+      
+      if (cachedData && isCacheValid) {
+        // Use cached data
+        setRestaurants(JSON.parse(cachedData));
+        setIsLoading(false);
+        return;
+      }
+      
+      // Fetch fresh data
+      const response = await axios.get<Restaurant[]>("https://bachelors-food-backend.onrender.com/api/restaurants");
+      
+      // Adding some mock data for demonstration
+      const enhancedData = response.data.map(restaurant => ({
+        ...restaurant,
+        cuisine: ["Italian", "Japanese", "Indian", "Mexican"][Math.floor(Math.random() * 4)],
+        deliveryTime: `${15 + Math.floor(Math.random() * 30)} mins`,
+        priceRange: ["$", "$$", "$$$"][Math.floor(Math.random() * 3)]
+      }));
+      
+      // Update state
+      setRestaurants(enhancedData);
+      
+      // Cache the data
+      localStorage.setItem('restaurants', JSON.stringify(enhancedData));
+      localStorage.setItem('restaurantsCache_timestamp', now.toString());
+    } catch (error) {
+      console.error("Failed to fetch restaurants:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, [fetchRestaurants]);
 
   const filteredRestaurants = restaurants.filter(restaurant => {
     const matchesSearch = restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -51,6 +110,17 @@ const RestaurantList: React.FC = () => {
 
   const cuisines = ["all", ...new Set(restaurants.map(r => r.cuisine || ""))];
 
+  // Function to refresh data manually
+  const handleRefresh = () => {
+    // Clear the cache timestamps to force a fresh fetch
+    localStorage.removeItem('restaurantsCache_timestamp');
+    fetchRestaurants();
+  };
+
+  if (isLoading) {
+    return <FoodLoader />;
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header Section */}
@@ -58,9 +128,18 @@ const RestaurantList: React.FC = () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Discover Amazing Restaurants
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-gray-600 mb-4">
           Find and explore the best restaurants in your area
         </p>
+        <button 
+          onClick={handleRefresh}
+          className="text-sm text-orange-500 hover:text-orange-600 flex items-center mx-auto"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh restaurant list
+        </button>
       </div>
 
       {/* Search and Filter Section */}
@@ -109,9 +188,15 @@ const RestaurantList: React.FC = () => {
                 src={restaurant.image}
                 alt={restaurant.name}
                 className="w-full h-48 object-cover transition-transform group-hover:scale-105"
+                loading="lazy" // Add lazy loading for images
               />
-              <button className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors">
-                <FaHeart className="text-gray-600 hover:text-red-500 transition-colors" />
+              <button 
+                className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
+                onClick={(e) => toggleFavorite(e, restaurant.id)}
+              >
+                <FaHeart className={`transition-colors ${
+                  favoriteRestaurants.has(restaurant.id) ? "text-red-500" : "text-gray-600 hover:text-red-500"
+                }`} />
               </button>
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
                 <div className="flex items-center space-x-1">
