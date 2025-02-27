@@ -83,39 +83,29 @@ export const getJobsFromDatabase = async ({
   
   export const getJobFromDatabaseById = async (
     id: string,
-    partitionKey?: string // Optional partition key
+    partitionKey?: string // Partition key (location)
   ): Promise<Job | null> => {
     try {
-      //console.log("Fetching Job - ID:", id, "Partition Key:", partitionKey);
-  
-      let response;
-  
-      // If partition key is provided, fetch with it
-      if (partitionKey) {
-        response = await container.item(id, partitionKey).read();
-      } else {
-        // If partition key is not provided, use a query to find the job
-        const query = {
-          query: "SELECT * FROM c WHERE c.id = @id",
-          parameters: [{ name: "@id", value: id }],
-        };
-  
-        const { resources } = await container.items.query(query).fetchAll();
-        response = resources.length > 0 ? resources[0] : null;
+      if (!partitionKey) {
+        console.error(`Partition key is required for efficient lookup. Job ID: ${id}`);
+        return null;
       }
   
-      if (!response) {
+      // Fast lookup using partition key (Optimized)
+      const { resource } = await container.item(id, partitionKey).read();
+  
+      if (!resource) {
         console.log("Error: Job not found in database for ID:", id);
         return null;
       }
   
-      //console.log("Fetched Job from database:", response);
-      return response as Job;
+      return resource as Job;
     } catch (error) {
       console.error("Error in getJobFromDatabaseById:", error);
       throw error;
     }
   };
+  
   
   
   export const deleteJobFromDatabaseById = async (id: string, location: string): Promise<boolean> => {

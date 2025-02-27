@@ -44,7 +44,11 @@ const JobDetailsPage: React.FC = () => {
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-        const response = await parttimeApiService.get(`/jobs/${id}`);
+        if (!id || !job?.location) return; // Ensure `id` and `location` exist
+
+        const response = await parttimeApiService.get(
+          `/jobs/${id}?location=${job.location}`
+        );
         setJob(response.data.data);
       } catch (error) {
         console.error("Error fetching job details:", error);
@@ -55,7 +59,7 @@ const JobDetailsPage: React.FC = () => {
     };
 
     fetchJobDetails();
-  }, [id]);
+  }, [id, job?.location]); // Ensure re-fetch when `id` or `location` changes
 
   if (loading) {
     return (

@@ -88,34 +88,34 @@ export const createJob = async (req: Request, res: Response): Promise<void> => {
   export const getJobById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
+      const { location } = req.query; // Ensure location is received
   
-      if (!id) {
-        res.status(400).json({ message: "Job ID is required." });
-        return; // Explicitly exit the function
+      if (!id || !location) {
+        res.status(400).json({ message: "Job ID and location (partition key) are required." });
+        return;
       }
   
-      const job = await getJobFromDatabaseById(id);
+      const job = await getJobFromDatabaseById(id, location as string);
   
       if (!job) {
         res.status(404).json({ message: "Job not found." });
-        return; // Explicitly exit the function
+        return;
       }
   
       res.status(200).json({
         message: "Job retrieved successfully",
         data: job,
       });
-      return; // Exit after successful response
     } catch (error) {
       console.error("Error in getJobById:", error);
-  
       res.status(500).json({
         message: "Failed to retrieve job",
         error: error instanceof Error ? error.message : "Unknown error occurred",
       });
-      return; // Exit after error response
     }
   };
+  
+  
   
   export const deleteJobById = async (req: Request, res: Response): Promise<void> => {
     try {
