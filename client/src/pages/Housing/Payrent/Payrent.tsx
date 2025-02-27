@@ -24,10 +24,10 @@ function Payrent() {
   return (
     <div className="min-h-screen bg-[#3949AB]">
       <div className="p-4 md:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-        {/* Left Section */}
+        {/* Left Secton */}
         <div className="w-full lg:flex-1">
           <h1 className="text-white text-2xl md:text-3xl font-bold mb-4 md:mb-6">Pay Rent and Fees with Credit Card</h1>
-          
+
           <div className="flex items-center gap-2 text-white mb-6 md:mb-8">
             <Shield size={20} />
             <span className="text-sm md:text-base">Lowest Charges. Instant Transfers.</span>
@@ -157,7 +157,7 @@ function Payrent() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Payment Type</label>
               <div className="relative">
-                <select 
+                <select
                   className="w-full p-2.5 border rounded-lg appearance-none pr-10"
                   value={paymentType}
                   onChange={(e) => setPaymentType(e.target.value)}
@@ -172,7 +172,7 @@ function Payrent() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-              <input 
+              <input
                 type="text"
                 placeholder="Enter your name"
                 className="w-full p-2.5 border rounded-lg"
@@ -185,7 +185,7 @@ function Payrent() {
                 <select className="border rounded-l-lg px-2 bg-gray-50">
                   <option>+91</option>
                 </select>
-                <input 
+                <input
                   type="tel"
                   placeholder="Enter phone number"
                   className="flex-1 p-2.5 border border-l-0 rounded-r-lg"
@@ -207,7 +207,7 @@ function Payrent() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
-              <input 
+              <input
                 type="email"
                 placeholder="Enter email address"
                 className="w-full p-2.5 border rounded-lg"
@@ -215,7 +215,7 @@ function Payrent() {
             </div>
 
             <div className="flex items-start gap-2">
-              <input 
+              <input
                 type="checkbox"
                 id="terms"
                 className="mt-1"
@@ -225,7 +225,7 @@ function Payrent() {
               </label>
             </div>
 
-            <button 
+            <button
               className="w-full bg-pink-400 text-white py-3 rounded-lg font-medium hover:bg-pink-500 transition-colors"
             >
               Get Started
