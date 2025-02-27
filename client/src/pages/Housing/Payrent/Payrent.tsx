@@ -11,7 +11,7 @@ import {
   Building2,
   Clock,
   Receipt,
-  PiggyBank,
+
   CreditCard as CardIcon,
   FileText,
   Wallet,
