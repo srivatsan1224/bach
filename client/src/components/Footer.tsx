@@ -40,7 +40,7 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Product Links */}
+        {/* Product Link */}
         <div>
           <h3 className="text-lg font-semibold mb-4">Product</h3>
           <ul className="space-y-2">
