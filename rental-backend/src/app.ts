@@ -13,7 +13,7 @@ const app = express();
 // CORS Middleware
 app.use(
   cors({
-    origin: "http://localhost:5174", // Replace with your frontend origin
+    origin: "https://bachelors-web.onrender.com/", // Replace with your frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
