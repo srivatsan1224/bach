@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaStar, FaHeart, FaSearch } from "react-icons/fa";
 import { IoRestaurant } from "react-icons/io5";
 import axios from "axios";
 import { useCart } from './context/CartContext';
+import FoodLoader from './FoodLoader';
 
 interface FoodItem {
   id: string;
@@ -13,8 +14,15 @@ interface FoodItem {
   cost: number;
   rating: number;
   ingredients: string;
-  category: string;  // Added category field
+  category: string;
 }
+
+interface RestaurantInfo {
+  name: string;
+}
+
+// Cache expiration time (in milliseconds) - 30 minutes
+const CACHE_EXPIRATION = 30 * 60 * 1000;
 
 const FoodList: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,23 +32,68 @@ const FoodList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceFilter, setPriceFilter] = useState("all");
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
   const { dispatch } = useCart();
 
+  // Load favorites from localStorage on component mount
   useEffect(() => {
-    const fetchFoodItems = async () => {
-      try {
-        const foodResponse = await axios.get<FoodItem[]>(`https://bachelors-food-backend.onrender.com/api/restaurants/${id}/food`);
-        setFoodItems(foodResponse.data);
+    const savedFavorites = localStorage.getItem('foodFavorites');
+    if (savedFavorites) {
+      setFavorites(new Set(JSON.parse(savedFavorites)));
+    }
+  }, []);
 
-        const restaurantResponse = await axios.get<{ name: string }>(`https://bachelors-food-backend.onrender.com/api/restaurants/${id}`);
-        setRestaurantName(restaurantResponse.data.name);
-      } catch (error) {
-        console.error("Failed to fetch food items:", error);
+  // Save favorites to localStorage whenever they change
+  useEffect(() => {
+    if (favorites.size > 0) {
+      localStorage.setItem('foodFavorites', JSON.stringify([...favorites]));
+    }
+  }, [favorites]);
+
+  const fetchFoodItems = useCallback(async () => {
+    if (!id) return;
+    
+    setIsLoading(true);
+    
+    try {
+      // Check if we have cached data
+      const cachedData = localStorage.getItem(`foodItems_${id}`);
+      const cachedRestaurant = localStorage.getItem(`restaurant_${id}`);
+      const cacheTimestamp = localStorage.getItem(`foodCache_timestamp_${id}`);
+      
+      const now = new Date().getTime();
+      const isCacheValid = cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_EXPIRATION;
+      
+      if (cachedData && cachedRestaurant && isCacheValid) {
+        // Use cached data
+        setFoodItems(JSON.parse(cachedData));
+        setRestaurantName(JSON.parse(cachedRestaurant).name);
+        setIsLoading(false);
+        return;
       }
-    };
-
-    fetchFoodItems();
+      
+      // Fetch fresh datafood
+      const foodResponse = await axios.get<FoodItem[]>(`https://bachelors-food-backend.onrender.com/api/restaurants/${id}/food`);
+      const restaurantResponse = await axios.get<RestaurantInfo>(`https://bachelors-food-backend.onrender.com/api/restaurants/${id}/food`);
+      
+      // Update state
+      setFoodItems(foodResponse.data);
+      setRestaurantName(restaurantResponse.data.name);
+      
+      // Cache the data
+      localStorage.setItem(`foodItems_${id}`, JSON.stringify(foodResponse.data));
+      localStorage.setItem(`restaurant_${id}`, JSON.stringify(restaurantResponse.data));
+      localStorage.setItem(`foodCache_timestamp_${id}`, now.toString());
+    } catch (error) {
+      console.error("Failed to fetch food items:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    fetchFoodItems();
+  }, [fetchFoodItems]);
 
   const handleAddToCart = (item: FoodItem) => {
     dispatch({
@@ -77,6 +130,10 @@ const FoodList: React.FC = () => {
                         (priceFilter === "high" && item.cost > 600);
     return matchesSearch && matchesCategory && matchesPrice;
   });
+
+  if (isLoading) {
+    return <FoodLoader />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -154,6 +211,7 @@ const FoodList: React.FC = () => {
                   src={item.image}
                   alt={item.name}
                   className="w-full h-48 object-cover transition-transform group-hover:scale-105"
+                  loading="lazy" // Add lazy loading for images
                 />
                 <button
                   onClick={(e) => {
