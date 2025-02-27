@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom"; // Import useLocation here
+import { Routes, Route, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FormProvider } from "./pages/Housing/PropertyForm/FormContext";
 import { CartProvider } from "./components/Foods/context/CartContext"; 
@@ -41,6 +41,7 @@ import EventForm from "./pages/EventForm";
 import PaintingandServices from "./pages/Housing/Painting/PaintingandService";
 import PackersMovers from "./pages/Housing/PackersandMovers/PackersandMovers";
 import Payrent from "./pages/Housing/Payrent/Payrent";
+import ScrollToTop from './pages/ScrollToTop'
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -58,9 +59,12 @@ const App: React.FC = () => {
     <GoogleOAuthProvider clientId={clientId}>
       <Analytics />
       <FormProvider>
-        <CartProvider> 
+        <CartProvider>
           {/* Conditionally render Navbar based on the route */}
-          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Navbar />} 
+          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Navbar />}
+          
+          {/* ScrollToTop will trigger on every route change */}
+          <ScrollToTop />
           
           <Routes>
             {/* Authentication Routes */}
@@ -92,11 +96,10 @@ const App: React.FC = () => {
             <Route path="/propertylist" element={<PropertyList />} />
             <Route path="/housingitem" element={<HousingItem />} />
             <Route path="/housingitem/:propertyId" element={<HousingItem />} />
-             <Route path="/housinghome/paintingandcleaning" element={<PaintingandServices />} />
+            <Route path="/housinghome/paintingandcleaning" element={<PaintingandServices />} />
             <Route path="/housingitem" element={<HousingItem />} />
-          <Route path="/housinghome/payrent" element={<Payrent />} />
-                    <Route path="/housinghome/packersandmovers" element={<PackersMovers />} />
-
+            <Route path="/housinghome/payrent" element={<Payrent />} />
+            <Route path="/housinghome/packersandmovers" element={<PackersMovers />} />
 
             {/* Discount & Shopping Routes */}
             <Route path="/discount" element={<DiscountPage />} />
@@ -105,7 +108,7 @@ const App: React.FC = () => {
             <Route path="/cart" element={<CartPage />} />
 
             {/* Food Routes */}
-            <Route path="/foodhome" element={<HomePage/>} />
+            <Route path="/foodhome" element={<HomePage />} />
             <Route path="/restaurant" element={<RestaurantList />} />
             <Route path="/restaurant/:id" element={<FoodList />} />
             <Route path="/foodvendor" element={<VendorDashboard />} />
@@ -117,12 +120,12 @@ const App: React.FC = () => {
             <Route path="/eventshome" element={<EventsHome />} />
             <Route path="/explore-events" element={<ExploreEvents />} />
             <Route path="/events/:id" element={<EventListing />} />
-            <Route path="/eventsForm" element={<EventForm/>}/>
+            <Route path="/eventsForm" element={<EventForm />} />
           </Routes>
 
           <CartButton />
-          {/* Conditionally render Navbar based on the route */}
-          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Footer />} 
+          {/* Conditionally render Footer based on the route */}
+          {location.pathname !== "/login" && location.pathname !== "/SignUp" && <Footer />}
           
         </CartProvider>
       </FormProvider>

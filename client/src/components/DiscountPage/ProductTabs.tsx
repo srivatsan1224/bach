@@ -19,13 +19,13 @@ const ProductTabs: React.FC<ProductTabsProps> = ({
 }) => {
   return (
     <div className="border-t">
-      <div className="p-6 lg:p-8">
-        <div className="flex gap-8 border-b">
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-wrap gap-4 border-b">
           {["description", "specifications", "reviews"].map((tab) => (
             <button
               key={tab}
               onClick={() => onTabChange(tab)}
-              className={`pb-4 text-sm font-medium capitalize ${
+              className={`pb-2 sm:pb-4 text-sm font-medium capitalize ${
                 activeTab === tab
                   ? 'border-b-2 border-indigo-600 text-indigo-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -36,7 +36,7 @@ const ProductTabs: React.FC<ProductTabsProps> = ({
           ))}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4 sm:mt-6">
           {activeTab === "description" && (
             <div className="prose max-w-none">
               <p className="text-gray-600 leading-relaxed">{product.description}</p>
@@ -63,12 +63,14 @@ const ProductTabs: React.FC<ProductTabsProps> = ({
 
           {activeTab === "reviews" && (
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-gray-900">{product.rating}</div>
+                  <div className="text-4xl sm:text-5xl font-bold text-gray-900">
+                    {product.rating}
+                  </div>
                   <div className="text-sm text-gray-500">out of 5</div>
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 w-full">
                   {[5, 4, 3, 2, 1].map((star) => {
                     const ratingWidth = useMemo(() => `${Math.random() * 100}%`, []);
                     return (

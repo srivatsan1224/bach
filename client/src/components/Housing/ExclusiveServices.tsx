@@ -18,20 +18,8 @@ const ExclusiveServices = () => {
       label: "New Offers",
       path: "/housinghome/payrent",
     },
-    {
-      id: 3,
-      icon: "📜",
-      title: "Rental Agreement",
-      label: "Flat 30% off",
-      path: "/housinghome/rentalagreement",
-    },
-    {
-      id: 4,
-      icon: "💸",
-      title: "Click & Earn",
-      label: "New",
-      path: "/housinghome/clickandearn",
-    },
+ 
+   
     {
       id: 5,
       icon: "🖌️",
