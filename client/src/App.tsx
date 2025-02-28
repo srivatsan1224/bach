@@ -42,7 +42,8 @@ import PaintingandServices from "./pages/Housing/Painting/PaintingandService";
 import PackersMovers from "./pages/Housing/PackersandMovers/PackersandMovers";
 import Payrent from "./pages/Housing/Payrent/Payrent";
 import ScrollToTop from "./pages/ScrollToTop";
-import PostAd from "./pages/Rental/PostAd";// Included from first code
+import PostAd from "./pages/Rental/PostAd";
+import AboutUs from "./components/AboutUs";
 
 const App: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -119,6 +120,7 @@ const App: React.FC = () => {
             <Route path="/filters" element={<FiltersPage />} />
             <Route path="/restaurant1/:id" element={<RestaurantDetails />} />
             <Route path="/cart1" element={<CartPage1 />} />
+            <Route path="/about" element={<AboutUs />} />
 
             {/* Event Routes */}
             <Route path="/eventshome" element={<EventsHome />} />

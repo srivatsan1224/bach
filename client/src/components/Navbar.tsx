@@ -24,7 +24,6 @@ const Navbar = () => {
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
-  const toggleServicesDropdown = () => setIsServicesDropdownOpen(!isServicesDropdownOpen); // Toggle Services dropdown
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -54,57 +53,14 @@ const Navbar = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8 relative">
               <Link to="/" className="text-gray-600 hover:text-emerald-600 transition-colors">Home</Link>
-              <div className="relative">
-                <button
-                  onClick={toggleServicesDropdown}
-                  className="text-gray-600 hover:text-emerald-600 transition-colors"
-                >
-                  Services
-                </button>
-                {isServicesDropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 services-dropdown">
-                    <Link
-                      to="/housing"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    >
-                      Housing
-                    </Link>
-                    <Link
-                      to="/home-food"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    >
-                      Home Food
-                    </Link>
-                    <Link
-                      to="/jobs"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    >
-                      Jobs
-                    </Link>
-                    <Link
-                      to="/property-rental"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    >
-                      Property Rental
-                    </Link>
-                    <Link
-                      to="/events"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    >
-                      Events
-                    </Link>
-                    <Link
-                      to="/discount-bazaar"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                    >
-                      Discount Bazaar
-                    </Link>
-                  </div>
-                )}
-              </div>
-              <Link to="/properties" className="text-gray-600 hover:text-emerald-600 transition-colors">Properties</Link>
+      <a
+    href="/#exclusive-services"
+    className="text-gray-600 hover:text-emerald-600 transition-colors"
+  >
+    Services
+  </a>
               <Link to="/about" className="text-gray-600 hover:text-emerald-600 transition-colors">About</Link>
-              <Link to="/contact" className="text-gray-600 hover:text-emerald-600 transition-colors">Contact</Link>
+              <a href="/#footer" className="text-gray-600 hover:text-emerald-600 transition-colors">Contact</a>
             </div>
 
             {/* Action Buttons */}
