@@ -1,4 +1,4 @@
-import { container } from "../utils/dbClient";
+import { jobContainer as container } from "../utils/dbClient";
 import { Job } from "../models/jobModel";
 interface GetJobsParams {
     page: number;
@@ -108,19 +108,19 @@ export const getJobsFromDatabase = async ({
   
   
   
-  export const deleteJobFromDatabaseById = async (id: string, location: string): Promise<boolean> => {
-    try {
-      //console.log("Deleting job - ID:", id, "Partition Key (Location):", location);
-  
-      const { resource } = await container.item(id, location).delete(); // Pass both id and partition key
-      //console.log("Job deleted successfully:", resource);
-  
-      return true; // Job successfully deleted
-    } catch (error) {
-      console.error("Error deleting job:", error);
-      return false; // Deletion failed
-    }
-  };
+export const deleteJobFromDatabaseById = async (id: string, location: string): Promise<boolean> => {
+  try {
+    await container.item(id, location).delete(); // Pass both id and partition key
+    // If delete() does not throw, it was successful.
+    return true; // Job successfully deleted
+  } catch (error: any) {
+    // If the item is not found, Cosmos DB SDK throws an error with statusCode 404.
+    // We can choose to treat "not found" as "deletion effectively complete" or as an error.
+    // Returning false here indicates the specific item was not found to be deleted.
+    // console.error("Error deleting job in service:", error.message);
+    return false; // Deletion failed (e.g., item not found or other error)
+  }
+};
   
 
   export const updateJobInDatabaseById = async (

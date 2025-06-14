@@ -107,7 +107,6 @@ router.get("/get", async (req: Request, res: Response): Promise<void> => {
 });
 
 // API to handle login with email and password
-// API to handle login with email and password
 router.post("/login", async (req: Request, res: Response): Promise<void> => {
   const { containerName, email, password }: { containerName: string; email: string; password: string } = req.body;
 
