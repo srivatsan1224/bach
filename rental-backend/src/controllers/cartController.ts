@@ -1,66 +1,114 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CosmosService } from "../services/cosmosService";
+import { AppError, BadRequestError, NotFoundError } from "../utils/errorHandler";
 
-const cartContainer = CosmosService.getCartContainer();
+const cartContainer = CosmosService.getCartContainer(); // Partition Key should be /userId
+const DEFAULT_MOCK_USER_ID = "default-mock-user"; // Hardcoded mock user ID
 
-// Add an item to the cart
-export const addItemToCart = async (req: Request, res: Response): Promise<void> => {
+export const addItemToCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id, name, price, quantity, category, imageUrl } = req.body;
+    const userId = DEFAULT_MOCK_USER_ID; // Use hardcoded mock user ID
 
-    // Validate required fields
-    if (!id || !name || !price || !quantity || !category || !imageUrl) {
-      res.status(400).json({ error: "All fields are required." });
-      return;
+    const { id: productId, name, price, quantity, category, imageUrl } = req.body;
+
+    if (!productId || !name || price === undefined || quantity === undefined || !category) {
+        return next(new BadRequestError("Required fields missing for cart item: productId, name, price, quantity, category."));
     }
 
+    const cartItemId = `${userId}-${productId}`; // Example composite ID for cart item
+
     const newItem = {
-      id,
+      id: cartItemId,       // Unique ID for the cart item (within this user's partition)
+      userId: userId,       // PARTITION KEY
+      productId,            // Reference to the actual product
       name,
       price,
       quantity,
       category,
-      imageUrl,
+      imageUrl: imageUrl || "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    const createdItem = await CosmosService.createItem(cartContainer, newItem);
-    res.status(201).json(createdItem);
+    try {
+        const createdItem = await CosmosService.createItem(cartContainer, newItem);
+        res.status(201).json(createdItem);
+    } catch (error: any) {
+        if (error.code === 409) { // Conflict - item already exists
+            return next(new AppError("Item already in cart. Use update quantity endpoint.", 409));
+        }
+        throw error;
+    }
   } catch (error) {
-    console.error("Error adding item to cart:", error);
-    res.status(500).json({ error: "An error occurred while adding the item to the cart." });
+    next(error);
   }
 };
 
-// Get all items in the cart
-export const getCartItems = async (_req: Request, res: Response): Promise<void> => {
+export const getCartItems = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const querySpec = { query: "SELECT * FROM c" };
+    const userId = DEFAULT_MOCK_USER_ID; // Use hardcoded mock user ID
 
+    const querySpec = {
+      query: "SELECT * FROM c WHERE c.userId = @userId",
+      parameters: [{ name: "@userId", value: userId }]
+    };
     const items = await CosmosService.queryItems(cartContainer, querySpec);
     res.status(200).json(items);
   } catch (error) {
-    console.error("Error fetching cart items:", error);
-    res.status(500).json({ error: "An error occurred while fetching cart items." });
+    next(error);
   }
 };
 
-// Remove an item from the cart
-export const removeItemFromCart = async (req: Request, res: Response): Promise<Response> => {
+export const removeItemFromCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id } = req.params; // Get item ID from route params
+    const userId = DEFAULT_MOCK_USER_ID; // Use hardcoded mock user ID
+    const { cartItemId } = req.params;
 
-    // Use CosmosService to delete the item using id as the partition key
-    await CosmosService.deleteItem(cartContainer, id, id); // Pass `id` as both ID and partition key
-    return res.status(204).send(); // Respond with 204 No Content if deletion succeeds
-  } catch (error) {
-    console.error("Error removing item from cart:", error);
-
-    if (error instanceof Error) {
-      return res.status(500).json({ error: error.message });
-    } else {
-      return res.status(500).json({ error: "An unknown error occurred while removing the item from the cart." });
+    if(!cartItemId) {
+        return next(new BadRequestError("Cart item ID parameter is required."));
     }
+
+    await CosmosService.deleteItem(cartContainer, cartItemId, userId); // userId is the partitionKey
+    res.status(204).send();
+  } catch (error: any) {
+    if (error instanceof NotFoundError || (error.message && error.message.includes("not found for deletion"))) {
+        return next(new NotFoundError("Cart item not found."));
+    }
+    next(error);
   }
+};
+
+export const updateCartItemQuantity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const userId = DEFAULT_MOCK_USER_ID;
+        const { cartItemId } = req.params;
+        const { quantity } = req.body;
+
+        if (!cartItemId) {
+            next(new BadRequestError("Cart item ID parameter is required."));
+            return; // Add a simple return to exit the function
+        }
+        if (quantity === undefined || typeof quantity !== 'number' || quantity < 0) {
+            next(new BadRequestError("Valid quantity (number >= 0) is required."));
+            return; // Add a simple return
+        }
+
+        if (quantity === 0) {
+            await CosmosService.deleteItem(cartContainer, cartItemId, userId);
+            res.status(204).send();
+            return; // Add a simple return
+        }
+
+        const updatedItem = await CosmosService.updateItem(cartContainer, cartItemId, userId, { quantity, updatedAt: new Date().toISOString() });
+
+        if (!updatedItem) {
+            next(new NotFoundError("Cart item not found or could not be updated."));
+            return; // Add a simple return
+        }
+        res.status(200).json(updatedItem);
+        // No explicit return needed here as it's the end of the try block's successful path
+    } catch (error) {
+        next(error);
+        // No explicit return needed here either
+    }
 };

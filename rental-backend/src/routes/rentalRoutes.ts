@@ -1,8 +1,14 @@
 import * as express from "express";
 import { addRentalItem } from "../controllers/rentalController";
+import { addRentalItemValidators, handleValidationErrors } from "../utils/validators";
 
 const router = express.Router();
 
-router.post("/", addRentalItem); // Route to add a new rental
+router.post(
+    "/",
+    addRentalItemValidators,
+    handleValidationErrors,
+    addRentalItem
+);
 
 export default router;

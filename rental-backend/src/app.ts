@@ -1,58 +1,50 @@
 import * as express from "express";
-import * as dotenv from "dotenv";
-import * as cors from "cors"; // Add CORS middleware
+import * as cors from "cors";
+import config from "./config"; // Your centralized configuration
+import { globalErrorHandler, NotFoundError } from "./utils/errorHandler";
+
+// Import Routes
 import categoryRoutes from "./routes/categoryRoutes";
 import itemRoutes from "./routes/itemRoutes";
 import cartRoutes from "./routes/cartRoutes";
 import rentalRoutes from "./routes/rentalRoutes";
-// Load environment variables
-dotenv.config();
+// import orderRoutes from "./routes/orderRoutes"; // For future
 
 const app = express();
-const allowedOrigins = [
-  "http://localhost:5174", // ✅ Local development
-  "http://localhost:3000", // ✅ If your frontend runs on port 3000
-  "https://bachelors-web.onrender.com" // ✅ Hosted frontend
-];
+
 // CORS Middleware
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || config.corsAllowedOrigins.includes(origin) || config.nodeEnv === 'development') { // Allow all in dev for simplicity if needed
         callback(null, true);
       } else {
-        console.warn(`❌ CORS Blocked Request from: ${origin}`); // Debugging log
+        console.warn(`CORS Blocked Request from: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Added PATCH and OPTIONS
+    allowedHeaders: ["Content-Type", "Authorization", "X-Mock-User-ID"], // Added X-Mock-User-ID
   })
 );
+
 // Middleware to parse JSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For form data
 
 // API Routes
-app.use("/api/category", categoryRoutes);
-app.use("/api/item", itemRoutes);
+app.use("/api/categories", categoryRoutes); // Changed from /api/category
+app.use("/api/items", itemRoutes);         // Changed from /api/item
 app.use("/api/cart", cartRoutes);
 app.use("/api/rentals", rentalRoutes);
+// app.use("/api/orders", orderRoutes); // For future
 
-// 404 Handler for undefined routes
-app.use((_req, res) => {
-  res.status(404).json({ error: "Route not found" });
+// Handle 404 for undefined routes - this should be after all valid routes
+app.all("*", (req, _res, next) => {
+  next(new NotFoundError(`Can't find ${req.originalUrl} on this server!`));
 });
 
-// Global Error Handler
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error("Global Error Handler:", err.message || err);
-  res.status(err.status || 500).json({
-    error: err.message || "An internal server error occurred.",
-  });
-});
+// Global Error Handling Middleware - Must be the last piece of middleware
+app.use(globalErrorHandler);
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+export default app;
