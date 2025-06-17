@@ -1,5 +1,7 @@
+// src/services/cosmosService.ts
 import { CosmosClient, Container } from "@azure/cosmos";
-import config from "../config"; // Use centralized config
+import config from "../config";
+import { AppError, NotFoundError } from "../utils/errorHandler"; // Assuming NotFoundError is defined
 
 const client = new CosmosClient({
   endpoint: config.cosmosDbEndpoint,
@@ -15,20 +17,21 @@ const getContainer = (containerId: string): Container => {
 export const CosmosService = {
   getRentalContainer: () => getContainer(config.cosmosDbRentalContainerId),
   getCartContainer: () => getContainer(config.cosmosDbCartContainerId),
-  getOrdersContainer: () => getContainer(config.cosmosDbOrdersContainerId), // For future use
+  getOrdersContainer: () => getContainer(config.cosmosDbOrdersContainerId), // Ensure this method exists
 
-  getItemById: async (container: Container, id: string, partitionKey: string) => {
+  // ... getItemById, queryItems, createItem, deleteItem, updateItem (from previous versions, no changes here)
+  async getItemById(container: Container, id: string, partitionKey: string) {
     try {
       const { resource } = await container.item(id, partitionKey).read();
       return resource;
     } catch (error: any) {
-      if (error.code === 404) return null; // Item not found
+      if (error.code === 404) return null;
       console.error(`Error fetching item with ID ${id} and partition key ${partitionKey}:`, error.message);
-      throw error; // Re-throw to be handled by error middleware
+      throw error;
     }
   },
 
-  queryItems: async (container: Container, querySpec: any) => {
+  async queryItems(container: Container, querySpec: any) {
     try {
       const { resources } = await container.items.query(querySpec).fetchAll();
       return resources;
@@ -38,39 +41,48 @@ export const CosmosService = {
     }
   },
 
-  createItem: async (container: Container, newItem: any) => {
+  async createItem(container: Container, newItem: any) {
     try {
       const { resource } = await container.items.create(newItem);
       return resource;
     } catch (error: any) {
       console.error("Error creating item:", error.message);
+      // Consider re-throwing a specific AppError if it's a known conflict, etc.
+      if (error.code === 409) { // Conflict
+        throw new AppError(`Resource with ID ${newItem.id} already exists.`, 409, true);
+      }
       throw error;
     }
   },
 
-  deleteItem: async (container: Container, id: string, partitionKey: string) => {
+  async deleteItem(container: Container, id: string, partitionKey: string) {
     try {
+      // It's good practice to ensure item exists before delete if you want a specific "not found"
+      // However, .delete() itself will error (404) if item not found with correct PK.
       await container.item(id, partitionKey).delete();
     } catch (error: any) {
-      if (error.code === 404) throw new Error(`Item with ID ${id} not found for deletion.`); // More specific
+      if (error.code === 404) {
+        throw new NotFoundError(`Item with ID ${id} and partition key ${partitionKey} not found for deletion.`);
+      }
       console.error(`Error deleting item with ID ${id}:`, error.message);
       throw error;
     }
   },
 
-  // Add updateItem method (will be used later in CRUD)
-  updateItem: async (container: Container, id: string, partitionKey: string, itemUpdates: Partial<any>) => {
+  async updateItem(container: Container, id: string, partitionKey: string, itemUpdates: Partial<any>) {
     try {
-        const { resource: existingItem } = await container.item(id, partitionKey).read();
+        const itemToUpdate = container.item(id, partitionKey);
+        const { resource: existingItem } = await itemToUpdate.read(); // Check existence
         if (!existingItem) {
-            return null; // Or throw NotFoundError
+            throw new NotFoundError(`Item with ID ${id} and partition key ${partitionKey} not found for update.`);
         }
-        // Merge updates with existing item
-        const updatedItem = { ...existingItem, ...itemUpdates, updatedAt: new Date().toISOString() };
-        const { resource } = await container.item(id, partitionKey).replace(updatedItem);
+        const updatedDoc = { ...existingItem, ...itemUpdates, updatedAt: new Date().toISOString() };
+        const { resource } = await itemToUpdate.replace(updatedDoc);
         return resource;
     } catch (error: any) {
-        if (error.code === 404) return null;
+        if (error.code === 404) { // Should be caught by the read() above, but as a fallback
+            throw new NotFoundError(`Item with ID ${id} and partition key ${partitionKey} not found for update.`);
+        }
         console.error(`Error updating item with ID ${id}:`, error.message);
         throw error;
     }
