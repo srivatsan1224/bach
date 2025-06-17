@@ -7,9 +7,12 @@ import { v4 as uuidv4 } from 'uuid';
 const rentalContainer = CosmosService.getRentalContainer();
 
 export const ItemService = {
-  // ... (getAllItems, getItemById, createItem, updateItem, deleteItem - from previous version, no changes here)
-  async getAllItems(querySpec: any): Promise<RentalItem[]> {
-    return CosmosService.queryItems(rentalContainer, querySpec) as Promise<RentalItem[]>;
+  async getAllItems(querySpec: any, limit?: number): Promise<RentalItem[]> { // Added optional limit
+    let items = await CosmosService.queryItems(rentalContainer, querySpec) as RentalItem[];
+    if (limit && items.length > limit) {
+      items = items.slice(0, limit);
+    }
+    return items;
   },
 
   async getItemById(itemId: string, category: string): Promise<RentalItem | null> {

@@ -22,14 +22,12 @@ const G_rental_item_with_contact_info = (item: RentalItem | null, showContact: b
 
 export const filterItemsByCriteria = catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { categoryName } = req.params;
-    const { search, minPrice, maxPrice, ratings, rentalType } = req.query;
+    const { search, minPrice, maxPrice, ratings, rentalType, limit } = req.query; // Added limit
 
-    if (!categoryName) { // Basic check, validator should catch this too
+    if (!categoryName) {
         return next(new BadRequestError("Category name parameter is required."));
     }
 
-    // Construct querySpec based on ItemService's expectation or pass raw filters
-    // For now, let's build querySpec here, ItemService.getAllItems might be too generic
     let query = "SELECT * FROM c WHERE c.category = @categoryName";
     const parameters: { name: string; value: string | number }[] = [
       { name: "@categoryName", value: categoryName as string },
@@ -55,9 +53,33 @@ export const filterItemsByCriteria = catchAsync(async (req: Request, res: Respon
       query += " AND c.rentalType = @rentalType";
       parameters.push({ name: "@rentalType", value: rentalType as string });
     }
-    const querySpec = { query, parameters };
+    // Note: Cosmos DB SQL doesn't directly support LIMIT in the same way as SQL.
+    // TOP is used for limiting results.
+    // We need to construct the query string carefully if using TOP.
+    // For simplicity, if limit is provided, we'll fetch all and slice in service/controller,
+    // OR use TOP if it's a simple query. For complex queries with many ANDs,
+    // TOP should be at the beginning.
+    // A more robust solution for pagination involves continuation tokens.
 
-    const items: RentalItem[] = await ItemService.getAllItems(querySpec);
+    // Simple TOP N for now (if no other ordering is applied, order is not guaranteed)
+    let finalQuery = "";
+    if (limit && !isNaN(Number(limit))) {
+        finalQuery = `SELECT TOP ${Number(limit)} * FROM c WHERE c.category = @categoryName`;
+        // Re-add other filters if TOP is used this way, which makes it more complex.
+        // A better approach is to let CosmosService handle TOP N if the SDK supports it easily with query objects,
+        // or fetch all and slice if dataset is small.
+        // For now, let's assume the ItemService might handle slicing if a limit is passed,
+        // or we adjust the query here if it's simple enough.
+
+        // Let's modify the ItemService.getAllItems to handle limit by slicing for now
+        // and keep the controller query simpler.
+    }
+
+
+    const querySpec = { query, parameters };
+    // Pass limit to ItemService if it's designed to handle it
+    const items: RentalItem[] = await ItemService.getAllItems(querySpec, limit ? Number(limit) : undefined);
+
 
     const showContact = shouldShowContactInfo(req);
     const processedItems = items.map(item => G_rental_item_with_contact_info(item, showContact));

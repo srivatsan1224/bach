@@ -15,6 +15,7 @@ const ElectronicsHome: React.FC = () => {
   const [searchQueryInput, setSearchQueryInput] = useState(""); // For the input field value
 
   const fetchItems = useCallback(async (filtersToApply: any) => {
+    console.log(`[${CATEGORY_NAME}Home] Fetching items with filters:`, filtersToApply);
     setIsLoading(true);
     try {
       // Construct query parameters
@@ -26,8 +27,8 @@ const ElectronicsHome: React.FC = () => {
       if (filtersToApply.ratings) queryParams.ratings = filtersToApply.ratings;
       // Handle 'availability' filter mapping if SearchFilter uses different values
       // Example: if (filtersToApply.availability === 'in-stock') queryParams.availability = 'available';
-
-      const response = await apiService.get<RentalItem[]>(`/items/filter/${CATEGORY_NAME.toLowerCase()}`, {
+console.log(`[${CATEGORY_NAME}Home] API call to: /items/filter/${CATEGORY_NAME} with params:`, queryParams);
+      const response = await apiService.get<RentalItem[]>(`/items/filter/${CATEGORY_NAME}`, {
         params: queryParams,
       });
       setItems(response.data);

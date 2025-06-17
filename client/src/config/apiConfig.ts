@@ -1,5 +1,11 @@
-// src/config/apiConfig.ts
+// src/config/apiConfig.ts (for VITE)
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+let baseUrl = 'http://localhost:5000/api'; // Default
+
+if (import.meta.env.VITE_API_URL) {
+  baseUrl = import.meta.env.VITE_API_URL;
+}
+
+const API_BASE_URL = baseUrl;
 
 export default API_BASE_URL;

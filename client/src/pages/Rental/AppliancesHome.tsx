@@ -27,7 +27,7 @@ const AppliancesHome: React.FC = () => {
       // Handle 'availability' filter mapping if SearchFilter uses different values
       // Example: if (filtersToApply.availability === 'in-stock') queryParams.availability = 'available';
 
-      const response = await apiService.get<RentalItem[]>(`/items/filter/${CATEGORY_NAME.toLowerCase()}`, {
+      const response = await apiService.get<RentalItem[]>(`/items/filter/${CATEGORY_NAME}`, {
         params: queryParams,
       });
       setItems(response.data);
