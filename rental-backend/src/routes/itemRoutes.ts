@@ -1,26 +1,63 @@
 import * as express from "express";
-import { filterItemsByCriteria, getItemById } from "../controllers/itemController";
-import { filterItemsValidators, getItemByIdValidators, handleValidationErrors } from "../utils/validators"; // Import validators
+import {
+    filterItemsByCriteria,
+    getItemByIdHandler, // Renamed from getItemById to avoid conflict if function itself was named getItemById
+    createItemHandler,
+    updateItemHandler,
+    deleteItemHandler
+} from "../controllers/itemController";
+import {
+    filterItemsValidators,
+    getItemByIdValidators,
+    createItemValidators,
+    updateItemValidators, // Add this
+    handleValidationErrors
+} from "../utils/validators";
+import { param, query } from "express-validator"; // For delete validator
 
 const router = express.Router();
 
-// Fetch items by category with filters. Example: /api/item/filter/Electronics?search=tv&minPrice=100
+// CREATE an item
+router.post(
+    "/",
+    createItemValidators,
+    handleValidationErrors,
+    createItemHandler
+);
+
+// READ items by category with filters
 router.get(
-    "/filter/:categoryName", // categoryName is a route parameter
-    filterItemsValidators,    // Apply validation rules
-    handleValidationErrors,   // Middleware to handle any validation errors
+    "/filter/:categoryName",
+    filterItemsValidators,
+    handleValidationErrors,
     filterItemsByCriteria
 );
 
-// Fetch a specific item by ID (requires `category` as a query parameter for partition key)
-// Example: /api/item/some-item-id?category=Electronics
+// READ a specific item by ID
 router.get(
     "/:id",
     getItemByIdValidators,
     handleValidationErrors,
-    getItemById
+    getItemByIdHandler
 );
 
-// We will add POST, PUT, DELETE routes here later for CRUD operations
+// UPDATE an item by ID
+router.put(
+    "/:id", // Item ID in path
+    updateItemValidators, // Category (partitionKey) expected in query
+    handleValidationErrors,
+    updateItemHandler
+);
+
+// DELETE an item by ID
+router.delete(
+    "/:id", // Item ID in path
+    [ // Inline validators for delete, or create a dedicated one
+        param("id").isString().notEmpty().withMessage("Item ID in path is required."),
+        query("category").isString().notEmpty().withMessage("Category query parameter (partitionKey) is required for deletion.")
+    ],
+    handleValidationErrors,
+    deleteItemHandler
+);
 
 export default router;

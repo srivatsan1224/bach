@@ -1,12 +1,12 @@
 import * as express from "express";
 import { addRentalItem } from "../controllers/rentalController";
-import { addRentalItemValidators, handleValidationErrors } from "../utils/validators";
+import { createItemValidators, handleValidationErrors } from "../utils/validators";
 
 const router = express.Router();
 
 router.post(
     "/",
-    addRentalItemValidators,
+    createItemValidators,
     handleValidationErrors,
     addRentalItem
 );
