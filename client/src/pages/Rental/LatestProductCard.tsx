@@ -1,40 +1,51 @@
-import { motion } from 'framer-motion';
+// import React from "react";
+// // import { useNavigate } from "react-router-dom"; // Keep if used
 
-interface ProductCardProps {
-  name: string;
-  rent: string;
-  img: string;
-  category: string;
-  id: string;
-}
+// interface LatestProductCardProps {
+//   id: string;
+//   img: string;
+//   name: string;
+//   price: number; // CHANGED from rent: string
+//   category: string;
+// }
 
-const LatestProductCard = ({ name, rent, img, category }: ProductCardProps) => {
-  return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      className="bg-white rounded-xl shadow-md overflow-hidden"
-    >
-      <div className="relative h-48">
-        <img
-          src={img}
-          alt={name}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute top-3 right-3 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-          {category}
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">{name}</h3>
-        <div className="flex justify-between items-center">
-          <span className="text-blue-500 font-bold">{rent}</span>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600 transition-colors">
-            Rent Now
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
+// const LatestProductCard: React.FC<LatestProductCardProps> = ({
+//   id,
+//   img,
+//   name,
+//   price, // CHANGED from rent
+//   category,
+// }) => {
+//   // const navigate = useNavigate(); // Keep if used
 
-export default LatestProductCard;
+//   // const handleClick = () => {
+//   //   navigate(`/home/rental/${category}/${id}`);
+//   // };
+
+//   return (
+//     <div className="p-4 border rounded-lg shadow-lg bg-white">
+//       <div className="h-40 w-full overflow-hidden rounded-t-lg">
+//         <img src={img} alt={name} className="h-full w-full object-cover" />
+//       </div>
+//       <div className="p-4">
+//         <h3 className="text-lg font-bold">{name}</h3>
+//         <p className="text-sm text-gray-500">Rent</p> {/* This label might need update too */}
+//         <p className="text-lg font-semibold">
+//             ₹{price} <span className="text-sm font-normal text-gray-500">/ month</span>
+//         </p>
+//         {/*
+//           If the parent div handles the click for navigation, this button might be redundant
+//           or could be for a different action like "Add to Cart".
+//         */}
+//         <button
+//           // onClick={handleClick} // This navigation is likely handled by the parent div in RentalHome
+//           className="mt-4 px-4 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white"
+//         >
+//           See More
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default LatestProductCard;
