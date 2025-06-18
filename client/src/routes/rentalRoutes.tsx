@@ -7,6 +7,7 @@ import FitnessHome from "../pages/Rental/FitnessHome";
 import ItemDetailsPage from "../pages/Rental/ItemDetailsPage";
 import OrderConfirmationPage from "../pages/Rental/OrderConfirmationPage";
 import CartPage from "../pages/Rental/CartPage"; 
+import PostAd from "../pages/Rental/PostAd";
 const RentalRoutes = () => {
   return (
     <Routes>
@@ -15,6 +16,7 @@ const RentalRoutes = () => {
       <Route path="/appliances" element={<AppliancesHome />} />
       <Route path="/electronics" element={<ElectronicsHome />} />
       <Route path="/fitness" element={<FitnessHome />} />
+      <Route path="/post-ad" element={<PostAd />} />
       <Route path="/cart" element={<CartPage />} /> 
       <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
       <Route path="/:category/:id" element={<ItemDetailsPage />} />

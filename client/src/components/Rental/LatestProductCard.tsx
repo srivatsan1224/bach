@@ -1,83 +1,61 @@
 // src/components/Rental/LatestProductCard.tsx
-// (Assuming this is the one imported by RentalHome.tsx)
-
 import React from "react";
 import { motion } from "framer-motion";
-// import { useNavigate } from "react-router-dom"; // Only if this component itself handles navigation
 
-export interface LatestProductCardProps { // Exporting the interface is good practice
+export interface LatestProductCardProps {
   id: string;
   name: string;
   img: string;
-  price: number; // CHANGED from rent: string
+  price: number;
   category: string;
-  originalPrice?: number; // Optional: if you want to show a strikethrough price
-  discount?: number;      // Optional: if you want to show a discount
-  // Add an onClick prop if the card itself should handle clicks internally
-  // onClick?: (id: string, category: string) => void;
+  originalPrice?: number;
+  discount?: number;
 }
 
 const LatestProductCard: React.FC<LatestProductCardProps> = ({
   id,
   name,
   img,
-  price, // CHANGED: Destructure price
+  price,
   category,
-  originalPrice,
-  // onClick, // Destructure if you add onClick prop
+  originalPrice, // Added for potential future use
 }) => {
-  // const navigate = useNavigate(); // Only if using internal navigation
-
-  // const handleCardClick = () => {
-  //   if (onClick) {
-  //     onClick(id, category);
-  //   } else {
-  //     // Fallback navigation if no onClick prop is provided
-  //     // navigate(`/home/rental/${category.toLowerCase().replace(/\s+/g, "-")}/${id}`);
-  //   }
-  // };
-
   return (
-    // If the parent `motion.div` in RentalHome handles the click, this component doesn't need its own top-level onClick.
-    // Otherwise, add onClick={handleCardClick} here.
     <motion.div
-      whileHover={{ y: -5 }}
-      className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full" // Added flex flex-col h-full for better layout
+      whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }} // Enhanced hover shadow
+      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full w-full transition-shadow duration-300"
+      // onClick could be here if the parent doesn't handle it:
+      // onClick={() => console.log(`Card clicked: ${id}`)} 
     >
-      <div className="relative h-48 w-full"> {/* Ensure image container takes full width */}
-        <img
-          src={img}
-          alt={name}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute top-3 right-3 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium capitalize">
+      <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
+  <img
+    src={img}
+    alt={name}
+    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+  />
+
+        <div className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-semibold capitalize shadow">
           {category}
         </div>
       </div>
-      <div className="p-4 flex flex-col flex-grow"> {/* Added flex-grow */}
-        <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate" title={name}>{name}</h3> {/* Added truncate and title for long names */}
+      <div className="p-4 sm:p-5 flex flex-col flex-grow"> {/* Added sm:p-5 for slightly more padding on small screens up */}
+        <h3 className="text-md sm:text-lg font-semibold text-gray-800 mb-1 truncate" title={name}>{name}</h3>
         
-        <div className="mt-auto"> {/* Pushes price and button to the bottom if content above is short */}
+        <div className="mt-auto pt-2"> {/* Pushes price and button to the bottom */}
           <div className="flex items-baseline space-x-1 mb-3">
-            <span className="text-blue-600 font-bold text-xl">
+            <span className="text-blue-600 font-bold text-lg sm:text-xl">
               ₹{price.toFixed(2)}
             </span>
             {originalPrice && originalPrice > price && (
-              <span className="text-gray-400 line-through text-sm">
+              <span className="text-gray-400 line-through text-xs sm:text-sm">
                 ₹{originalPrice.toFixed(2)}
               </span>
             )}
-             <span className="text-sm font-normal text-gray-500">/ month</span> {/* Assuming per month */}
+             <span className="text-xs sm:text-sm font-normal text-gray-500">/ month</span>
           </div>
-          {/* 
-            The button below is styled as "View Details".
-            Since RentalHome.tsx makes the whole card clickable for navigation,
-            this button might be visually redundant or could be an "Add to Cart" button.
-            For now, it's just a visual element.
-          */}
           <button
-            // onClick={handleCardClick} // Only if this button specifically handles navigation
-            className="w-full bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600 transition-colors"
+            // This button is for display; actual navigation is handled by parent div's onClick in RentalHome
+            className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             View Details
           </button>

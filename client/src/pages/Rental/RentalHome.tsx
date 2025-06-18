@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react"; // Added useCallback
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Search, Bell, MessageCircle, Plus, Loader2 } from "lucide-react";
+import { MapPin, Search, Bell, Plus, Loader2, ShoppingCart } from "lucide-react"; 
 
 import LatestProductCard from "../../components/Rental/LatestProductCard";
 import CategoryButton from "../../components/Rental/CategoryButton";
@@ -62,7 +62,7 @@ const RentalHome: React.FC = () => {
         name: name,
         img: getCategoryImage(name),
         description: `Quality ${name.toLowerCase()} at affordable prices`,
-        route: `/home/rental/${name.toLowerCase().replace(/\s+/g, "-")}`,
+        route: `/rental/${name.toLowerCase().replace(/\s+/g, "-")}`,
       }));
       setDisplayCategories(formattedCategories);
     } catch (err) {
@@ -106,7 +106,13 @@ const RentalHome: React.FC = () => {
     fetchCategories();
     fetchFeaturedProducts();
   }, [fetchCategories, fetchFeaturedProducts]); // Call the memoized functions
-
+  const handleNavigateToCart = () => {
+    // This path is relative to where RentalRoutes is mounted.
+    // If RentalRoutes is at /home/rental/*, this becomes /home/rental/cart
+    // If RentalRoutes is at /*, this becomes /cart
+    // Adjust based on your main App.tsx router setup for RentalRoutes
+    navigate("/rental/cart"); 
+  };
 
   const testimonials = [
     { name: "Kyle Roberts DVM", role: "Customer Web Consultant", text: "Renting furniture and appliances has never been this easy! I set up my new apartment in no time without spending a fortune. The quality and flexibility are perfect for bachelors like me." },
@@ -116,7 +122,7 @@ const RentalHome: React.FC = () => {
 
   const handleProductCardClick = (category: string, id: string) => {
     const categorySlug = category.toLowerCase().replace(/\s+/g, "-");
-    navigate(`/home/rental/${categorySlug}/${id}`);
+    navigate(`/rental/${categorySlug}/${id}`);
   };
 
   return (
@@ -139,12 +145,23 @@ const RentalHome: React.FC = () => {
               </div>
               <div className="flex items-center space-x-6">
                 <Bell className="w-6 h-6 text-white cursor-pointer hover:text-blue-400 transition-colors" />
-                <MessageCircle className="w-6 h-6 text-white cursor-pointer hover:text-blue-400 transition-colors" />
+                                <button
+                  onClick={handleNavigateToCart}
+                  className="text-white cursor-pointer hover:text-blue-400 transition-colors p-1 relative"
+                  aria-label="Shopping Cart"
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                  {/* Optional: Cart item count badge (requires global state)
+                  <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                    3 
+                  </span>
+                  */}
+                </button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                  onClick={() => navigate("/post-ad")}
+                  onClick={() => navigate("/rental/post-ad")}
                 >
                   <Plus className="w-5 h-5" />
                   <span>Post Ad</span>
@@ -217,16 +234,22 @@ const RentalHome: React.FC = () => {
 
       {/* Featured Products */}
       <section className="bg-white py-16 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> {/* Added responsive padding */}
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-10 sm:mb-12">
             Featured Products
           </h2>
           {isLoadingProducts ? (
              <div className="flex justify-center items-center h-60"><Loader2 className="w-10 h-10 text-blue-500 animate-spin" /></div>
-          ) : errorProducts ? ( // Display general error for products section
+          ) : errorProducts ? (
             <p className="text-center text-red-500">{errorProducts}</p>
           ) : featuredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
+              {/*
+                Default: 1 column, gap-6
+                Small screens (sm): 2 columns, gap-6 (gap-6 from default still applies unless overridden)
+                Medium screens (md): gap changes to md:gap-8 (columns still 2 from sm:)
+                Large screens (lg): 4 columns, gap-8 (gap-8 from md: still applies)
+              */}
               {featuredProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
@@ -234,9 +257,11 @@ const RentalHome: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05, type: "spring", stiffness: 100 }}
                   onClick={() => handleProductCardClick(product.category, product.id)}
-                  className="cursor-pointer flex" // Added flex for consistent card heights if cards have varying content
+                  // The card itself should be responsive.
+                  // Adding 'flex' here ensures the motion.div takes up space if the card itself doesn't fill.
+                  className="cursor-pointer flex flex-col" 
                 >
-                  <LatestProductCard // Ensure this component uses flex-grow if inside a flex parent for consistent height
+                  <LatestProductCard
                     id={product.id}
                     name={product.name}
                     img={product.imageUrl || DefaultProductImg}

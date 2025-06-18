@@ -1,51 +1,65 @@
-// import React from "react";
-// // import { useNavigate } from "react-router-dom"; // Keep if used
+import React from "react";
+import { motion } from "framer-motion";
 
-// interface LatestProductCardProps {
-//   id: string;
-//   img: string;
-//   name: string;
-//   price: number; // CHANGED from rent: string
-//   category: string;
-// }
+export interface LatestProductCardProps {
+  id: string;
+  name: string;
+  img: string;
+  price: number;
+  category: string;
+  originalPrice?: number;
+}
 
-// const LatestProductCard: React.FC<LatestProductCardProps> = ({
-//   id,
-//   img,
-//   name,
-//   price, // CHANGED from rent
-//   category,
-// }) => {
-//   // const navigate = useNavigate(); // Keep if used
+const LatestProductCard: React.FC<LatestProductCardProps> = ({
+  id,
+  name,
+  img,
+  price,
+  category,
+  originalPrice,
+}) => {
+  return (
+    <motion.div
+      whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }}
+      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full w-full transition-shadow duration-300 group" // Added "group" for hover effects on children
+    >
+       <div className="relative w-full overflow-hidden bg-gray-200 h-[180px] sm:h-[200px] md:h-[220px] lg:h-[240px]">
+  <img
+    src={img}
+    alt={name}
+    className="w-full h-full object-cover"
+  />
+  <div className="absolute top-2 right-2 bg-blue-600 text-white px-2.5 py-1 rounded-md text-xs font-semibold capitalize shadow-sm">
+    {category}
+  </div>
+</div>
 
-//   // const handleClick = () => {
-//   //   navigate(`/home/rental/${category}/${id}`);
-//   // };
 
-//   return (
-//     <div className="p-4 border rounded-lg shadow-lg bg-white">
-//       <div className="h-40 w-full overflow-hidden rounded-t-lg">
-//         <img src={img} alt={name} className="h-full w-full object-cover" />
-//       </div>
-//       <div className="p-4">
-//         <h3 className="text-lg font-bold">{name}</h3>
-//         <p className="text-sm text-gray-500">Rent</p> {/* This label might need update too */}
-//         <p className="text-lg font-semibold">
-//             ₹{price} <span className="text-sm font-normal text-gray-500">/ month</span>
-//         </p>
-//         {/*
-//           If the parent div handles the click for navigation, this button might be redundant
-//           or could be for a different action like "Add to Cart".
-//         */}
-//         <button
-//           // onClick={handleClick} // This navigation is likely handled by the parent div in RentalHome
-//           className="mt-4 px-4 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white"
-//         >
-//           See More
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
 
-// export default LatestProductCard;
+      <div className="p-4 sm:p-5 flex flex-col flex-grow">
+        <h3 className="text-md sm:text-lg font-semibold text-gray-800 mb-1 truncate" title={name}>{name}</h3>
+        
+        <div className="mt-auto pt-2">
+          <div className="flex items-baseline space-x-1 mb-3">
+            <span className="text-blue-600 font-bold text-lg sm:text-xl">
+              ₹{price.toFixed(2)}
+            </span>
+            {originalPrice && originalPrice > price && (
+              <span className="text-gray-400 line-through text-xs sm:text-sm">
+                ₹{originalPrice.toFixed(2)}
+              </span>
+            )}
+             <span className="text-xs sm:text-sm font-normal text-gray-500">/ month</span>
+          </div>
+          <button
+            className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            View Details
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default LatestProductCard;

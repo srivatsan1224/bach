@@ -27,7 +27,7 @@ const Card: React.FC<CardProps> = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/home/rental/${category}/${id}`);
+    navigate(`/rental/${category}/${id}`);
     console.log(`Navigating to: /home/rental/${category}/${id}`);
   };
 

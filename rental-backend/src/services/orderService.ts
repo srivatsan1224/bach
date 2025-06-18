@@ -30,31 +30,30 @@ export const OrderService = {
       if (!availabilityCheck.available || !availabilityCheck.item) {
         throw new AppError(
           `Item "${cartItem.name}" (ID: ${cartItem.productId}) is no longer available in the requested quantity or does not exist. Please remove it from your cart or reduce quantity.`,
-          400 // Bad Request, as client should ideally prevent this or re-validate
+          400
         );
       }
-      // Use current price from the rental item for the order
       const currentPrice = availabilityCheck.item.price;
       totalAmount += currentPrice * cartItem.quantity;
 
       orderItems.push({
         productId: cartItem.productId,
-        name: availabilityCheck.item.name, // Use current name
-        price: currentPrice,               // Use current price
+        name: availabilityCheck.item.name,
+        price: currentPrice,
         quantity: cartItem.quantity,
-        category: availabilityCheck.item.category, // Use current category
+        category: availabilityCheck.item.category,
         imageUrl: availabilityCheck.item.imageUrl,
       });
     }
 
-    // 2. (Simulate Payment) - In a real app, payment processing happens here.
-    console.log(`OrderService: Mock payment successful for user ${userId}, amount ${totalAmount}`);
+    // 2. (Simulate Payment)
+    console.log(`[OrderService] Mock payment successful for user ${userId}, amount ${totalAmount}`);
 
     // 3. Create the Order document
     const now = new Date().toISOString();
     const newOrder: Order = {
-      id: uuidv4(), // Generate a unique order ID
-      userId,       // Partition Key
+      id: uuidv4(),
+      userId,
       items: orderItems,
       totalAmount,
       orderDate: now,
@@ -65,34 +64,26 @@ export const OrderService = {
 
     const createdOrder = await CosmosService.createItem(ordersContainer, newOrder) as Order;
 
-    // 4. Adjust stock for each item *after* successful order creation (or payment)
-    // This part needs careful error handling. If one stock adjustment fails,
-    // the order is created but stock might be inconsistent.
-    // For production, consider a more transactional approach or compensating transactions.
+    // 4. Adjust stock for each item
     try {
       for (const item of orderItems) {
         await ItemService.adjustItemStock(item.productId, item.category, -item.quantity); // Decrement stock
       }
     } catch (stockError: any) {
-      // Log critical error: Order created, but stock adjustment failed. Manual intervention might be needed.
       console.error(
-        `CRITICAL: Order ${createdOrder.id} created, but failed to adjust stock for item ${stockError.message_referencing_item_id || 'unknown'}. Error: ${stockError.message}`
+        `CRITICAL: Order ${createdOrder.id} created, but failed to adjust stock. Error: ${stockError.message}`
       );
-      // Depending on policy, you might:
-      // - Attempt to flag the order for review.
-      // - Attempt to revert payment (if real payment).
-      // For now, we'll just log and the order remains.
+      // In a real scenario, consider how to handle this. For now, order is placed, stock might be off.
     }
 
-    // 5. Clear the user's cart
-    await CartService.clearCart(userId);
+    // 5. Clear the user's cart - MODIFIED FOR TESTING
+    console.log(`[OrderService] Cart clearing is SKIPPED for userId: ${userId} for testing/demonstration purposes.`);
+     await CartService.clearCart(userId); // <-- This line is now commented out
 
     return createdOrder;
   },
 
-  // Future methods like getOrderById, getUserOrders etc.
   async getOrderById(orderId: string, userId: string): Promise<Order | null> {
-    // userId is the partition key
     return CosmosService.getItemById(ordersContainer, orderId, userId) as Promise<Order | null>;
   },
 

@@ -82,11 +82,18 @@ const Navbar = () => {
                       Jobs
                     </Link>
                     <Link
-                      to="/property-rental"
+                      to="/rental"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                     >
                       Property Rental
                     </Link>
+                    <Link
+                      to="/parttime"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    >
+                      Part-time Jobs
+                    </Link>
+                    
                     <Link
                       to="/events"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
@@ -103,6 +110,8 @@ const Navbar = () => {
                 )}
               </div>
               <Link to="/properties" className="text-gray-600 hover:text-emerald-600 transition-colors">Properties</Link>
+              <Link to="/rental/home" className="text-gray-600 hover:text-emerald-600 transition-colors">Rental</Link>
+              <Link to="/parttime/home" className="text-gray-600 hover:text-emerald-600 transition-colors">Jobs</Link>
               <Link to="/about" className="text-gray-600 hover:text-emerald-600 transition-colors">About</Link>
               <Link to="/contact" className="text-gray-600 hover:text-emerald-600 transition-colors">Contact</Link>
             </div>
