@@ -1,17 +1,41 @@
+// src/routes/cartRoutes.ts
 import { Router } from "express";
-import { addItemToCart, getCartItems, removeItemFromCart } from "../controllers/cartController";
+import {
+    addItemToCartHandler, // Ensure this matches controller export
+    getCartItemsHandler,  // Ensure this matches controller export
+    removeItemFromCartHandler, // Ensure this matches controller export
+    updateCartItemQuantityHandler // Ensure this matches controller export
+} from "../controllers/cartController";
+import {
+    addItemToCartValidators,
+    updateCartItemQuantityValidators, // Ensure this validator exists and is correct
+    handleValidationErrors
+} from "../utils/validators";
+import { param } from "express-validator";
 
 const router = Router();
 
-// Add an item to the cart
-router.post("/", addItemToCart);
+router.post(
+    "/",
+    addItemToCartValidators,
+    handleValidationErrors,
+    addItemToCartHandler // Use correct handler
+);
 
-// Get all cart items
-router.get("/", getCartItems);
+router.get("/", getCartItemsHandler); // Use correct handler
 
-// Remove an item from the cart
-router.delete("/:id", async (req, res) => {
-  await removeItemFromCart(req, res);
-});
+router.delete(
+    "/:cartItemId",
+    [param("cartItemId").isString().notEmpty().withMessage("Cart Item ID in path must be a non-empty string.")],
+    handleValidationErrors,
+    removeItemFromCartHandler // Use correct handler
+);
+
+router.put(
+    "/:cartItemId",
+    updateCartItemQuantityValidators,
+    handleValidationErrors,
+    updateCartItemQuantityHandler // Use correct handler
+);
 
 export default router;

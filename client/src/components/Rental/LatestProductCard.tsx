@@ -1,47 +1,67 @@
+// src/components/Rental/LatestProductCard.tsx
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
-interface LatestProductCardProps {
-  img: string; // Image URL
-  name: string; // Name of the product
-  rent: string; // Rent price
-  category: string; // Category of the product (e.g., furniture, appliances)
-  id: string; // ID of the product
+export interface LatestProductCardProps {
+  id: string;
+  name: string;
+  img: string;
+  price: number;
+  category: string;
+  originalPrice?: number;
+  discount?: number;
 }
 
 const LatestProductCard: React.FC<LatestProductCardProps> = ({
-  img,
-  name,
-  rent,
-  category,
   id,
+  name,
+  img,
+  price,
+  category,
+  originalPrice, // Added for potential future use
 }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`/home/rental/${category}/${id}`);
-    console.log(`Navigating to: /home/rental/${category}/${id}`);
-  };
-
   return (
-    <div className="p-4 border rounded-lg shadow-lg bg-white">
-      {/* Image Section */}
-      <div className="h-40 w-full overflow-hidden rounded-t-lg">
-        <img src={img} alt={name} className="h-full w-full object-cover" />
+    <motion.div
+      whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }} // Enhanced hover shadow
+      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full w-full transition-shadow duration-300"
+      // onClick could be here if the parent doesn't handle it:
+      // onClick={() => console.log(`Card clicked: ${id}`)} 
+    >
+      <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
+  <img
+    src={img}
+    alt={name}
+    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+  />
+
+        <div className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-semibold capitalize shadow">
+          {category}
+        </div>
       </div>
-      {/* Content Section */}
-      <div className="p-4">
-        <h3 className="text-lg font-bold">{name}</h3>
-        <p className="text-sm text-gray-500">Rent</p>
-        <p className="text-lg font-semibold">{rent}</p>
-        <button
-          onClick={handleClick}
-          className="mt-4 px-4 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white"
-        >
-          See More
-        </button>
+      <div className="p-4 sm:p-5 flex flex-col flex-grow"> {/* Added sm:p-5 for slightly more padding on small screens up */}
+        <h3 className="text-md sm:text-lg font-semibold text-gray-800 mb-1 truncate" title={name}>{name}</h3>
+        
+        <div className="mt-auto pt-2"> {/* Pushes price and button to the bottom */}
+          <div className="flex items-baseline space-x-1 mb-3">
+            <span className="text-blue-600 font-bold text-lg sm:text-xl">
+              ₹{price.toFixed(2)}
+            </span>
+            {originalPrice && originalPrice > price && (
+              <span className="text-gray-400 line-through text-xs sm:text-sm">
+                ₹{originalPrice.toFixed(2)}
+              </span>
+            )}
+             <span className="text-xs sm:text-sm font-normal text-gray-500">/ month</span>
+          </div>
+          <button
+            // This button is for display; actual navigation is handled by parent div's onClick in RentalHome
+            className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            View Details
+          </button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

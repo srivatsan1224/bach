@@ -1,9 +1,20 @@
 import { Router } from "express";
-import { addCategoryItem, getItemsByCategory } from "../controllers/categoryController";
+import { getAllCategories } from "../controllers/categoryController";
+// import { addItemValidators, handleValidationErrors } from "../utils/validators"; // If addCategoryItem was used
 
 const router = Router();
 
-router.post("/", addCategoryItem); // Add item to category
-router.get("/:category", getItemsByCategory); // Get items by category
+// If addCategoryItem is removed or managed by itemRoutes:
+// router.post(
+//     "/",
+//     addItemValidators,
+//     handleValidationErrors,
+//     addCategoryItem // This might be removed
+// );
+
+router.get(
+    "/",
+    getAllCategories
+);
 
 export default router;

@@ -1,56 +1,37 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CosmosService } from "../services/cosmosService";
+import { AppError, BadRequestError } from "../utils/errorHandler";
 
-const rentalContainer = CosmosService.getRentalContainer(); // Get rental container
+const rentalContainer = CosmosService.getRentalContainer();
 
-export const addRentalItem = async (req: Request, res: Response): Promise<void> => {
+export const addRentalItem = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { 
-      id, 
-      category, 
-      name, 
-      description, 
-      price, 
-      originalPrice, 
-      discount, 
-      availability, 
-      imageUrl, 
-      specifications, 
-      offers, 
-      ratings, 
-      rentalType 
-    } = req.body;
+    const { category, name, description, price, availability } = req.body;
 
-    // Validate required fields
-    if (!category || !name || !description || !price || !availability) {
-      res.status(400).json({ error: "Missing required fields: category, name, description, price, availability." });
-      return;
+    if (!category || !name || !description || price === undefined || availability === undefined) {
+      return next(new BadRequestError("Missing required fields: category, name, description, price, availability."));
     }
+    // Generate an ID if not provided, or expect it from the client
+    // Ensure the ID is unique for the partition key (category)
+    const id = req.body.id || `${category.substring(0, 3).toLowerCase()}-${new Date().getTime()}`;
 
-    // Create a new rental item object with the exact structure you provided
-    const newItem = {
-      id: `${category.substring(0, 3)}-${new Date().getTime()}`, // Generate ID if not provided
-      category,
-      name,
-      description,
-      price,
-      originalPrice: originalPrice || price, // Default to price if originalPrice not provided
-      discount: discount || 0,
-      availability,
-      imageUrl: imageUrl || "",
-      specifications: specifications || {}, // Ensure empty object if not provided
-      offers: offers || [],
-      ratings: ratings || 0,
-      rentalType: rentalType || "short-term",
+    const newItemData = {
+      ...req.body,
+      id,
+      originalPrice: req.body.originalPrice || price,
+      discount: req.body.discount || 0,
+      imageUrl: req.body.imageUrl || "",
+      specifications: req.body.specifications || {},
+      offers: req.body.offers || [],
+      ratings: req.body.ratings || 0,
+      rentalType: req.body.rentalType || "short-term",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    // Save to Cosmos DB
-    const createdItem = await CosmosService.createItem(rentalContainer, newItem);
+    const createdItem = await CosmosService.createItem(rentalContainer, newItemData);
     res.status(201).json(createdItem);
   } catch (error) {
-    console.error("Error adding rental item:", error);
-    res.status(500).json({ error: "An error occurred while adding the rental item." });
+    next(error);
   }
 };

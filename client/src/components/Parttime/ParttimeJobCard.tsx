@@ -1,3 +1,4 @@
+// src/components/Parttime/ParttimeJobCard.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, DollarSign, Clock } from "lucide-react";
@@ -6,8 +7,8 @@ import { MapPin, DollarSign, Clock } from "lucide-react";
 interface Job {
   id: string;
   title: string;
-  description: string;
-  location: string;
+  description: string; // Keep this if your card might show it, otherwise optional
+  location: string;    // This is crucial
   salaryRange: {
     min: number;
     max: number;
@@ -27,6 +28,7 @@ const ParttimeJobCard: React.FC<JobCardProps> = ({ job }) => {
   const navigate = useNavigate();
 
   const getTimeAgo = (date: string) => {
+    // ... (your existing getTimeAgo function) ...
     const postedDate = new Date(date);
     const now = new Date();
     const diffInMinutes = Math.floor(
@@ -38,9 +40,16 @@ const ParttimeJobCard: React.FC<JobCardProps> = ({ job }) => {
     return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
+  const handleNavigateToDetails = () => {
+    // *** CHANGED LINE ***
+    // Pass job.location in the state object
+    navigate(`/parttime/job/${job.id}`, { state: { location: job.location } });
+  };
+
   return (
     <div
-      onClick={() => navigate(`/parttime/${job.id}`)}
+      // *** CHANGED LINE ***
+      onClick={handleNavigateToDetails} // Use the new handler
       className="flex items-start bg-white hover:bg-gray-50 border border-gray-200 p-4 cursor-pointer transition-all duration-200 rounded-lg"
     >
       {/* Company Logo/Initial */}

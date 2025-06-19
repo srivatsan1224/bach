@@ -1,66 +1,62 @@
-import { Request, Response } from "express";
-import { CosmosService } from "../services/cosmosService";
+// src/controllers/cartController.ts
+import { Request, Response, NextFunction } from "express";
+import { CartService } from "../services/cartService"; // Import CartService
+import { catchAsync, AppError, BadRequestError, NotFoundError } from "../utils/errorHandler";
 
-const cartContainer = CosmosService.getCartContainer();
+const DEFAULT_MOCK_USER_ID = "default-mock-user";
 
-// Add an item to the cart
-export const addItemToCart = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id, name, price, quantity, category, imageUrl } = req.body;
+export const addItemToCartHandler = catchAsync(async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  const userId = DEFAULT_MOCK_USER_ID;
+  const { id: productId, name, price, category, imageUrl, quantity } = req.body; // 'id' from body is productId
 
-    // Validate required fields
-    if (!id || !name || !price || !quantity || !category || !imageUrl) {
-      res.status(400).json({ error: "All fields are required." });
-      return;
+  if (!productId || !name || price === undefined || !category || quantity === undefined) {
+      throw new BadRequestError("Missing required fields: productId, name, price, category, quantity.");
+  }
+  if (typeof quantity !== 'number' || quantity <= 0) {
+      throw new BadRequestError("Quantity must be a positive number.");
+  }
+
+  const itemDetails = { productId, name, price, category, imageUrl };
+  const cartItem = await CartService.addItem(userId, itemDetails, quantity);
+  res.status(201).json(cartItem);
+});
+
+export const getCartItemsHandler = catchAsync(async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  const userId = DEFAULT_MOCK_USER_ID;
+  const items = await CartService.getCart(userId);
+  res.status(200).json(items);
+});
+
+export const removeItemFromCartHandler = catchAsync(async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  const userId = DEFAULT_MOCK_USER_ID;
+  const { cartItemId } = req.params;
+
+  if (!cartItemId) { // Validator should catch this
+      throw new BadRequestError("Cart item ID parameter is required.");
+  }
+  await CartService.removeItem(userId, cartItemId);
+  res.status(204).send();
+});
+
+export const updateCartItemQuantityHandler = catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const userId = DEFAULT_MOCK_USER_ID;
+    const { cartItemId } = req.params;
+    const { quantity } = req.body;
+
+    if (!cartItemId) { // Validator should catch this
+        throw new BadRequestError("Cart item ID parameter is required.");
+    }
+    if (quantity === undefined || typeof quantity !== 'number' || quantity < 0) {
+        throw new BadRequestError("Valid quantity (number >= 0) is required.");
     }
 
-    const newItem = {
-      id,
-      name,
-      price,
-      quantity,
-      category,
-      imageUrl,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    const createdItem = await CosmosService.createItem(cartContainer, newItem);
-    res.status(201).json(createdItem);
-  } catch (error) {
-    console.error("Error adding item to cart:", error);
-    res.status(500).json({ error: "An error occurred while adding the item to the cart." });
-  }
-};
-
-// Get all items in the cart
-export const getCartItems = async (_req: Request, res: Response): Promise<void> => {
-  try {
-    const querySpec = { query: "SELECT * FROM c" };
-
-    const items = await CosmosService.queryItems(cartContainer, querySpec);
-    res.status(200).json(items);
-  } catch (error) {
-    console.error("Error fetching cart items:", error);
-    res.status(500).json({ error: "An error occurred while fetching cart items." });
-  }
-};
-
-// Remove an item from the cart
-export const removeItemFromCart = async (req: Request, res: Response): Promise<Response> => {
-  try {
-    const { id } = req.params; // Get item ID from route params
-
-    // Use CosmosService to delete the item using id as the partition key
-    await CosmosService.deleteItem(cartContainer, id, id); // Pass `id` as both ID and partition key
-    return res.status(204).send(); // Respond with 204 No Content if deletion succeeds
-  } catch (error) {
-    console.error("Error removing item from cart:", error);
-
-    if (error instanceof Error) {
-      return res.status(500).json({ error: error.message });
-    } else {
-      return res.status(500).json({ error: "An unknown error occurred while removing the item from the cart." });
+    if (quantity === 0) {
+        // If quantity is 0, treat as remove item
+        await CartService.removeItem(userId, cartItemId);
+        res.status(204).send();
+        return;
     }
-  }
-};
+
+    const updatedItem = await CartService.updateItemQuantity(userId, cartItemId, quantity);
+    res.status(200).json(updatedItem);
+});

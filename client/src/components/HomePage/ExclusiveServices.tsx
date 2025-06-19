@@ -59,7 +59,7 @@ const services = [
     color: "from-pink-500 to-rose-600",
     hexColor: "#EC4899",
     highlight: "Latest Gadgets",
-    route: "/home/rental/rental",
+    route: "/rental/home",
     image:
       "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
   },
