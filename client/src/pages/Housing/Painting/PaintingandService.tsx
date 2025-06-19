@@ -31,8 +31,7 @@ function PaintingandServices(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Search Bar */}
+ <div className="min-h-screen bg-gray-50">      {/* Search Bar */}
       <div className="p-4 bg-white shadow-sm">
         <div className="max-w-3xl mx-auto relative">
           <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
@@ -46,8 +45,7 @@ function PaintingandServices(): JSX.Element {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto p-4">
-        {/* Header */}
+ <div className="max-w-6xl mx-auto p-4">        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">Home Painting Services</h1>
@@ -60,7 +58,7 @@ function PaintingandServices(): JSX.Element {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
           <ServiceCard
             label="Interior Painting"
             tag="Flat 25% Off"
@@ -102,7 +100,7 @@ function PaintingandServices(): JSX.Element {
         </div>
 
         {/* Service Cards */}
-        <div className="space-y-4">
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <DetailedServiceCard
             title="Interior Painting"
             rating="4.8"
@@ -158,11 +156,11 @@ function PaintingandServices(): JSX.Element {
         </div>
 
         {/* Promise Section */}
-        <div className="mt-12 bg-gray-50 rounded-lg p-8">
+       <div className="mt-12 bg-gray-50 rounded-lg p-4 md:p-8">
           <h2 className="text-2xl font-semibold mb-6 flex items-center">
             <span className="text-red-500 font-bold mr-2">WE </span>Bachelor Promise
           </h2>
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
             <PromiseCard title="Best Price" icon="💰" />
             <PromiseCard title="Free Reschedule" icon="🔄" />
             <PromiseCard title="5 Star Rated Partner" icon="⭐" />
@@ -250,15 +248,15 @@ function PaintingandServices(): JSX.Element {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ label, tag, icon }) => {
   return (
-    <div className="relative bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div className="relative bg-white p-3 md:p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
       {tag && (
         <span className="absolute top-2 left-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
           {tag}
         </span>
       )}
-      <div className="mt-6 text-center">
-        <span className="text-3xl mb-2 block">{icon}</span>
-        <p className="text-sm font-medium text-gray-800">{label}</p>
+      <div className="mt-4 md:mt-6 text-center">
+        <span className="text-2xl md:text-3xl mb-2 block">{icon}</span>
+        <p className="text-xs md:text-sm font-medium text-gray-800">{label}</p>
       </div>
     </div>
   );
@@ -274,33 +272,33 @@ const DetailedServiceCard: React.FC<DetailedServiceCardProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      <div className="relative h-48">
+      <div className="relative h-40 md:h-48">
         <img src={image} alt={title} className="w-full h-full object-cover" />
-        <div className="absolute bottom-4 left-4">
-          <h3 className="text-white text-xl font-semibold">{title}</h3>
+        <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4">
+          <h3 className="text-white text-lg md:text-xl font-semibold">{title}</h3>
           <div className="flex items-center mt-1">
             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="ml-1 text-white">{rating}</span>
-            <span className="ml-1 text-white">({reviews})</span>
+            <span className="ml-1 text-white text-sm">{rating}</span>
+            <span className="ml-1 text-white text-sm">({reviews})</span>
           </div>
         </div>
       </div>
-      <div className="p-4">
+      <div className="p-3 md:p-4">
         <ul className="space-y-2">
           {features.map((feature, index) => (
-            <li key={index} className="flex items-start">
+            <li key={index} className="flex items-start text-sm">
               <span className="text-green-500 mr-2">✓</span>
               {feature}
             </li>
           ))}
         </ul>
         <div className="flex items-center justify-between mt-4">
-          <button className="text-gray-600 flex items-center">
+          <button className="text-gray-600 text-sm flex items-center">
             Show more <ChevronRight className="w-4 h-4 ml-1" />
           </button>
           <button 
             onClick={onEstimateClick}
-            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
+            className="px-3 md:px-4 py-2 bg-teal-500 text-white text-sm rounded hover:bg-teal-600"
           >
             GET ESTIMATE
           </button>
@@ -309,7 +307,6 @@ const DetailedServiceCard: React.FC<DetailedServiceCardProps> = ({
     </div>
   );
 };
-
 const Step: React.FC<StepProps> = ({ number, title, description }) => {
   return (
     <div className="flex items-start">

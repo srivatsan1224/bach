@@ -28,7 +28,8 @@ const LoginPage: React.FC = () => {
       setIsLoggedIn(true);
       setUserName(parsedUser.name);
       setProfilePic(parsedUser.picture || "");
-      navigate("/home");
+      // Navigate to home page ("/") after login
+      navigate("/");
     }
   }, [navigate]);
 
@@ -50,6 +51,7 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         setIsLoggedIn(true);
         setUserName(data.user.name);
+        // Navigate to home page ("/")
         navigate("/");
       } else {
         setError(data.message || "Invalid login credentials.");
@@ -85,6 +87,7 @@ const LoginPage: React.FC = () => {
         setIsLoggedIn(true);
         setUserName(user.name);
         setProfilePic(user.picture || "");
+        // Navigate to home page ("/") after Google login
         navigate("/");
       } catch (error) {
         console.error("Google login failed:", error);

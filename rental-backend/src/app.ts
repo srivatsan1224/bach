@@ -13,7 +13,14 @@ import orderRoutes from "./routes/orderRoutes";   // <--- ADD THIS
 
 const app = express();
 
-// CORS Middleware (ensure X-Mock-User-ID is allowed if you were using it)
+const allowedOrigins = [
+  "http://localhost:5174", // ✅ Local development
+  "http://localhost:3000", // ✅ If your frontend runs on port 3000
+  "https://bachelors-web.vercel.app", // ✅ Hosted frontend
+  "https://bachelors-preview.vercel.app"
+];
+// CORS Middleware
+
 app.use(
   cors({
     origin: (origin, callback) => {

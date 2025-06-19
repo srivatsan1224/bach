@@ -138,7 +138,7 @@ const ServicesGrid = () => {
                     <h3 className="font-bold text-white text-xs md:text-lg">
                       {service.title}
                     </h3>
-                    {/* Hide the description on mobile to reduce content */}
+                    {/* Hide the description on mobile to reuce content */}
                     <p className="hidden md:block text-white/90 text-xs md:text-sm">
                       {service.description}
                     </p>

@@ -29,20 +29,19 @@ const QuickLearning = () => {
       level: "Advanced",
       image: "https://images.unsplash.com/photo-1610018556010-6a11691bc905?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
-    
   ];
 
   return (
-    <div className="py-16 px-4 bg-gradient-to-b from-white to-gray-50">
+    <div className="py-8 md:py-16 px-3 md:px-4 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto">
-       
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {learningTopics.map((topic) => (
             <div
               key={topic.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-in-up"
+              className="bg-white rounded-xl md:rounded-2xl overflow-hidden shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="relative h-48 overflow-hidden">
+              {/* Image Container */}
+              <div className="relative h-40 md:h-48 overflow-hidden">
                 <img
                   src={topic.image}
                   alt={topic.title}
@@ -50,36 +49,43 @@ const QuickLearning = () => {
                 />
               </div>
               
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              {/* Content Container */}
+              <div className="p-4 md:p-6">
+                {/* Title and Description */}
+                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 line-clamp-1">
                   {topic.title}
                 </h3>
-                <p className="text-gray-600 mb-4">{topic.description}</p>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4 line-clamp-2">
+                  {topic.description}
+                </p>
                 
-                <div className="flex items-center gap-2 text-gray-500 mb-4">
-                  <BookOpen className="w-4 h-4" />
-                  <span className="text-sm">{topic.category}</span>
+                {/* Category */}
+                <div className="flex items-center gap-2 text-gray-500 mb-3 md:mb-4">
+                  <BookOpen className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-xs md:text-sm">{topic.category}</span>
                 </div>
                 
-                <div className="flex justify-between mb-6">
+                {/* Duration and Level */}
+                <div className="flex justify-between mb-4 md:mb-6">
                   <div>
-                    <p className="text-sm text-gray-500">Duration</p>
-                    <p className="text-lg font-semibold text-emerald-600">{topic.duration}</p>
+                    <p className="text-xs md:text-sm text-gray-500">Duration</p>
+                    <p className="text-sm md:text-lg font-semibold text-emerald-600">{topic.duration}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Level</p>
-                    <p className="text-lg font-semibold text-emerald-600">{topic.level}</p>
+                    <p className="text-xs md:text-sm text-gray-500">Level</p>
+                    <p className="text-sm md:text-lg font-semibold text-emerald-600">{topic.level}</p>
                   </div>
                 </div>
                 
-                <div className="flex gap-4">
-                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full font-medium hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
-                    <Video className="w-4 h-4" />
-                    Watch Lesson
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full text-sm md:text-base font-medium hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+                    <Video className="w-4 h-4 flex-shrink-0" />
+                    <span className="whitespace-nowrap">Watch Lesson</span>
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-emerald-500 text-emerald-600 rounded-full font-medium hover:bg-emerald-50 transition-colors">
-                    <ClipboardCheck className="w-4 h-4" />
-                    Take Quiz
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 border border-emerald-500 text-emerald-600 rounded-full text-sm md:text-base font-medium hover:bg-emerald-50 transition-colors">
+                    <ClipboardCheck className="w-4 h-4 flex-shrink-0" />
+                    <span className="whitespace-nowrap">Take Quiz</span>
                   </button>
                 </div>
               </div>

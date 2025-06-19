@@ -41,22 +41,23 @@ const cities = [
 
 const CityShowcase = () => {
   return (
-    <section className="section-padding bg-gray-50">
+    <section className="py-8 md:py-16 px-4 bg-gray-50">
       <div className="container mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-8 md:mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4">Popular Cities</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Popular Cities</h2>
+          <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto px-4">
             Explore properties in India's most sought-after cities
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Modified grid for better mobile display */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
           {cities.map((city, index) => (
             <motion.div
               key={index}
@@ -66,9 +67,9 @@ const CityShowcase = () => {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="group cursor-pointer"
             >
-              <div className="relative overflow-hidden rounded-2xl">
-                {/* Image */}
-                <div className="relative h-72">
+              <div className="relative overflow-hidden rounded-xl md:rounded-2xl">
+                {/* Adjusted image height for mobile */}
+                <div className="relative h-44 sm:h-56 md:h-72">
                   <img
                     src={city.image}
                     alt={city.name}
@@ -77,13 +78,13 @@ const CityShowcase = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 </div>
                 
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="text-2xl font-bold text-white mb-2">{city.name}</h3>
-                  <div className="flex items-center justify-between text-white/90">
+                {/* Adjusted content padding and text sizes for mobile */}
+                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-6">
+                  <h3 className="text-lg md:text-2xl font-bold text-white mb-1 md:mb-2">{city.name}</h3>
+                  <div className="flex items-center justify-between text-white/90 text-sm md:text-base">
                     <span>{city.properties} Properties</span>
                     <div className="flex items-center gap-1">
-                      <span>★</span>
+                      <span className="text-yellow-400">★</span>
                       <span>{city.rating}</span>
                     </div>
                   </div>
@@ -101,9 +102,9 @@ const CityShowcase = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mt-12"
+          className="text-center mt-8 md:mt-12"
         >
-          <button className="px-8 py-4 bg-emerald-600 text-white rounded-full font-medium hover:bg-emerald-700 transition-colors">
+          <button className="px-6 py-3 md:px-8 md:py-4 bg-emerald-600 text-white rounded-full text-sm md:text-base font-medium hover:bg-emerald-700 transition-colors">
             View All Cities
           </button>
         </motion.div>

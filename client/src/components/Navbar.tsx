@@ -24,7 +24,6 @@ const Navbar = () => {
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
-  const toggleServicesDropdown = () => setIsServicesDropdownOpen(!isServicesDropdownOpen); // Toggle Services dropdown
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -54,6 +53,7 @@ const Navbar = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8 relative">
               <Link to="/" className="text-gray-600 hover:text-emerald-600 transition-colors">Home</Link>
+
               <div className="relative">
                 <button
                   onClick={toggleServicesDropdown}
@@ -112,8 +112,16 @@ const Navbar = () => {
               <Link to="/properties" className="text-gray-600 hover:text-emerald-600 transition-colors">Properties</Link>
               <Link to="/rental/home" className="text-gray-600 hover:text-emerald-600 transition-colors">Rental</Link>
               <Link to="/parttime/home" className="text-gray-600 hover:text-emerald-600 transition-colors">Jobs</Link>
+
+      <a
+    href="/#exclusive-services"
+    className="text-gray-600 hover:text-emerald-600 transition-colors"
+  >
+    Services
+  </a>
+
               <Link to="/about" className="text-gray-600 hover:text-emerald-600 transition-colors">About</Link>
-              <Link to="/contact" className="text-gray-600 hover:text-emerald-600 transition-colors">Contact</Link>
+              <a href="/#footer" className="text-gray-600 hover:text-emerald-600 transition-colors">Contact</a>
             </div>
 
             {/* Action Buttons */}
