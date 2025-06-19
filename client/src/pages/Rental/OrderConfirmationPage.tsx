@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { CheckCircle, Package, ShoppingBag, AlertCircle } from 'lucide-react';
+import { CheckCircle,  ShoppingBag, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Order, OrderItem } from '../../types'; // Ensure OrderItem is also imported if used directly
 

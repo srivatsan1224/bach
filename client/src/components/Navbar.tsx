@@ -7,7 +7,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false); // State for Services dropdown
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
   const [user, setUser] = useState<{ name?: string; picture?: string }>({});
 
   useEffect(() => {
@@ -24,6 +24,12 @@ const Navbar = () => {
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
+  
+  // Added function to toggle services dropdown
+  const toggleServicesDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsServicesDropdownOpen(!isServicesDropdownOpen);
+  };
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -31,9 +37,10 @@ const Navbar = () => {
         closeDropdown();
       }
       if (isServicesDropdownOpen && !(event.target as HTMLElement).closest(".services-dropdown")) {
-        setIsServicesDropdownOpen(false); // Close services dropdown if clicked outside
+        setIsServicesDropdownOpen(false);
       }
     };
+    
     document.addEventListener("click", handleOutsideClick);
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [isDropdownOpen, isServicesDropdownOpen]);
@@ -66,60 +73,65 @@ const Navbar = () => {
                     <Link
                       to="/housing"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsServicesDropdownOpen(false)}
                     >
                       Housing
                     </Link>
                     <Link
                       to="/home-food"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsServicesDropdownOpen(false)}
                     >
                       Home Food
                     </Link>
                     <Link
                       to="/jobs"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsServicesDropdownOpen(false)}
                     >
                       Jobs
                     </Link>
                     <Link
                       to="/rental"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsServicesDropdownOpen(false)}
                     >
                       Property Rental
                     </Link>
                     <Link
                       to="/parttime"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsServicesDropdownOpen(false)}
                     >
                       Part-time Jobs
                     </Link>
-                    
                     <Link
                       to="/events"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsServicesDropdownOpen(false)}
                     >
                       Events
                     </Link>
                     <Link
                       to="/discount-bazaar"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsServicesDropdownOpen(false)}
                     >
                       Discount Bazaar
                     </Link>
                   </div>
                 )}
               </div>
+              
               <Link to="/properties" className="text-gray-600 hover:text-emerald-600 transition-colors">Properties</Link>
               <Link to="/rental/home" className="text-gray-600 hover:text-emerald-600 transition-colors">Rental</Link>
               <Link to="/parttime/home" className="text-gray-600 hover:text-emerald-600 transition-colors">Jobs</Link>
-
-      <a
-    href="/#exclusive-services"
-    className="text-gray-600 hover:text-emerald-600 transition-colors"
-  >
-    Services
-  </a>
-
+              <a
+                href="/#exclusive-services"
+                className="text-gray-600 hover:text-emerald-600 transition-colors"
+              >
+                Services
+              </a>
               <Link to="/about" className="text-gray-600 hover:text-emerald-600 transition-colors">About</Link>
               <a href="/#footer" className="text-gray-600 hover:text-emerald-600 transition-colors">Contact</a>
             </div>
@@ -164,17 +176,22 @@ const Navbar = () => {
                       <Link
                         to="/profile"
                         className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={closeDropdown}
                       >
                         Profile
                       </Link>
                       <Link
                         to="/settings"
                         className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={closeDropdown}
                       >
                         Settings
                       </Link>
                       <button
-                        onClick={handleLogout}
+                        onClick={() => {
+                          handleLogout();
+                          closeDropdown();
+                        }}
                         className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                       >
                         Logout
@@ -208,11 +225,73 @@ const Navbar = () => {
             className="md:hidden overflow-hidden"
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <Link to="/" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Home</Link>
-              <Link to="/services" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Services</Link>
-              <Link to="/properties" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Properties</Link>
-              <Link to="/about" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">About</Link>
-              <Link to="/contact" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors">Contact</Link>
+              <Link to="/" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors" onClick={() => setIsOpen(false)}>Home</Link>
+              <div className="relative">
+                <button
+                  onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+                  className="w-full text-left px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                >
+                  Services
+                </button>
+                {isServicesDropdownOpen && (
+                  <div className="pl-4">
+                    <Link
+                      to="/housing"
+                      className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Housing
+                    </Link>
+                    <Link
+                      to="/home-food"
+                      className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Home Food
+                    </Link>
+                    <Link
+                      to="/jobs"
+                      className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Jobs
+                    </Link>
+                    <Link
+                      to="/rental"
+                      className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Property Rental
+                    </Link>
+                    <Link
+                      to="/parttime"
+                      className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Part-time Jobs
+                    </Link>
+                    <Link
+                      to="/events"
+                      className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Events
+                    </Link>
+                    <Link
+                      to="/discount-bazaar"
+                      className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Discount Bazaar
+                    </Link>
+                  </div>
+                )}
+              </div>
+              <Link to="/properties" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors" onClick={() => setIsOpen(false)}>Properties</Link>
+              <Link to="/rental/home" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors" onClick={() => setIsOpen(false)}>Rental</Link>
+              <Link to="/parttime/home" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors" onClick={() => setIsOpen(false)}>Jobs</Link>
+              <Link to="/about" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors" onClick={() => setIsOpen(false)}>About</Link>
+              <a href="/#footer" className="block px-3 py-2 rounded-md text-gray-600 hover:text-emerald-600 hover:bg-gray-50 transition-colors" onClick={() => setIsOpen(false)}>Contact</a>
             </div>
             <div className="px-5 py-3 border-t border-gray-100">
               {!isAuthenticated ? (
@@ -233,7 +312,6 @@ const Navbar = () => {
           </motion.div>
         </div>
       </nav>
-      {/* Spacer div to prevent content from hiding under navbar */}
       <div className="h-16" />
     </>
   );

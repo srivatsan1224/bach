@@ -11,7 +11,7 @@ export interface LatestProductCardProps {
 }
 
 const LatestProductCard: React.FC<LatestProductCardProps> = ({
-  id,
+
   name,
   img,
   price,
