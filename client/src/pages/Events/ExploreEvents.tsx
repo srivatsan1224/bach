@@ -34,7 +34,7 @@ const ExploreEvents: React.FC = () => {
   useEffect(() => {
     // Fetch all events from the backend on initial load
     const fetchEvents = async () => {
-      const response = await fetch("https://bachelors-roshan-backend.onrender.com/events");
+      const response = await fetch("http://localhost:3000/events");
       const data: Event[] = await response.json(); // Type the response data as Event[]
       setAllEvents(data);
       setFilteredEvents(data);

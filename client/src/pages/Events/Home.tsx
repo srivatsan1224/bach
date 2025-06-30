@@ -40,7 +40,7 @@ const Index: React.FC = () => {
     // Fetch upcoming events from backend API
     const fetchUpcomingEvents = async () => {
       try {
-        const response = await fetch("https://bachelors-roshan-backend.onrender.com/events");
+        const response = await fetch("http://localhost:3000/events");
         const data: Event[] = await response.json(); // Ensure the data is typed as Event[]
         setUpcomingEvents(data); // Set fetched data into state
       } catch (error) {

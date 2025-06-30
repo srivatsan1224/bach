@@ -22,7 +22,7 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("https://bachelors-roshan-backend.onrender.com/user/signup", {
+      const response = await axios.post("http://localhost:3000/user/signup", {
         containerName: "Users",
         users: [
           {
@@ -71,7 +71,7 @@ const SignupPage: React.FC = () => {
         const googleUser = googleResponse.data;
 
         // Send user data to backend
-        const backendResponse = await axios.post("https://bachelors-roshan-backend.onrender.com/google-login", {
+        const backendResponse = await axios.post("http://localhost:3000/google-login", {
           containerName: "Users",
           user: {
             email: googleUser.email,

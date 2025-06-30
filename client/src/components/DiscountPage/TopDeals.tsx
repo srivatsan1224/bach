@@ -21,7 +21,7 @@ const TopDeals: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          'https://bachelors-roshan-backend.onrender.com/products'
+          'http://localhost:3000/products'
         );
         setProducts(response.data);
       } catch (error) {

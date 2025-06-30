@@ -55,7 +55,7 @@ function EventListing() {
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const response = await fetch(`https://bachelors-roshan-backend.onrender.com/events/${id}`);
+        const response = await fetch(`http://localhost:3000/events/${id}`);
         const data = await response.json();
         setEvent(data);
       } catch (error) {

@@ -22,7 +22,7 @@ const CartPage: React.FC = () => {
         const userId = user.id;
 
         const response = await axios.get(
-          `https://bachelors-roshan-backend.onrender.com/user/get?userId=${userId}`
+          `http://localhost:3000/user/get?userId=${userId}`
         );
 
         const cartData = response.data.cart || [];

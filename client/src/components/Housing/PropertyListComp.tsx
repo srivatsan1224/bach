@@ -66,7 +66,7 @@ const PropertyListComp = () => {
       setLoading(true);
       const queryParams = buildQueryParams(pageNumber);
       const response = await fetch(
-        `https://bachelors-roshan-backend.onrender.com/api/properties?${queryParams}`
+        `http://localhost:3000/api/properties?${queryParams}`
       );
       if (!response.ok) {
         throw new Error(`Failed to fetch properties: ${response.statusText}`);
