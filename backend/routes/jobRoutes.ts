@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from "express";
 import { createJob, getAllJobs, getJobById, updateJob, deleteJob } from "../services/jobService";
 import { validateJobCreation, validateJobUpdate } from "../middlewares/validateJob";
