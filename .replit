@@ -6,3 +6,27 @@ channel = "stable-24_05"
 
 [deployment]
 run = ["sh", "-c", "node index.js"]
+
+[workflows]
+runButton = "Start Backend Services"
+
+[[workflows.workflow]]
+name = "Start Backend Services"
+author = 44594619
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm run start:parttime"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm run start:rental"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm run start:food"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm run dev"
