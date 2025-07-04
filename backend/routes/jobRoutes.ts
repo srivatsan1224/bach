@@ -31,19 +31,28 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/", getJobs);
+
 // Get job by ID
 router.get("/:id", async (req: Request, res: Response) => {
-  try {
-    const job = await getJobById(req.params.id);
-    if (!job) {
-      return res.status(404).json({ message: "Job not found" });
+    try {
+        const jobId = req.params.id;
+        const job = await getJobById(jobId);
+
+        if (!job) {
+            res.status(404).json({ message: "Job not found" });
+            return;
+        }
+
+        res.json(job);
+    } catch (error) {
+        console.error("Error fetching job by ID:", error);
+        res.status(500).json({ message: "Error fetching job" });
     }
-    res.status(200).json(job);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
 });
 
+// Create new job
+router.post("/", validateJob, createJob);
 // Update job
 router.put("/:id", validateJobUpdate, async (req: Request, res: Response) => {
   try {
