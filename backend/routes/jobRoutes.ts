@@ -4,16 +4,6 @@ import { validateJobCreation, validateJobUpdate } from "../middlewares/validateJ
 
 const router = express.Router();
 
-// Create a new job
-router.post("/", validateJobCreation, async (req: Request, res: Response) => {
-  try {
-    const job = await createJob(req.body);
-    res.status(201).json({ message: "Job created successfully", job });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Get all jobs with optional filtering
 router.get("/", async (req: Request, res: Response) => {
   try {
@@ -30,8 +20,6 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-router.get("/", getJobs);
 
 // Get job by ID
 router.get("/:id", async (req: Request, res: Response) => {
@@ -51,8 +39,15 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-// Create new job
-router.post("/", validateJob, createJob);
+// Create a new job
+router.post("/", validateJobCreation, async (req: Request, res: Response) => {
+  try {
+    const job = await createJob(req.body);
+    res.status(201).json({ message: "Job created successfully", job });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Update job
 router.put("/:id", validateJobUpdate, async (req: Request, res: Response) => {
   try {
