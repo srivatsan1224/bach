@@ -29,4 +29,4 @@ async function testAllServices() {
 }
 
 // Run tests after a short delay to allow server startup
-setTimeout(testAllServices, 5000);
+setTimeout(testAllServices, 3000);ices, 5000);

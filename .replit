@@ -8,7 +8,7 @@ channel = "stable-24_05"
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "Start Unified Backend"
+runButton = "Start Full App"
 
 [[workflows.workflow]]
 name = "Start Backend Services"
@@ -33,6 +33,19 @@ args = "cd backend && npm run dev"
 
 [[workflows.workflow]]
 name = "Start Unified Backend"
+author = 44594619
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm run dev"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run dev"
+
+[[workflows.workflow]]
+name = "Start Full App"
 author = 44594619
 mode = "parallel"
 

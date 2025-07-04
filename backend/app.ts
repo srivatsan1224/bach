@@ -65,8 +65,8 @@ async function startServer(): Promise<void> {
     try {
         console.log("Initializing server...");
         await setupDatabaseAndContainer();
-        app.listen(port, () => {
-            console.log(`Server running at http://localhost:${port}`);
+        app.listen(port, '0.0.0.0', () => {
+            console.log(`Main backend server running at http://0.0.0.0:${port}`);
         });
     } catch (error) {
         console.error("Failed to start server:", error);
