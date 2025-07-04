@@ -22,8 +22,8 @@ app.use(
 
 // Azure Cosmos DB Configuration
 const client = new CosmosClient({
-  endpoint: process.env.COSMOS_ENDPOINT || 'https://sudheeps.documents.azure.com:443/',
-  key: process.env.COSMOS_KEY || 'z24k8ykchU67wFyV0aG0mBmH99y4lWXk2tGWpAIEYsrUzERSeTtBS1zAOdliTx9wkyn5bCculmzNACDbW3bsGg==',
+  endpoint: process.env.COSMOS_ENDPOINT ',
+  key: process.env.COSMOS_KEY,
 });
 
 const databaseId = process.env.DATABASE_ID || 'Bachelors';
